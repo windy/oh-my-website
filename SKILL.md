@@ -1,5 +1,5 @@
 ---
-name: yafei-personal-website
+name: oh-my-website
 description: '生成个性化多页个人网站（独立 HTML 文件 + 共享 CSS/JS），5 种身份自动匹配页面结构，3 套视觉风格预置完整代码。触发词：个人网站、个人主页、个人站、personal website、帮我做个网站、做个人站、生成我的主页、我的网站。'
 disable-model-invocation: false
 user-invocable: true

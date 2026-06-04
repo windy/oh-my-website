@@ -21,19 +21,19 @@
 ## 30 秒开始
 
 ```bash
-npx skills add https://github.com/windy/oh-my-website --skill yafei-personal-website
+npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
 ```
 
 也可以直接把这段话发给有 shell 权限的 AI Agent：
 
 ```text
-帮我安装 yafei-personal-website 这个 Clacky skill。请把 https://github.com/windy/oh-my-website 克隆到 ~/.clacky/skills/yafei-personal-website，安装完成后检查 SKILL.md、assets/、references/ 是否存在。
+帮我安装 oh-my-website 这个 Clacky skill。请把 https://github.com/windy/oh-my-website 克隆到 ~/.clacky/skills/oh-my-website，安装完成后检查 SKILL.md、assets/、references/ 是否存在。
 ```
 
 已经安装过的话，用这段话更新：
 
 ```text
-帮我更新 yafei-personal-website。请进入 ~/.clacky/skills/yafei-personal-website 执行 git pull，然后告诉我当前最新 commit。
+帮我更新 oh-my-website。请进入 ~/.clacky/skills/oh-my-website 执行 git pull，然后告诉我当前最新 commit。
 ```
 
 安装后直接对 Agent 说：
@@ -104,16 +104,16 @@ npx skills add https://github.com/windy/oh-my-website --skill yafei-personal-web
 ### 方式一：一行命令安装（推荐）
 
 ```bash
-npx skills add https://github.com/windy/oh-my-website --skill yafei-personal-website
+npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
 ```
 
 ### 方式二：把下面这段话直接发给 AI
 
-> 帮我安装 `yafei-personal-website` 这个 Clacky skill。请按下面步骤做：
+> 帮我安装 `oh-my-website` 这个 Clacky skill。请按下面步骤做：
 >
 > 1. 确保 `~/.clacky/skills/` 目录存在（不存在就创建）
-> 2. 执行 `git clone https://github.com/windy/oh-my-website.git ~/.clacky/skills/yafei-personal-website`
-> 3. 验证：`ls ~/.clacky/skills/yafei-personal-website/` 应该看到 `SKILL.md`、`assets/`、`references/` 三项
+> 2. 执行 `git clone https://github.com/windy/oh-my-website.git ~/.clacky/skills/oh-my-website`
+> 3. 验证：`ls ~/.clacky/skills/oh-my-website/` 应该看到 `SKILL.md`、`assets/`、`references/` 三项
 > 4. 告诉我安装好了，之后我说「帮我做个个人网站」之类的话就会触发这个 skill
 
 把这段话复制粘贴给 Clacky / Claude Code / Cursor 等任何有 shell 权限的 AI Agent，它会自动完成安装。
@@ -121,7 +121,7 @@ npx skills add https://github.com/windy/oh-my-website --skill yafei-personal-web
 ### 方式三：手动命令行
 
 ```bash
-git clone https://github.com/windy/oh-my-website.git ~/.clacky/skills/yafei-personal-website
+git clone https://github.com/windy/oh-my-website.git ~/.clacky/skills/oh-my-website
 ```
 
 ### 触发方式
