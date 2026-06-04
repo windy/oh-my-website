@@ -1,14 +1,16 @@
 # Oh My Website · AI 驱动的多页个人网站生成器
 
 ![GitHub stars](https://img.shields.io/github/stars/windy/oh-my-website?style=flat-square)
-![License](https://img.shields.io/github/license/windy/oh-my-website?style=flat-square)
+![License](https://img.shields.io/badge/License-AGPL--3.0-blue?style=flat-square)
+![Claude Code](https://img.shields.io/badge/Claude_Code-Supported-D97706?style=flat-square)
+![Codex](https://img.shields.io/badge/Codex-Supported-111111?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![HTML](https://img.shields.io/badge/HTML-Multi%20Page-0A7CFF?style=flat-square)
-![Clacky](https://img.shields.io/badge/Clacky-Supported-6B5B95?style=flat-square)
+![OpenClacky](https://img.shields.io/badge/OpenClacky-Supported-6B5B95?style=flat-square)
 
 > 把「帮我做个个人网站」变成一句可执行的指令。
 
-一个适配 Clacky 等 Agent 环境的个人网站技能——**按身份自动匹配页面结构，AI 撰写文案，多页独立 HTML 文件，CSS 变量一键换肤，发布即上线**。
+一个适配 OpenClacky 等 Agent 环境的个人网站技能——**按身份自动匹配页面结构，AI 撰写文案，多页独立 HTML 文件，CSS 变量一键换肤，发布即上线**。
 
 内置三套视觉系统（极简白已就绪，杂志风和暗色极客待开发）：
 
@@ -27,13 +29,13 @@ npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
 也可以直接把这段话发给有 shell 权限的 AI Agent：
 
 ```text
-帮我安装 oh-my-website 这个 Clacky skill。请把 https://github.com/windy/oh-my-website 克隆到 ~/.clacky/skills/oh-my-website，安装完成后检查 SKILL.md、assets/、references/ 是否存在。
+帮我安装 oh-my-website 这个 OpenClacky skill。请把 https://github.com/windy/oh-my-website 克隆到 ~/.claude/skills/oh-my-website，安装完成后检查 SKILL.md、assets/、references/ 是否存在。
 ```
 
 已经安装过的话，用这段话更新：
 
 ```text
-帮我更新 oh-my-website。请进入 ~/.clacky/skills/oh-my-website 执行 git pull，然后告诉我当前最新 commit。
+帮我更新 oh-my-website。请进入 ~/.claude/skills/oh-my-website 执行 git pull，然后告诉我当前最新 commit。
 ```
 
 安装后直接对 Agent 说：
@@ -94,7 +96,7 @@ npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
 
 | 平台 | 状态 | 说明 |
 |------|------|------|
-| Clacky | 支持 | 原生 Skill 工作流，适合生成和迭代多页网站 |
+| OpenClacky | 支持 | 原生 Skill 工作流，适合生成和迭代多页网站 |
 | Claude Code | 可用 | 需要能读写文件并执行 shell 命令 |
 | Cursor / 其他本地 Agent | 可用 | 需要能读写文件并执行 shell 命令 |
 | 普通 Chatbot | 不推荐 | 没有文件系统和浏览器预览时，很难稳定生成完整网站 |
@@ -109,19 +111,19 @@ npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
 
 ### 方式二：把下面这段话直接发给 AI
 
-> 帮我安装 `oh-my-website` 这个 Clacky skill。请按下面步骤做：
+> 帮我安装 `oh-my-website` 这个 OpenClacky skill。请按下面步骤做：
 >
-> 1. 确保 `~/.clacky/skills/` 目录存在（不存在就创建）
-> 2. 执行 `git clone https://github.com/windy/oh-my-website.git ~/.clacky/skills/oh-my-website`
-> 3. 验证：`ls ~/.clacky/skills/oh-my-website/` 应该看到 `SKILL.md`、`assets/`、`references/` 三项
+> 1. 确保 `~/.claude/skills/` 目录存在（不存在就创建）
+> 2. 执行 `git clone https://github.com/windy/oh-my-website.git ~/.claude/skills/oh-my-website`
+> 3. 验证：`ls ~/.claude/skills/oh-my-website/` 应该看到 `SKILL.md`、`assets/`、`references/` 三项
 > 4. 告诉我安装好了，之后我说「帮我做个个人网站」之类的话就会触发这个 skill
 
-把这段话复制粘贴给 Clacky / Claude Code / Cursor 等任何有 shell 权限的 AI Agent，它会自动完成安装。
+把这段话复制粘贴给 OpenClacky / Claude Code / Cursor 等任何有 shell 权限的 AI Agent，它会自动完成安装。
 
 ### 方式三：手动命令行
 
 ```bash
-git clone https://github.com/windy/oh-my-website.git ~/.clacky/skills/oh-my-website
+git clone https://github.com/windy/oh-my-website.git ~/.claude/skills/oh-my-website
 ```
 
 ### 触发方式
