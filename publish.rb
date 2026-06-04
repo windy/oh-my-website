@@ -5,13 +5,21 @@
 #   ruby publish.rb publish --name "NAME" --dir /path/to/site   (multi-page)
 #   ruby publish.rb publish --name "NAME" --html-file FILE      (single page)
 #   ruby publish.rb delete  [--slug SLUG]
+#   ruby publish.rb reset                                       (clear local token)
 #
 # On first publish, prints the page URL and saves the token to
-# ~/clacky_workspace/personal_website/token.json (used for future updates/deletes).
+# ~/clacky_workspace/oh-my-website/token.json (used for future updates/deletes).
 #
 # Environment:
 #   SHOWCODE_API_HOST — platform base URL (default: https://showcode.com)
-#   use http://localhost:5000 for local dev
+#                       For local dev: http://localhost:3000 (or whatever port)
+#                       The publish output URLs always say "https://showcode.com/~slug"
+#                       — when running locally, mentally rewrite to your local host.
+#
+# Behavior on stale/invalid token:
+#   If a saved token returns 401/403/500 on update, publish.rb auto-clears the
+#   local token.json and falls back to creating a new site. This keeps things
+#   working when a local dev DB has been reset.
 
 require "net/http"
 require "uri"
@@ -20,7 +28,7 @@ require "optparse"
 require "fileutils"
 
 API_HOST   = ENV.fetch("SHOWCODE_API_HOST", "https://showcode.com")
-TOKEN_FILE = File.expand_path("~/clacky_workspace/personal_website/token.json")
+TOKEN_FILE = File.expand_path("~/clacky_workspace/oh-my-website/token.json")
 MAX_SIZE   = 1_048_576 # 1MB
 
 def http_request(method, path, body: nil, token: nil)
@@ -30,9 +38,9 @@ def http_request(method, path, body: nil, token: nil)
   http.open_timeout = 8
   http.read_timeout = 15
 
-  req_class = { "POST" => Net::HTTP::Post, "PUT" => Net::HTTP::Put,
-                "DELETE" => Net::HTTP::Delete }[method]
-  req = req_class.new(uri.path)
+  req_class = { "GET" => Net::HTTP::Get, "POST" => Net::HTTP::Post,
+                "PUT" => Net::HTTP::Put, "DELETE" => Net::HTTP::Delete }[method]
+  req = req_class.new(method == "GET" ? uri.request_uri : uri.path)
   req["Content-Type"]  = "application/json"
   req["Authorization"] = "Bearer #{token}" if token
   req.body = body.to_json if body
@@ -248,6 +256,35 @@ def upload_pages_and_assets(slug, token, sub_pages, assets)
   end
 end
 
+# ── Check Slug ────────────────────────────────────────────────────────
+
+def cmd_check_slug(query)
+  slugs = query.to_s.split(",").map(&:strip).reject(&:empty?)
+  if slugs.empty?
+    warn "Usage: ruby publish.rb check-slug --q slug1,slug2,slug3"
+    exit 1
+  end
+
+  status, body = http_request("GET", "/api/v1/sites/check_slug?q=#{slugs.join(",")}")
+  if status == 200
+    available = body["available"] || []
+    taken     = body["taken"] || []
+
+    if available.empty?
+      puts "❌ All slugs taken. Try different candidates."
+    else
+      puts "✅ Available: #{available.join(", ")}"
+    end
+    unless taken.empty?
+      puts "   Taken: #{taken.join(", ")}"
+    end
+    exit available.empty? ? 1 : 0
+  else
+    warn "❌ Check failed (#{status}): #{body["error"] || body.inspect}"
+    exit 1
+  end
+end
+
 # ── Delete ────────────────────────────────────────────────────────────
 
 def cmd_delete(slug: nil)
@@ -303,9 +340,19 @@ when "delete"
 
   cmd_delete(slug: options[:slug])
 
+when "check-slug"
+  options = {}
+  OptionParser.new do |opts|
+    opts.on("--q QUERY") { |v| options[:q] = v }
+    opts.on("-q QUERY")  { |v| options[:q] = v }
+  end.parse!
+
+  cmd_check_slug(options[:q])
+
 else
-  warn "Usage: ruby publish.rb publish|delete [options]"
-  warn "  publish --name NAME [--html-file FILE | --dir DIR]"
-  warn "  delete  [--slug SLUG]"
+  warn "Usage: ruby publish.rb publish|delete|check-slug [options]"
+  warn "  publish     --name NAME [--html-file FILE | --dir DIR]"
+  warn "  delete      [--slug SLUG]"
+  warn "  check-slug  --q slug1,slug2,slug3"
   exit 1
 end

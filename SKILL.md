@@ -176,21 +176,39 @@ template-minimal/
 
 ## Step 5 — 发布
 
-**发布前必须先向用户确认 slug（URL 路径）。**
+**发布前必须先确认可用 slug（URL 路径）。禁止随机生成。**
 
 ### Slug 确认流程
 
-1. 根据用户名字自动生成候选 slug（拼音或英文，小写、连字符分隔），如 "李亚飞" → `yafei`，"John Doe" → `john-doe`
-2. 询问用户：使用此 slug 还是自定义一个
-3. 告知用户 URL 预览：`https://showcode.com/~{slug}`
-4. 用户确认后，发布时传入 `--slug` 参数
+1. 根据用户名字自动生成 **3 个候选 slug**（拼音或英文，小写、连字符分隔）：
+   - 如 "李亚飞" → `yafei`, `yafei-li`, `yafeilee`
+   - 如 "张三" → `zhangsan`, `zhang-san`, `san-zhang`
+   - 如 "John Doe" → `john`, `john-doe`, `johndoe`
 
-```
-✨ 即将发布到 https://showcode.com/~yafei
-   Slug 就用 yafei，还是你想换一个？
-```
+2. 调用 `check-slug` 命令测试哪些候选可用：
 
-用户确认后，执行发布命令：
+   ```bash
+   ruby "SKILL_DIR/publish.rb" check-slug --q yafei,yafei-li,yafeilee
+   ```
+
+   输出示例：
+   ```
+   ✅ Available: yafei-li, yafeilee
+      Taken: yafei
+   ```
+
+3. 将可用候选列出，让用户选一个。提示 URL 预览 `https://showcode.com/~{slug}`：
+
+   ```
+   ✨ 以下 slug 可用：
+   1. yafei-li → https://showcode.com/~yafei-li
+   2. yafeilee → https://showcode.com/~yafeilee
+   选哪个？（输入序号或自定义）
+   ```
+
+4. **如果 3 个候选全被占用**，告知用户并请用户自定义一个 slug，重新 `check-slug` 确认后再发布。
+
+5. 用户确认后，执行发布命令：
 
 ```bash
 ruby "SKILL_DIR/publish.rb" publish \
@@ -199,11 +217,11 @@ ruby "SKILL_DIR/publish.rb" publish \
   --dir /tmp/site
 ```
 
-- `--slug` 指定 URL 路径（可选，不传则自动用 name 生成）
+- `--slug` 指定 URL 路径（必传，不可随机）
 - `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面）
 - `index.html` 作为主页面内容，其余 `.html` 文件通过子页面 API（`POST /api/v1/sites/:slug/pages`）逐页上传
 - 子页面标题取自 HTML `<title>` 标签，找不到时用文件名去扩展名后首字母大写
-- 首次发布 → 创建新站点，token 保存到 `~/clacky_workspace/personal_website/token.json`
+- 首次发布 → 创建新站点，token 保存到 `~/clacky_workspace/oh-my-website/token.json`
 - 后续运行 → 更新主页面 + 逐页更新所有子页面
 - 从 stdout 提取 `✅` 开头的 URL 返回给用户
 
