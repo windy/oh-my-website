@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{NAME}} - 作品</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-brand">{{NAME}}</a>
+  <button class="nav-toggle" aria-label="Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+    </svg>
+  </button>
+  <ul class="nav-links">
+    <li><a href="index.html">首页</a></li>
+    <li><a href="about.html">关于</a></li>
+    <li><a href="projects.html">项目</a></li>
+    <li><a href="blog.html">博客</a></li>
+    <li><a href="portfolio.html" class="active">作品</a></li>
+    <li><a href="product.html">产品</a></li>
+    <li><a href="resume.html">简历</a></li>
+    <li><a href="contact.html">联系</a></li>
+  </ul>
+</nav>
+<main>
+  <h2 style="margin-bottom:var(--sp-5)">作品</h2>
+  <div class="project-grid">
+    {{PORTFOLIO_ITEMS}}
+  </div>
+</main>
+<footer>Made with Clacky</footer>
+<script src="js/script.js"></script>
+</body>
+</html>
