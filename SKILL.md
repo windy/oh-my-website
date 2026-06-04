@@ -185,9 +185,13 @@ ruby "SKILL_DIR/publish.rb" publish \
 ```
 
 - `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面）
+- `index.html` 作为主页面内容，其余 `.html` 文件通过子页面 API（`POST /api/v1/sites/:slug/pages`）逐页上传
+- 子页面标题取自 HTML `<title>` 标签，找不到时用文件名去扩展名后首字母大写
 - 首次发布 → 创建新站点，token 保存到 `~/clacky_workspace/personal_website/token.json`
-- 后续运行 → 更新同一站点
+- 后续运行 → 更新主页面 + 逐页更新所有子页面
 - 从 stdout 提取 `✅` 开头的 URL 返回给用户
+
+> 仅发布单个 HTML 文件时可用 `--html-file` 替代 `--dir`（向后兼容）。
 
 ### 删除网站
 
