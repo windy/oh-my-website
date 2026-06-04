@@ -64,9 +64,34 @@ def validate_size!(content, label)
   exit 1
 end
 
+# Inject <base href="/~slug/"> so relative URLs (css/style.css, js/script.js)
+# resolve correctly from any sub-page like /~slug/about
+def inject_base_tag(html, slug)
+  return html unless slug
+  html.sub(/<head>/i, "<head>\n  <base href=\"/~#{slug}/\">")
+end
+
+# Collect non-HTML asset files (CSS, JS, fonts, etc.) from the site directory.
+# Returns array of [relative_path, content_string] pairs.
+def collect_assets(dir)
+  assets = []
+  # Walk the entire directory tree, skip HTML files
+  Dir.glob(File.join(dir, "**/*"), File::FNM_DOTMATCH).each do |f|
+    next unless File.file?(f)
+    next if f.end_with?(".html")
+    next if File.basename(f).start_with?(".")  # skip hidden files
+
+    rel_path = f.sub(dir + "/", "")
+    content  = File.read(f, encoding: "utf-8")
+    validate_size!(content, rel_path)
+    assets << [rel_path, content]
+  end
+  assets
+end
+
 # ── Single-file publish ──────────────────────────────────────────────
 
-def publish_single(name:, html_file:)
+def publish_single(name:, html_file:, slug: nil)
   unless File.exist?(html_file)
     warn "❌ HTML file not found: #{html_file}"
     exit 1
@@ -76,11 +101,12 @@ def publish_single(name:, html_file:)
   validate_size!(content, html_file)
 
   token_data = load_token_data
-  slug  = token_data["slug"]
+  saved_slug  = token_data["slug"]
   token = token_data["token"]
 
-  if slug && token
-    status, body = http_request("PUT", "/api/v1/sites/#{slug}",
+  if saved_slug && token
+    content = inject_base_tag(content, saved_slug)
+    status, body = http_request("PUT", "/api/v1/sites/#{saved_slug}",
                                 body: { name: name, content: content },
                                 token: token)
     if status == 200
@@ -93,12 +119,22 @@ def publish_single(name:, html_file:)
       exit 1
     end
   else
+    post_body = { name: name, content: content }
+    post_body[:slug] = slug if slug
     status, body = http_request("POST", "/api/v1/sites",
-                                body: { name: name, content: content })
+                                body: post_body)
     if status == 201
-      save_token_data("slug" => body["slug"], "token" => body["token"], "version" => 1)
+      slug  = body["slug"]
+      token = body["token"]
+      save_token_data("slug" => slug, "token" => token, "version" => 1)
+
+      # Now inject base tag and update
+      content = inject_base_tag(content, slug)
+      http_request("PUT", "/api/v1/sites/#{slug}",
+                   body: { name: name, content: content }, token: token)
+
       puts "✅ Website published: #{body["url"]}"
-      puts "   Slug: #{body["slug"]}"
+      puts "   Slug: #{slug}"
       puts "   Token saved to: #{TOKEN_FILE}"
     else
       warn "❌ Publish failed (#{status}): #{body["error"] || body.inspect}"
@@ -109,7 +145,7 @@ end
 
 # ── Multi-page (directory) publish ────────────────────────────────────
 
-def publish_dir(name:, dir:)
+def publish_dir(name:, dir:, slug: nil)
   unless Dir.exist?(dir)
     warn "❌ Directory not found: #{dir}"
     exit 1
@@ -121,8 +157,8 @@ def publish_dir(name:, dir:)
     exit 1
   end
 
-  index_content = File.read(index_file, encoding: "utf-8")
-  validate_size!(index_content, "index.html")
+  index_raw = File.read(index_file, encoding: "utf-8")
+  validate_size!(index_raw, "index.html")
 
   # Collect sub-pages (all .html files except index.html)
   sub_pages = Dir.glob(File.join(dir, "*.html"))
@@ -135,13 +171,17 @@ def publish_dir(name:, dir:)
       [basename, title, raw]  # path without .html (Rails strips format extension)
     end
 
+  # Collect assets (css/, js/, fonts/, images/, etc.)
+  assets = collect_assets(dir)
+
   token_data = load_token_data
-  slug  = token_data["slug"]
+  saved_slug  = token_data["slug"]
   token = token_data["token"]
 
-  if slug && token
+  if saved_slug && token
     # ── Update existing site ──
-    status, body = http_request("PUT", "/api/v1/sites/#{slug}",
+    index_content = inject_base_tag(index_raw, saved_slug)
+    status, body = http_request("PUT", "/api/v1/sites/#{saved_slug}",
                                 body: { name: name, content: index_content },
                                 token: token)
     if status == 200
@@ -153,20 +193,13 @@ def publish_dir(name:, dir:)
       exit 1
     end
 
-    sub_pages.each do |path, title, content|
-      status, body = http_request("POST", "/api/v1/sites/#{slug}/pages",
-                                  body: { path: path, title: title, content: content },
-                                  token: token)
-      if status == 200
-        puts "   📄 #{path} → #{body["url"]}"
-      else
-        warn "   ⚠️  #{path} failed (#{status}): #{body["error"] || body.inspect}"
-      end
-    end
+    upload_pages_and_assets(saved_slug, token, sub_pages, assets)
   else
-    # ── First publish ──
+    # ── First publish: upload without base tag, get slug, then inject and update ──
+    post_body = { name: name, content: index_raw }
+    post_body[:slug] = slug if slug
     status, body = http_request("POST", "/api/v1/sites",
-                                body: { name: name, content: index_content })
+                                body: post_body)
     unless status == 201
       warn "❌ Publish failed (#{status}): #{body["error"] || body.inspect}"
       exit 1
@@ -179,15 +212,38 @@ def publish_dir(name:, dir:)
     puts "   Slug: #{slug}"
     puts "   Token saved to: #{TOKEN_FILE}"
 
-    sub_pages.each do |path, title, content|
-      status, body = http_request("POST", "/api/v1/sites/#{slug}/pages",
-                                  body: { path: path, title: title, content: content },
-                                  token: token)
-      if status == 200
-        puts "   📄 #{path} → #{body["url"]}"
-      else
-        warn "   ⚠️  #{path} failed (#{status}): #{body["error"] || body.inspect}"
-      end
+    # Inject <base> and update main page
+    index_content = inject_base_tag(index_raw, slug)
+    http_request("PUT", "/api/v1/sites/#{slug}",
+                 body: { name: name, content: index_content }, token: token)
+
+    upload_pages_and_assets(slug, token, sub_pages, assets)
+  end
+end
+
+def upload_pages_and_assets(slug, token, sub_pages, assets)
+  # Upload sub-pages (HTML files)
+  sub_pages.each do |path, title, content|
+    injected = inject_base_tag(content, slug)
+    status, body = http_request("POST", "/api/v1/sites/#{slug}/pages",
+                                body: { path: path, title: title, content: injected },
+                                token: token)
+    if status == 200
+      puts "   📄 #{path} → #{body["url"]}"
+    else
+      warn "   ⚠️  #{path} failed (#{status}): #{body["error"] || body.inspect}"
+    end
+  end
+
+  # Upload asset files (CSS, JS, etc.)
+  assets.each do |rel_path, content|
+    status, body = http_request("POST", "/api/v1/sites/#{slug}/pages",
+                                body: { path: rel_path, title: rel_path, content: content },
+                                token: token)
+    if status == 200
+      puts "   🎨 #{rel_path} uploaded"
+    else
+      warn "   ⚠️  #{rel_path} failed (#{status}): #{body["error"] || body.inspect}"
     end
   end
 end
@@ -219,6 +275,7 @@ when "publish"
   options = {}
   OptionParser.new do |opts|
     opts.on("--name NAME")          { |v| options[:name]      = v }
+    opts.on("--slug SLUG")          { |v| options[:slug]      = v }
     opts.on("--html-file FILE")     { |v| options[:html_file] = v }
     opts.on("--dir DIR")            { |v| options[:dir]       = v }
   end.parse!
@@ -229,9 +286,9 @@ when "publish"
   end
 
   if options[:dir]
-    publish_dir(name: options[:name], dir: File.expand_path(options[:dir]))
+    publish_dir(name: options[:name], dir: File.expand_path(options[:dir]), slug: options[:slug])
   elsif options[:html_file]
-    publish_single(name: options[:name], html_file: File.expand_path(options[:html_file]))
+    publish_single(name: options[:name], html_file: File.expand_path(options[:html_file]), slug: options[:slug])
   else
     warn "❌ Must specify --html-file or --dir"
     warn "Usage: ruby publish.rb publish --name NAME --dir /path/to/site"
