@@ -245,6 +245,62 @@ ruby "SKILL_DIR/publish.rb" delete
 
 ---
 
+## Step 5.5 — 账户管理（用户想管多个/在别处管理时）
+
+> 默认走免注册路径：首次发布只需 token 保存在本地。**当用户表达想"管理网站 / 换设备 / 多网站统一管理 / 升级账号"等意图时，引导走账户体系**。
+
+### 触发关键词
+
+用户说："注册账号"、"登录"、"换电脑还能改吗"、"我有多个网站想一起管"、"绑定账号"、"我的网站列表"、"升级到账号" → 进入账户流程。
+
+### 注册流程（首次）
+
+1. Agent 主动询问邮箱和密码（不要让用户去网页操作，全在对话里完成）：
+
+   > 我帮你注册一个 showcode 账号，以后多设备/多网站都能管理。请提供：
+   > - 邮箱（用作登录名）
+   > - 密码（4 位以上）
+
+2. 调命令注册：
+
+   ```bash
+   ruby "SKILL_DIR/publish.rb" register --email USER_EMAIL --password USER_PASSWORD
+   ```
+
+3. 注册成功后，**自动把当前本地 site 绑到账户**：
+
+   ```bash
+   ruby "SKILL_DIR/publish.rb" claim
+   ```
+
+   `claim` 不带参数时会读取本地 `token.json` 中的 slug + site_token，调 API 把这个 site 的所有权绑给当前登录用户。
+
+### 登录流程（已有账号）
+
+```bash
+ruby "SKILL_DIR/publish.rb" login --email USER_EMAIL --password USER_PASSWORD
+```
+
+登录后 session_token 存到 `~/clacky_workspace/oh-my-website/account.json`，**所有后续 publish/update 都会优先用 session 鉴权**，自动覆盖账号下所有 site。
+
+### 检查登录状态 / 登出
+
+```bash
+ruby "SKILL_DIR/publish.rb" whoami      # 查看当前登录账号
+ruby "SKILL_DIR/publish.rb" logout      # 登出（清本地 session）
+```
+
+### 鉴权优先级（参考）
+
+publish.rb 内部按以下顺序选 token：
+
+1. 已登录 → 优先用 `account.json` 里的 `session_token`（覆盖账号名下所有 site）
+2. 未登录 → 退回 `token.json` 里的 `site_token`（仅当前 site）
+
+匿名 + 登录两条路径**完全兼容**。已登录时首次 publish 创建新 site 后会自动 claim 绑定到账户。
+
+---
+
 ## Step 6 — 迭代对话
 
 **上线后主动引导用户看网页，鼓励提修改意见。**

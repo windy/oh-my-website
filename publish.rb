@@ -2,24 +2,27 @@
 # publish.rb — Publish or delete a personal website on showcode.com
 #
 # Usage:
-#   ruby publish.rb publish --name "NAME" --dir /path/to/site   (multi-page)
-#   ruby publish.rb publish --name "NAME" --html-file FILE      (single page)
+#   ruby publish.rb publish --name "NAME" --dir /path/to/site
+#   ruby publish.rb publish --name "NAME" --html-file FILE
 #   ruby publish.rb delete  [--slug SLUG]
-#   ruby publish.rb reset                                       (clear local token)
+#   ruby publish.rb check-slug --q s1,s2,s3
 #
-# On first publish, prints the page URL and saves the token to
-# ~/clacky_workspace/oh-my-website/token.json (used for future updates/deletes).
+#   ruby publish.rb register --email E --password P [--name N]
+#   ruby publish.rb login    --email E --password P
+#   ruby publish.rb logout
+#   ruby publish.rb whoami
+#   ruby publish.rb claim    [--slug SLUG]    # 把本地 site_token 绑到当前账号
+#
+# 凭证：
+#   ~/clacky_workspace/oh-my-website/token.json    # 当前 site 的 site_token (匿名/兼容)
+#   ~/clacky_workspace/oh-my-website/account.json  # 登录后的 session_token
+#
+# 鉴权优先级：account.session_token > token.json.token
+#   - 有 session 时：所有 PUT/POST 都用 session_token，可操作账户名下所有 site
+#   - 首次 publish 创建 site 后，若已登录会自动 claim 绑定到账号
 #
 # Environment:
 #   SHOWCODE_API_HOST — platform base URL (default: https://showcode.com)
-#                       For local dev: http://localhost:3000 (or whatever port)
-#                       The publish output URLs always say "https://showcode.com/~slug"
-#                       — when running locally, mentally rewrite to your local host.
-#
-# Behavior on stale/invalid token:
-#   If a saved token returns 401/403/500 on update, publish.rb auto-clears the
-#   local token.json and falls back to creating a new site. This keeps things
-#   working when a local dev DB has been reset.
 
 require "net/http"
 require "uri"
@@ -27,9 +30,11 @@ require "json"
 require "optparse"
 require "fileutils"
 
-API_HOST   = ENV.fetch("SHOWCODE_API_HOST", "https://showcode.com")
-TOKEN_FILE = File.expand_path("~/clacky_workspace/oh-my-website/token.json")
-MAX_SIZE   = 1_048_576 # 1MB
+API_HOST     = ENV.fetch("SHOWCODE_API_HOST", "https://showcode.com")
+BASE_DIR     = File.expand_path("~/clacky_workspace/oh-my-website")
+TOKEN_FILE   = File.join(BASE_DIR, "token.json")
+ACCOUNT_FILE = File.join(BASE_DIR, "account.json")
+MAX_SIZE     = 1_048_576 # 1MB
 
 def http_request(method, path, body: nil, token: nil)
   uri  = URI.parse("#{API_HOST}#{path}")
@@ -40,7 +45,7 @@ def http_request(method, path, body: nil, token: nil)
 
   req_class = { "GET" => Net::HTTP::Get, "POST" => Net::HTTP::Post,
                 "PUT" => Net::HTTP::Put, "DELETE" => Net::HTTP::Delete }[method]
-  req = req_class.new(method == "GET" ? uri.request_uri : uri.path)
+  req = req_class.new(uri.request_uri)
   req["Content-Type"]  = "application/json"
   req["Authorization"] = "Bearer #{token}" if token
   req.body = body.to_json if body
@@ -50,15 +55,31 @@ def http_request(method, path, body: nil, token: nil)
   [response.code.to_i, parsed]
 end
 
-def load_token_data
-  return {} unless File.exist?(TOKEN_FILE)
-  JSON.parse(File.read(TOKEN_FILE)) rescue {}
+def load_json(path)
+  return {} unless File.exist?(path)
+  JSON.parse(File.read(path)) rescue {}
 end
 
-def save_token_data(data)
-  FileUtils.mkdir_p(File.dirname(TOKEN_FILE))
-  File.write(TOKEN_FILE, JSON.pretty_generate(data))
-  File.chmod(0600, TOKEN_FILE)
+def save_json(path, data)
+  FileUtils.mkdir_p(File.dirname(path))
+  File.write(path, JSON.pretty_generate(data))
+  File.chmod(0600, path)
+end
+
+def load_token_data    = load_json(TOKEN_FILE)
+def save_token_data(d) = save_json(TOKEN_FILE, d)
+def load_account       = load_json(ACCOUNT_FILE)
+def save_account(d)    = save_json(ACCOUNT_FILE, d)
+
+# 鉴权优先级：登录后的 session_token > 当前 site 的 site_token
+def preferred_auth_token(site_token = nil)
+  acct = load_account
+  return acct["session_token"] if acct["session_token"]
+  site_token
+end
+
+def logged_in?
+  !load_account["session_token"].to_s.empty?
 end
 
 def extract_title(html)
@@ -79,22 +100,105 @@ def inject_base_tag(html, slug)
   html.sub(/<head>/i, "<head>\n  <base href=\"/~#{slug}/\">")
 end
 
-# Collect non-HTML asset files (CSS, JS, fonts, etc.) from the site directory.
-# Returns array of [relative_path, content_string] pairs.
 def collect_assets(dir)
   assets = []
-  # Walk the entire directory tree, skip HTML files
   Dir.glob(File.join(dir, "**/*"), File::FNM_DOTMATCH).each do |f|
     next unless File.file?(f)
     next if f.end_with?(".html")
-    next if File.basename(f).start_with?(".")  # skip hidden files
-
+    next if File.basename(f).start_with?(".")
     rel_path = f.sub(dir + "/", "")
     content  = File.read(f, encoding: "utf-8")
     validate_size!(content, rel_path)
     assets << [rel_path, content]
   end
   assets
+end
+
+# ── 账户：注册 / 登录 / 登出 / whoami ────────────────────────────────
+
+def cmd_register(email:, password:, name: nil)
+  status, body = http_request("POST", "/api/v1/sign_up",
+    body: { user: { name: name || email.split("@").first,
+                    email: email, password: password,
+                    password_confirmation: password } })
+  if status == 201 && body["session_token"]
+    save_account(
+      "session_token" => body["session_token"].to_s,
+      "email" => body.dig("user", "email"),
+      "user_id" => body.dig("user", "id"),
+      "name" => body.dig("user", "name")
+    )
+    puts "✅ 注册成功：#{body.dig("user", "email")}"
+    puts "   session_token 已保存到 #{ACCOUNT_FILE}"
+  else
+    warn "❌ 注册失败 (#{status}): #{body["error"] || body.inspect}"
+    exit 1
+  end
+end
+
+def cmd_login(email:, password:)
+  status, body = http_request("POST", "/api/v1/login",
+    body: { email: email, password: password })
+  if status == 200 && body["session_token"]
+    save_account(
+      "session_token" => body["session_token"].to_s,
+      "email" => body.dig("user", "email"),
+      "user_id" => body.dig("user", "id"),
+      "name" => body.dig("user", "name")
+    )
+    puts "✅ 登录成功：#{body.dig("user", "email")}"
+  else
+    warn "❌ 登录失败 (#{status}): #{body["error"] || body.inspect}"
+    exit 1
+  end
+end
+
+def cmd_logout
+  acct = load_account
+  if acct["session_token"]
+    http_request("DELETE", "/api/v1/logout", token: acct["session_token"])
+  end
+  File.delete(ACCOUNT_FILE) if File.exist?(ACCOUNT_FILE)
+  puts "✅ 已登出"
+end
+
+def cmd_whoami
+  acct = load_account
+  if acct["session_token"]
+    puts "已登录：#{acct["email"]} (id=#{acct["user_id"]})"
+  else
+    puts "未登录"
+    exit 1
+  end
+end
+
+# 把本地 site_token 对应的 site 绑定到当前账户
+def cmd_claim(slug: nil)
+  acct = load_account
+  unless acct["session_token"]
+    warn "❌ 未登录。请先 ruby publish.rb login --email ... --password ..."
+    exit 1
+  end
+
+  td = load_token_data
+  slug  ||= td["slug"]
+  site_token = td["token"]
+
+  unless slug && site_token
+    warn "❌ 本地没有发布过的 site（#{TOKEN_FILE} 不存在或不完整）"
+    exit 1
+  end
+
+  status, body = http_request("POST", "/api/v1/sites/#{slug}/claim?token=#{site_token}",
+                              token: acct["session_token"])
+  if status == 200
+    puts "✅ 已认领 site：~#{slug} → #{acct["email"]}"
+  elsif status == 409
+    puts "ℹ️  该 site 已经被认领过"
+  else
+    warn "❌ 认领失败 (#{status}): #{body["error"] || body.inspect}"
+    exit 1
+  end
 end
 
 # ── Single-file publish ──────────────────────────────────────────────
@@ -109,14 +213,15 @@ def publish_single(name:, html_file:, slug: nil)
   validate_size!(content, html_file)
 
   token_data = load_token_data
-  saved_slug  = token_data["slug"]
-  token = token_data["token"]
+  saved_slug = token_data["slug"]
+  site_token = token_data["token"]
+  auth_token = preferred_auth_token(site_token)
 
-  if saved_slug && token
+  if saved_slug && auth_token
     content = inject_base_tag(content, saved_slug)
     status, body = http_request("PUT", "/api/v1/sites/#{saved_slug}",
                                 body: { name: name, content: content },
-                                token: token)
+                                token: auth_token)
     if status == 200
       token_data["version"] = body["version"]
       save_token_data(token_data)
@@ -129,17 +234,18 @@ def publish_single(name:, html_file:, slug: nil)
   else
     post_body = { name: name, content: content }
     post_body[:slug] = slug if slug
-    status, body = http_request("POST", "/api/v1/sites",
-                                body: post_body)
+    status, body = http_request("POST", "/api/v1/sites", body: post_body)
     if status == 201
-      slug  = body["slug"]
-      token = body["token"]
-      save_token_data("slug" => slug, "token" => token, "version" => 1)
+      slug       = body["slug"]
+      site_token = body["token"]
+      save_token_data("slug" => slug, "token" => site_token, "version" => 1)
 
-      # Now inject base tag and update
       content = inject_base_tag(content, slug)
+      auth = preferred_auth_token(site_token)
       http_request("PUT", "/api/v1/sites/#{slug}",
-                   body: { name: name, content: content }, token: token)
+                   body: { name: name, content: content }, token: auth)
+
+      auto_claim_if_logged_in(slug, site_token)
 
       puts "✅ Website published: #{body["url"]}"
       puts "   Slug: #{slug}"
@@ -168,30 +274,28 @@ def publish_dir(name:, dir:, slug: nil)
   index_raw = File.read(index_file, encoding: "utf-8")
   validate_size!(index_raw, "index.html")
 
-  # Collect sub-pages (all .html files except index.html)
   sub_pages = Dir.glob(File.join(dir, "*.html"))
     .reject { |f| File.basename(f) == "index.html" }
     .map do |f|
       raw = File.read(f, encoding: "utf-8")
       validate_size!(raw, File.basename(f))
-      basename = File.basename(f, ".html")  # e.g. "about"
+      basename = File.basename(f, ".html")
       title = extract_title(raw) || basename.capitalize
-      [basename, title, raw]  # path without .html (Rails strips format extension)
+      [basename, title, raw]
     end
 
-  # Collect assets (css/, js/, fonts/, images/, etc.)
   assets = collect_assets(dir)
 
   token_data = load_token_data
-  saved_slug  = token_data["slug"]
-  token = token_data["token"]
+  saved_slug = token_data["slug"]
+  site_token = token_data["token"]
+  auth_token = preferred_auth_token(site_token)
 
-  if saved_slug && token
-    # ── Update existing site ──
+  if saved_slug && auth_token
     index_content = inject_base_tag(index_raw, saved_slug)
     status, body = http_request("PUT", "/api/v1/sites/#{saved_slug}",
                                 body: { name: name, content: index_content },
-                                token: token)
+                                token: auth_token)
     if status == 200
       token_data["version"] = body["version"]
       save_token_data(token_data)
@@ -201,36 +305,48 @@ def publish_dir(name:, dir:, slug: nil)
       exit 1
     end
 
-    upload_pages_and_assets(saved_slug, token, sub_pages, assets)
+    upload_pages_and_assets(saved_slug, auth_token, sub_pages, assets)
   else
-    # ── First publish: upload without base tag, get slug, then inject and update ──
     post_body = { name: name, content: index_raw }
     post_body[:slug] = slug if slug
-    status, body = http_request("POST", "/api/v1/sites",
-                                body: post_body)
+    status, body = http_request("POST", "/api/v1/sites", body: post_body)
     unless status == 201
       warn "❌ Publish failed (#{status}): #{body["error"] || body.inspect}"
       exit 1
     end
 
-    slug  = body["slug"]
-    token = body["token"]
-    save_token_data("slug" => slug, "token" => token, "version" => 1)
+    slug       = body["slug"]
+    site_token = body["token"]
+    save_token_data("slug" => slug, "token" => site_token, "version" => 1)
     puts "✅ Website published: #{body["url"]}"
     puts "   Slug: #{slug}"
     puts "   Token saved to: #{TOKEN_FILE}"
 
-    # Inject <base> and update main page
+    auth = preferred_auth_token(site_token)
     index_content = inject_base_tag(index_raw, slug)
     http_request("PUT", "/api/v1/sites/#{slug}",
-                 body: { name: name, content: index_content }, token: token)
+                 body: { name: name, content: index_content }, token: auth)
 
-    upload_pages_and_assets(slug, token, sub_pages, assets)
+    auto_claim_if_logged_in(slug, site_token)
+
+    upload_pages_and_assets(slug, auth, sub_pages, assets)
+  end
+end
+
+# 已登录时，新建的 site 自动绑到账号
+def auto_claim_if_logged_in(slug, site_token)
+  return unless logged_in?
+  acct = load_account
+  status, body = http_request("POST", "/api/v1/sites/#{slug}/claim?token=#{site_token}",
+                              token: acct["session_token"])
+  if status == 200
+    puts "   🔗 已自动绑定到账户：#{acct["email"]}"
+  elsif status != 409  # 409=已认领过，忽略
+    warn "   ⚠️  自动绑定失败 (#{status}): #{body["error"] || body.inspect}"
   end
 end
 
 def upload_pages_and_assets(slug, token, sub_pages, assets)
-  # Upload sub-pages (HTML files)
   sub_pages.each do |path, title, content|
     injected = inject_base_tag(content, slug)
     status, body = http_request("POST", "/api/v1/sites/#{slug}/pages",
@@ -243,7 +359,6 @@ def upload_pages_and_assets(slug, token, sub_pages, assets)
     end
   end
 
-  # Upload asset files (CSS, JS, etc.)
   assets.each do |rel_path, content|
     status, body = http_request("POST", "/api/v1/sites/#{slug}/pages",
                                 body: { path: rel_path, title: rel_path, content: content },
@@ -328,7 +443,6 @@ when "publish"
     publish_single(name: options[:name], html_file: File.expand_path(options[:html_file]), slug: options[:slug])
   else
     warn "❌ Must specify --html-file or --dir"
-    warn "Usage: ruby publish.rb publish --name NAME --dir /path/to/site"
     exit 1
   end
 
@@ -337,7 +451,6 @@ when "delete"
   OptionParser.new do |opts|
     opts.on("--slug SLUG") { |v| options[:slug] = v }
   end.parse!
-
   cmd_delete(slug: options[:slug])
 
 when "check-slug"
@@ -346,13 +459,56 @@ when "check-slug"
     opts.on("--q QUERY") { |v| options[:q] = v }
     opts.on("-q QUERY")  { |v| options[:q] = v }
   end.parse!
-
   cmd_check_slug(options[:q])
 
+when "register"
+  options = {}
+  OptionParser.new do |opts|
+    opts.on("--email E")    { |v| options[:email]    = v }
+    opts.on("--password P") { |v| options[:password] = v }
+    opts.on("--name N")     { |v| options[:name]     = v }
+  end.parse!
+  unless options[:email] && options[:password]
+    warn "Usage: ruby publish.rb register --email EMAIL --password PASSWORD [--name NAME]"
+    exit 1
+  end
+  cmd_register(email: options[:email], password: options[:password], name: options[:name])
+
+when "login"
+  options = {}
+  OptionParser.new do |opts|
+    opts.on("--email E")    { |v| options[:email]    = v }
+    opts.on("--password P") { |v| options[:password] = v }
+  end.parse!
+  unless options[:email] && options[:password]
+    warn "Usage: ruby publish.rb login --email EMAIL --password PASSWORD"
+    exit 1
+  end
+  cmd_login(email: options[:email], password: options[:password])
+
+when "logout"
+  cmd_logout
+
+when "whoami"
+  cmd_whoami
+
+when "claim"
+  options = {}
+  OptionParser.new do |opts|
+    opts.on("--slug SLUG") { |v| options[:slug] = v }
+  end.parse!
+  cmd_claim(slug: options[:slug])
+
 else
-  warn "Usage: ruby publish.rb publish|delete|check-slug [options]"
-  warn "  publish     --name NAME [--html-file FILE | --dir DIR]"
+  warn "Usage: ruby publish.rb COMMAND [options]"
+  warn "  publish     --name NAME [--html-file FILE | --dir DIR] [--slug SLUG]"
   warn "  delete      [--slug SLUG]"
   warn "  check-slug  --q slug1,slug2,slug3"
+  warn ""
+  warn "  register    --email E --password P [--name N]"
+  warn "  login       --email E --password P"
+  warn "  logout"
+  warn "  whoami"
+  warn "  claim       [--slug SLUG]    # 把本地 site 绑到当前账号"
   exit 1
 end
