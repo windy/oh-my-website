@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{NAME}} — 关于</title>
+  <link rel="stylesheet" href="css/animated-bg.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="persona-designer">
+
+<nav>
+  <a href="index.html" class="nav-brand">{{NAME_BRAND}}</a>
+  <ul class="nav-links">
+    <li><a href="index.html">首页</a></li>
+    <li><a href="about.html">关于</a></li>
+    <li><a href="portfolio.html">作品集</a></li>
+    <li><a href="contact.html">联系</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="菜单">≡</button>
+</nav>
+
+<main>
+  <section class="about-section">
+    <div class="section-eyebrow">关于 / About</div>
+    <h1 class="section-title">{{ABOUT_HEADING}}</h1>
+
+    <div class="about-prose narrow">
+      <p class="lead">{{ABOUT_LEAD}}</p>
+
+      <p>{{ABOUT_PARAGRAPH_1}}</p>
+
+      <p>{{ABOUT_PARAGRAPH_2}}</p>
+
+      <blockquote class="pull-quote">{{ABOUT_PULL_QUOTE}}</blockquote>
+
+      <p>{{ABOUT_PARAGRAPH_3}}</p>
+
+      <hr class="rule-thick">
+
+      <h3 style="margin-bottom: var(--sp-5);">经历</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">{{TIMELINE_YEAR_1}}</div>
+          <div class="timeline-content">
+            <h4>{{TIMELINE_TITLE_1}}</h4>
+            <p>{{TIMELINE_DESC_1}}</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">{{TIMELINE_YEAR_2}}</div>
+          <div class="timeline-content">
+            <h4>{{TIMELINE_TITLE_2}}</h4>
+            <p>{{TIMELINE_DESC_2}}</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">{{TIMELINE_YEAR_3}}</div>
+          <div class="timeline-content">
+            <h4>{{TIMELINE_TITLE_3}}</h4>
+            <p>{{TIMELINE_DESC_3}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-actions">
+    <button class="footer-btn" onclick="toggleQR()">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
+      扫码访问
+    </button>
+    <button class="footer-btn" onclick="copyLink(this)">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      复制链接
+    </button>
+  </div>
+  <div>© {{YEAR}} {{NAME}}</div>
+</footer>
+
+<script src="js/qrcode.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

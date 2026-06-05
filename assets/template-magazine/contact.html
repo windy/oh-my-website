@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{NAME}} — 联系</title>
+  <link rel="stylesheet" href="css/animated-bg.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="persona-designer">
+
+<div class="bg-geo-float"></div>
+
+<nav>
+  <a href="index.html" class="nav-brand">{{NAME_BRAND}}</a>
+  <ul class="nav-links">
+    <li><a href="index.html">首页</a></li>
+    <li><a href="about.html">关于</a></li>
+    <li><a href="portfolio.html">作品集</a></li>
+    <li><a href="contact.html">联系</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="菜单">≡</button>
+</nav>
+
+<main>
+  <section class="contact-section">
+    <div class="contact-eyebrow">联系 / Get in touch</div>
+    <h1 class="contact-heading">{{CONTACT_HEADING}}</h1>
+
+    <p class="lead narrow" style="margin-bottom: var(--sp-7);">{{CONTACT_INTRO}}</p>
+
+    <a href="mailto:{{EMAIL}}" class="contact-email">{{EMAIL}}</a>
+
+    <div class="contact-socials">
+      <a href="{{SOCIAL_1_URL}}" target="_blank" rel="noopener">{{SOCIAL_1_LABEL}}</a>
+      <a href="{{SOCIAL_2_URL}}" target="_blank" rel="noopener">{{SOCIAL_2_LABEL}}</a>
+      <a href="{{SOCIAL_3_URL}}" target="_blank" rel="noopener">{{SOCIAL_3_LABEL}}</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-actions">
+    <button class="footer-btn" onclick="toggleQR()">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
+      扫码访问
+    </button>
+    <button class="footer-btn" onclick="copyLink(this)">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      复制链接
+    </button>
+  </div>
+  <div>© {{YEAR}} {{NAME}}</div>
+</footer>
+
+<script src="js/qrcode.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

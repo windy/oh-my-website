@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{NAME}} — 作品集</title>
+  <link rel="stylesheet" href="css/animated-bg.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="persona-designer">
+
+<nav>
+  <a href="index.html" class="nav-brand">{{NAME_BRAND}}</a>
+  <ul class="nav-links">
+    <li><a href="index.html">首页</a></li>
+    <li><a href="about.html">关于</a></li>
+    <li><a href="portfolio.html">作品集</a></li>
+    <li><a href="contact.html">联系</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="菜单">≡</button>
+</nav>
+
+<main>
+  <section style="padding: var(--sp-7) 0 var(--sp-6);">
+    <div class="section-eyebrow">作品集 / Selected Works</div>
+    <h1 class="section-title">{{PORTFOLIO_HEADING}}</h1>
+    <p class="lead narrow">{{PORTFOLIO_INTRO}}</p>
+  </section>
+
+  <div class="portfolio-list">
+
+    <article class="work fade-in">
+      <div class="work-number">01</div>
+      <div class="work-meta">
+        <span>{{WORK_1_CATEGORY}}</span>
+        <span>{{WORK_1_CLIENT}}</span>
+        <span>{{WORK_1_YEAR}}</span>
+      </div>
+      <h2>{{WORK_1_TITLE}}</h2>
+      <div class="work-image">
+        <!-- 用户提供图片时换成 <img>。base64 内联，遵守 Step 4.5 媒体规约 -->
+        <div class="placeholder">{{WORK_1_PLACEHOLDER_LABEL}}</div>
+      </div>
+      <p class="work-description">{{WORK_1_DESCRIPTION}}</p>
+      <a href="{{WORK_1_LINK}}" class="work-link" target="_blank" rel="noopener">查看案例 →</a>
+    </article>
+
+    <article class="work fade-in">
+      <div class="work-number">02</div>
+      <div class="work-meta">
+        <span>{{WORK_2_CATEGORY}}</span>
+        <span>{{WORK_2_CLIENT}}</span>
+        <span>{{WORK_2_YEAR}}</span>
+      </div>
+      <h2>{{WORK_2_TITLE}}</h2>
+      <div class="work-image">
+        <div class="placeholder">{{WORK_2_PLACEHOLDER_LABEL}}</div>
+      </div>
+      <p class="work-description">{{WORK_2_DESCRIPTION}}</p>
+      <a href="{{WORK_2_LINK}}" class="work-link" target="_blank" rel="noopener">查看案例 →</a>
+    </article>
+
+    <article class="work fade-in">
+      <div class="work-number">03</div>
+      <div class="work-meta">
+        <span>{{WORK_3_CATEGORY}}</span>
+        <span>{{WORK_3_CLIENT}}</span>
+        <span>{{WORK_3_YEAR}}</span>
+      </div>
+      <h2>{{WORK_3_TITLE}}</h2>
+      <div class="work-image">
+        <div class="placeholder">{{WORK_3_PLACEHOLDER_LABEL}}</div>
+      </div>
+      <p class="work-description">{{WORK_3_DESCRIPTION}}</p>
+      <a href="{{WORK_3_LINK}}" class="work-link" target="_blank" rel="noopener">查看案例 →</a>
+    </article>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-actions">
+    <button class="footer-btn" onclick="toggleQR()">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
+      扫码访问
+    </button>
+    <button class="footer-btn" onclick="copyLink(this)">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      复制链接
+    </button>
+  </div>
+  <div>© {{YEAR}} {{NAME}}</div>
+</footer>
+
+<script src="js/qrcode.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

@@ -134,7 +134,7 @@ user-invocable: true
 | 风格 | 种子模板 | 配色参考 | 特征 | 适合 |
 |-----|---------|---------|------|------|
 | **极简白** | `assets/template-minimal/` | `references/themes-minimal.md` | 大量留白、细线分割、黑白灰 + 单一强调色、无衬线、克制排版 | 程序员、创业者、学生求职、通用 |
-| **杂志风** _(待开发)_ | — | — | 衬线标题、大胆字号对比、暖色调、层次丰富 | 设计师、写作者、创意人 |
+| **杂志风** | `assets/template-magazine/` | `references/themes-magazine.md` | 超大衬线标题、暖米白底 + 一抹强调色、不对称排版、大序号 + 粗分割线 | 设计师、写作者、创意人 |
 | **暗色极客** _(待开发)_ | — | — | 深色背景、霓虹强调色、等宽字体元素、终端美学 | 偏好极客审美的用户 |
 
 ### 匹配规则
@@ -147,16 +147,34 @@ user-invocable: true
 
 ## Step 4 — 生成网站
 
+### 选择种子模板
+
+| 风格 | 目录 | 适合 | 内置页面 |
+|------|------|------|---------|
+| **极简白** | `assets/template-minimal/` | 程序员、创业者、学生、通用 | index / about / projects / blog / portfolio / product / resume / contact |
+| **杂志风** | `assets/template-magazine/` | 设计师、写作者、创意人 | index / about / portfolio / contact（更精简，无 blog/projects/resume） |
+
+**选择规则**：
+
+1. 用户身份匹配上「设计师 / 写作者 / 创意人」 → 默认用 **杂志风**
+2. 用户明确说"我要简洁/克制" → 极简白
+3. 用户明确说"我要有视觉冲击/作品集导向" → 杂志风
+4. 设计师同时想要程序员风格 → 极简白 + `persona-designer` body class
+5. 程序员想要文艺感 → 杂志风（但建议先讨论清楚，杂志风更适合作品展示而非项目列表）
+
 ### 种子模板用法
 
-模板位于 `assets/template-minimal/` 目录，含 8 个 HTML 页面 + 共享的 `css/style.css`、`js/script.js` 和 `js/qrcode.min.js`。
-
-1. **复制整个目录**：`cp -r SKILL_DIR/assets/template-minimal /tmp/site`
-2. **切换配色**：编辑 `css/style.css`，从 `references/themes-minimal.md` 选一套主题，替换 `:root{}` 块
-3. **删除不需要的页面**：根据身份映射表，删除不需要的 HTML 文件（如设计师删 `blog.html`、`projects.html`）
-4. **清理导航**：在每个保留的 HTML 文件中，删除 `<ul class="nav-links">` 中对应已删除页面的 `<li>`
+1. **复制整个目录**（按风格选其一）：
+   ```bash
+   cp -r SKILL_DIR/assets/template-minimal /tmp/site    # 极简白
+   cp -r SKILL_DIR/assets/template-magazine /tmp/site   # 杂志风
+   ```
+2. **切换配色**：编辑 `css/style.css`，从对应 `references/themes-XXX.md` 选一套主题，替换 `:root{}` 块
+3. **删除不需要的页面**：根据身份映射表，删除不需要的 HTML 文件
+4. **清理导航**：在每个保留的 HTML 文件中，删除导航中对应已删除页面的 `<li>`
 5. **填充内容**：逐个编辑每个 HTML 文件，替换 `{{PLACEHOLDER}}` 标记
-6. **调整文案**：确保自我介绍、项目描述等文案自然流畅
+6. **加身份字体 class**：在 `<body>` 加 `class="persona-XXX"`（见 Step 4.4）
+7. **调整文案**：确保自我介绍、项目描述等文案自然流畅
 
 ### 模板目录结构
 
@@ -555,8 +573,8 @@ publish.rb 内部按以下顺序选 token：
 ## 后续路线图
 
 - [x] `assets/template-minimal/css/animated-bg.css` — 5 套 CSS/SVG 动态背景（无外部依赖）
-- [ ] `assets/template-magazine/` — 杂志风种子模板（衬线大字 + 暖色）
-- [ ] `references/themes-magazine.md` — 杂志风配色
+- [x] `assets/template-magazine/` — 杂志风种子模板（衬线大字 + 暖色 + 大序号 + 粗分割线）
+- [x] `references/themes-magazine.md` — 杂志风配色（3 套）
 - [ ] `assets/template-dark/` — 暗色极客种子模板（终端美学）
 - [ ] `references/themes-dark.md` — 暗色极客配色
 - [ ] 独立开发者特化模板（产品矩阵 + MRR/用户数版块）
