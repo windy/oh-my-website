@@ -42,9 +42,25 @@
   --shadow: 0 1px 3px rgba(0,0,0,0.04);
   --shadow-hover: 0 4px 16px rgba(0,0,0,0.08);
 
-  /* --- 字体 --- */
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+  /* --- 字体源（4 套字体栈，跨平台都能命中体面的字体） --- */
+  --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+          'Microsoft YaHei', 'Source Han Sans CN', 'Noto Sans CJK SC',
+          'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --serif: ui-serif, 'Iowan Old Style', 'Apple Garamond', Georgia,
+           'Times New Roman', 'Songti SC', 'STSong',
+           'Source Han Serif CN', 'Noto Serif CJK SC', SimSun, serif;
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code',
+          'Roboto Mono', Menlo, Monaco, Consolas,
+          'PingFang SC', monospace;
+  --display: ui-rounded, -apple-system-ui-rounded, 'PingFang SC',
+             'Hiragino Sans GB', 'Microsoft YaHei UI',
+             'Source Han Sans CN', system-ui, sans-serif;
+
+  /* --- 字体角色（按页面元素绑定，身份切换只改这 3 个） --- */
+  --font-display: var(--sans);   /* 大标题 / hero 名字 */
+  --font-body:    var(--sans);   /* 正文 / 段落 */
+  --font-accent:  var(--mono);   /* 强调元素：版本号 / 数据 / meta */
 
   /* --- 间距 (8px 基准) --- */
   --sp-2: 8px;
@@ -71,7 +87,7 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 body {
-  font-family: var(--sans);
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.7;
   color: var(--text);
@@ -84,9 +100,9 @@ body {
 /* ============================================================
    3. Typography
    ============================================================ */
-h1 { font-size: 2.5rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
-h2 { font-size: 1.75rem; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; }
-h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
+h1 { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
+h2 { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; }
+h3 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
 p  { color: var(--text-secondary); }
 a  { color: var(--accent); text-decoration: none; transition: color 0.15s ease; }
 a:hover { color: var(--accent-hover); }
@@ -375,7 +391,7 @@ footer {
   border-radius: var(--radius);
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.82rem; font-family: var(--sans);
+  font-size: 0.82rem; font-family: var(--font-body);
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
@@ -425,7 +441,7 @@ footer {
   border-radius: var(--radius);
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.82rem; font-family: var(--sans);
+  font-size: 0.82rem; font-family: var(--font-body);
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -439,3 +455,52 @@ footer {
   to   { opacity: 1; transform: translateY(0); }
 }
 main { animation: fadeIn 0.35s ease; }
+
+/* ============================================================
+   身份字体变体
+   ============================================================
+   在 <body> 上加一个 class 即可切换字体角色，不动其他变量。
+   不加任何 class 时走默认（sans + sans + mono），适合大多数程序员。
+
+   用法示例：<body class="persona-writer">
+*/
+
+/* 程序员：标题/正文都用无衬线，强调用等宽（默认即可，这里显式写出方便覆盖） */
+.persona-coder {
+  --font-display: var(--sans);
+  --font-body:    var(--sans);
+  --font-accent:  var(--mono);
+}
+
+/* 设计师：标题用圆体显示字体，正文无衬线，引言/标语用衬线增加格调 */
+.persona-designer {
+  --font-display: var(--display);
+  --font-body:    var(--sans);
+  --font-accent:  var(--serif);
+}
+
+/* 写作者：标题/正文都用衬线（阅读舒适），meta 信息用无衬线区隔 */
+.persona-writer {
+  --font-display: var(--serif);
+  --font-body:    var(--serif);
+  --font-accent:  var(--sans);
+}
+.persona-writer p { line-height: 1.85; }  /* 衬线正文需要更宽行距 */
+
+/* 创业者/产品人：标题用圆体显示字体（亲切），正文无衬线，数据指标等宽 */
+.persona-founder {
+  --font-display: var(--display);
+  --font-body:    var(--sans);
+  --font-accent:  var(--mono);
+}
+
+/* 学生/求职：紧凑无衬线，简历感 */
+.persona-student {
+  --font-display: var(--sans);
+  --font-body:    var(--sans);
+  --font-accent:  var(--sans);
+}
+
+/* 通用强调样式：用 .accent-text 给特定元素套强调字体
+   适合：MRR 数字、版本号、引言、"独立开发者 · since 2020" 这类 meta */
+.accent-text { font-family: var(--font-accent); }

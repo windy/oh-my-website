@@ -223,6 +223,76 @@ template-minimal/
 
 ---
 
+## Step 4.4 — 字体规约（按身份套字体角色）
+
+> **核心原则：零外部字体依赖**。Google Fonts / Adobe Fonts / 字体厂商 CDN 在国内全部不通，禁止使用。所有字体必须走系统字体栈。
+>
+> **怎么把系统字体玩出格调？** 通过「字体角色」+ 「身份变体」实现跨身份的差异化。
+
+### 字体源（4 套已预置在 `style.css` 的 `:root`）
+
+| CSS 变量 | 字体类型 | 跨平台落点 |
+|---------|---------|-----------|
+| `--sans` | 现代无衬线 | macOS: 苹方 · Windows: 雅黑/Segoe · iOS: 苹方 · Android: 思源/Noto |
+| `--serif` | 衬线（书籍感） | macOS: 宋体 SC · Windows: Times · 移动端 fallback 思源宋体 |
+| `--mono` | 等宽（代码/数据） | macOS: SF Mono · 跨平台 fallback JetBrains Mono / Menlo / Consolas |
+| `--display` | 圆体显示字（标题大字） | macOS/iOS: 苹方圆体 · 其他系统 fallback 苹方/雅黑 |
+
+### 字体角色（语义化绑定）
+
+```css
+--font-display  → 大标题 / hero 名字
+--font-body     → 正文 / 段落
+--font-accent   → 强调元素：MRR/版本号/引言/meta/标签
+```
+
+- HTML `<h1>/<h2>/<h3>` 已绑 `--font-display`
+- `<body>` 已绑 `--font-body`
+- 任何元素加 `class="accent-text"` 即套上 `--font-accent`
+
+**Agent 切身份只需做一件事**：在 `<body>` 上加一个 `persona-XXX` class（见下表），style.css 已预置 5 套变体，自动改 3 个角色变量的绑定。
+
+### 身份 → 字体变体对照
+
+| 身份 | body class | display | body | accent | 视觉效果 |
+|------|-----------|---------|------|--------|---------|
+| 程序员 | `persona-coder` | sans | sans | mono | 简洁清爽，版本号/技术栈用等宽 |
+| 设计师 | `persona-designer` | display（圆体） | sans | serif | 标题亲切、引言用衬线增加格调 |
+| 写作者 | `persona-writer` | serif | serif | sans | 接近书籍阅读，meta 信息用无衬线区隔 |
+| 创业者 | `persona-founder` | display（圆体） | sans | mono | 标题亲切、数据指标"一眼看出指标感" |
+| 学生求职 | `persona-student` | sans | sans | sans | 紧凑专业，简历感 |
+
+### Agent 操作步骤
+
+1. 复制模板后，在每个 HTML 文件的 `<body>` 标签上加身份 class：
+   ```html
+   <body class="persona-writer">
+   ```
+2. 给应该被强调的内联元素加 `class="accent-text"`：
+   ```html
+   <p>已运行 <span class="accent-text">847</span> 天 · MRR <span class="accent-text">$12.4K</span></p>
+   <p class="meta accent-text">2024-06-05 · 12 min read</p>
+   ```
+3. **不要** 直接写 `font-family: ...`，所有字体决策走变量。
+
+### 用户主动想换字体怎么办
+
+| 用户说 | 处理 |
+|-------|------|
+| "标题太硬，柔一点" | 把 `--font-display` 绑到 `var(--display)`（圆体） |
+| "想要书籍感" | `<body>` 改 `persona-writer` |
+| "数字想要更突出" | 给数字外面套 `<span class="accent-text">`，并确认当前身份的 accent 是 mono |
+| "想要更现代" | 默认就是现代无衬线，已经做到位；非要再调可加 `letter-spacing: -0.02em` 让标题更紧 |
+
+### 不允许的操作
+
+- ❌ `<link href="https://fonts.googleapis.com/...">` — 国内打不开
+- ❌ `<link href="https://cdn.jsdelivr.net/.../font.css">` — 国内不稳
+- ❌ 自托管字体到 showcode 服务器 — 违反零成本约束
+- ❌ 在 HTML 里写死 `font-family: "PingFang SC"` — 应该走变量
+
+---
+
 ## Step 4.5 — 媒体处理规约（图片 / 视频 / 动态背景）
 
 > **核心原则：零外部资源依赖。所有图片、视频、字体、CDN 必须本地化或内联。**
