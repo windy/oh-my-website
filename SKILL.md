@@ -15,7 +15,44 @@ user-invocable: true
 
 > 我可以帮你生成一个**精美漂亮的个人网站**，自动匹配你的身份和风格，**完全免费**，**自动部署上线**，整个过程只需要 **10 分钟**左右。你只需要回答几个简单问题，剩下的我来搞定 ✨
 
-然后进入 Step 1。
+然后立即进入 **Step 0 检查已有网站**。
+
+---
+
+## Step 0 — 检查已有网站（决定新增还是编辑）
+
+**必须先检查，不要跳过。**
+
+1. 检查 `~/clacky_workspace/oh-my-website/token.json` 是否存在且包含 `slug`：
+
+   ```bash
+   ls ~/clacky_workspace/oh-my-website/token.json 2>/dev/null
+   cat ~/clacky_workspace/oh-my-website/token.json 2>/dev/null
+   ```
+
+2. **如果存在已有网站（slug 非空）**，告知用户并让用户选择：
+
+   > 你之前发布过一个网站：https://showcode.com/~{slug}
+   > 你想要：
+   > 1. **编辑这个网站** — 我帮你拉下来改
+   > 2. **新建一个网站** — 保留旧的，另外做一个新的
+   > 选哪个？
+
+3. **用户选"编辑"**：
+   - 调用 API 获取当前网站内容：
+     ```bash
+     curl -s https://showcode.com/api/v1/sites/{slug}
+     ```
+   - 把 `content` 字段（主页 HTML）+ `pages`（子页面 HTML）写入 `/tmp/site/` 目录
+   - 直接跳到 **Step 6（迭代对话）**，让用户说改哪里
+   - 发布时用已有 slug 更新（publish.rb 会自动识别 `token.json` 走 update 路径）
+
+4. **用户选"新建"**：
+   - 先把旧 `token.json` 备份为 `token_backup_{slug}.json`（后续 publish 会覆盖 `token.json`）
+   - 如果用户已登录（`account.json` 存在），先 `claim` 把旧 site 绑定到账户，这样换电脑也不会丢
+   - 然后进入 Step 1
+
+5. **如果没有已有网站**：直接进入 Step 1。
 
 ---
 
