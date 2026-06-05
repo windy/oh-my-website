@@ -185,6 +185,7 @@ template-minimal/
 
 - **独立 HTML 文件，共享 CSS/JS**：每页 `<link rel="stylesheet" href="css/style.css">` 和 `<script src="js/script.js">`
 - **零外部资源**：不引用 CDN、Google Fonts、外部图片。字体用系统栈。QR 码库 `qrcode.min.js` 为本地文件（qrcode-generator, MIT 协议）
+- **媒体铁律见下方「Step 4.5 媒体处理规约」**，所有图片/视频处理必须遵守
 - **移动端优先，响应式**：`<meta name="viewport">`，导航在小屏上有汉堡菜单
 - **有效 HTML5**，语义标签
 - **所有外部链接 `target="_blank" rel="noopener"`**
@@ -219,6 +220,122 @@ template-minimal/
 - **排版比装饰重要**：字号对比、行距、间距比花哨 CSS 更重要
 - **文案自然**：AI 写自我介绍时，要像真人说话，不要官腔
 - **动画克制**：页面切换可以有 subtle 过渡，不加花哨入场动画
+
+---
+
+## Step 4.5 — 媒体处理规约（图片 / 视频 / 动态背景）
+
+> **核心原则：零外部资源依赖。所有图片、视频、字体、CDN 必须本地化或内联。**
+> 任何"贴个外链"的偷懒方案在国内用户那里都会挂掉，**禁止使用**。
+
+### 图片：默认内联 base64
+
+#### 流程
+
+1. 用户给出本地图片路径或外链。
+2. 检查文件大小：
+   - **< 200KB** → 直接 base64 内联到 HTML
+   - **≥ 200KB** → 先压缩，压完仍 ≥ 200KB 提示用户换图或缩小尺寸
+3. 写入 HTML：`<img src="data:image/jpeg;base64,...">`
+
+#### 压缩命令（macOS 自带 sips）
+
+```bash
+# JPEG 压缩到最长边 1200px，质量 60
+sips -Z 1200 -s formatOptions 60 input.jpg --out /tmp/compressed.jpg
+
+# PNG 压缩到最长边 800px
+sips -Z 800 input.png --out /tmp/compressed.png
+
+# 转 base64 并写入剪贴板（Agent 可读取拼到 HTML）
+base64 -i /tmp/compressed.jpg | tr -d '\n'
+```
+
+头像建议先 `sips -Z 400`（400px 足够），多数能压到 50KB 以内。
+
+#### 外链域名禁用清单
+
+**绝对禁止**生成 `<img src>` 指向以下任一域名（国内访问不稳或被墙）：
+
+```
+github.com / raw.githubusercontent.com / objects.githubusercontent.com
+cdn.jsdelivr.net / unpkg.com
+imgur.com / i.imgur.com
+unsplash.com / images.unsplash.com
+dribbble.com / cdn.dribbble.com
+behance.net
+googleusercontent.com / lh3.googleusercontent.com
+twimg.com / pbs.twimg.com
+```
+
+#### 用户给了外链怎么办
+
+1. 先用 `curl -I` 或 `curl -o` 把图片**下载到本地**：
+   ```bash
+   curl -L -o /tmp/user_img.jpg "USER_PROVIDED_URL"
+   ```
+2. 然后走标准内联流程（压缩 + base64）。
+3. 如果 curl 失败（403/404/超时）→ 告诉用户该链接拿不到图，请换一个或直接给本地文件路径。
+
+**永远不要**直接把外链 URL 粘到 HTML 里，哪怕用户坚持。
+
+### 视频：默认不用真视频，用动态背景代替
+
+90% 的"想要视频背景"需求本质是想要「动起来的氛围」。**默认引导用户用 CSS/SVG 动态背景**（见下方），不主动提"视频"选项。
+
+#### 动态背景使用方式
+
+种子模板已预置 5 套动态背景，文件在 `css/animated-bg.css`：
+
+| class | 风格 | 适合身份 |
+|-------|------|---------|
+| `.bg-gradient-flow` | 渐变流动（柔和大色块游动） | 米白 / 极简 / 设计师 / 写作者 / 创业者 |
+| `.bg-particles` | 粒子飘浮（暗色星点上飘） | 暗黑 / AI 工程师 / 独立开发者 |
+| `.bg-grid-scan` | 网格扫光（赛博网格 + 高光线） | 程序员 / 黑客风 / AI |
+| `.bg-geo-float` | 几何漂浮（孟菲斯色块） | 设计师 / 创意人 / 年轻品牌 |
+| `.bg-noise-stars` | 噪点星空（沉静夜色） | 写作者 / 内容创作者 |
+
+#### 启用步骤
+
+1. 在每个 HTML 的 `<head>` 加：
+   ```html
+   <link rel="stylesheet" href="css/animated-bg.css">
+   ```
+2. 在 `<body>` 第一个子元素加：
+   ```html
+   <div class="bg-gradient-flow"></div>
+   ```
+3. 完事。背景固定铺满视口，`z-index: -1`，不影响内容。
+
+#### Agent 自动选择规则
+
+| 风格主题（用户选的视觉） | 默认动态背景 |
+|------------------------|-------------|
+| 极简白 / 米白 / 温暖 | `.bg-gradient-flow` |
+| 暗色极客 / 黑客风 | `.bg-grid-scan` |
+| 暗色 + AI/独立开发者 | `.bg-particles` |
+| 设计师 / 杂志风 | `.bg-geo-float` |
+| 写作者 / 内容沉静向 | `.bg-noise-stars` |
+
+用户主动说"我要换个粒子背景 / 加点动效 / 太花了去掉" → 直接换 class 或删掉那个 `<div>`。
+
+#### 真要用视频怎么办（罕见场景）
+
+如果用户**坚持**要真背景视频（比如咖啡馆品牌站要海浪），告诉用户两个事实：
+
+1. showcode 不提供视频托管（控制服务端成本）
+2. 用户需要自己上传到国内可访问的 CDN（阿里云 OSS / 腾讯云 COS / 七牛云），把直链给 Agent
+
+拿到直链后用 `<video>` 标签：
+```html
+<video autoplay muted loop playsinline class="bg-video">
+  <source src="USER_CDN_URL" type="video/mp4">
+</video>
+```
+
+`.bg-video` 样式参考动态背景容器：`position: fixed; inset: 0; z-index: -1; object-fit: cover; width: 100%; height: 100%;`。
+
+**绝大多数情况下不要走这条路**，`.bg-particles` 配粒子动画的"科技感"已经够用。
 
 ---
 
@@ -367,7 +484,10 @@ publish.rb 内部按以下顺序选 token：
 
 ## 后续路线图
 
-- [ ] `assets/template-magazine.html` — 杂志风种子模板
+- [x] `assets/template-minimal/css/animated-bg.css` — 5 套 CSS/SVG 动态背景（无外部依赖）
+- [ ] `assets/template-magazine/` — 杂志风种子模板（衬线大字 + 暖色）
 - [ ] `references/themes-magazine.md` — 杂志风配色
-- [ ] `assets/template-dark.html` — 暗色极客种子模板
+- [ ] `assets/template-dark/` — 暗色极客种子模板（终端美学）
 - [ ] `references/themes-dark.md` — 暗色极客配色
+- [ ] 独立开发者特化模板（产品矩阵 + MRR/用户数版块）
+- [ ] 视频背景方案：仅在用户主动要求时启用，需自带 CDN
