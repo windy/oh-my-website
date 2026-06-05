@@ -149,7 +149,7 @@ user-invocable: true
 
 ### 种子模板用法
 
-模板位于 `assets/template-minimal/` 目录，含 8 个 HTML 页面 + 共享的 `css/style.css` 和 `js/script.js`。
+模板位于 `assets/template-minimal/` 目录，含 8 个 HTML 页面 + 共享的 `css/style.css`、`js/script.js` 和 `js/qrcode.min.js`。
 
 1. **复制整个目录**：`cp -r SKILL_DIR/assets/template-minimal /tmp/site`
 2. **切换配色**：编辑 `css/style.css`，从 `references/themes-minimal.md` 选一套主题，替换 `:root{}` 块
@@ -173,7 +173,8 @@ template-minimal/
 ├── css/
 │   └── style.css       ← 共享样式（主题色在这里改）
 └── js/
-    └── script.js       ← 汉堡菜单 + 导航高亮
+    └── script.js       ← 汉堡菜单 + 导航高亮 + 分享 UI
+    └── qrcode.min.js    ← QR 码生成库 (qrcode-generator MIT)
 ```
 
 **删页面时务必做两件事**：① 删 HTML 文件 ② 在所有保留页面的导航 `<ul class="nav-links">` 中删对应 `<li>`。
@@ -183,13 +184,13 @@ template-minimal/
 ### 硬约束
 
 - **独立 HTML 文件，共享 CSS/JS**：每页 `<link rel="stylesheet" href="css/style.css">` 和 `<script src="js/script.js">`
-- **零外部资源**：不引用 CDN、Google Fonts、外部图片。字体用系统栈
+- **零外部资源**：不引用 CDN、Google Fonts、外部图片。字体用系统栈。QR 码库 `qrcode.min.js` 为本地文件（qrcode-generator, MIT 协议）
 - **移动端优先，响应式**：`<meta name="viewport">`，导航在小屏上有汉堡菜单
 - **有效 HTML5**，语义标签
 - **所有外部链接 `target="_blank" rel="noopener"`**
 - **内部导航用普通 `<a href="页面.html">`**，当前页链接加 `class="active"`
 - **页面 `<title>`**：`{名字} - {页面名}`
-- **页脚标识**：`Made with Clacky` 小字，低调
+- **页脚分享区**：`扫码访问` 按钮 + `复制链接` 按钮。QR 码弹窗由 `js/script.js` 自动生成，点击按钮触发
 - **CSS 变量控制主题**：换配色只需替换 `css/style.css` 中的 `:root` 块
 
 ### 链接图标映射

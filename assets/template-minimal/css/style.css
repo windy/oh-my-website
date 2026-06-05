@@ -361,13 +361,78 @@ main {
    13. Footer
    ============================================================ */
 footer {
-  text-align: center; padding: var(--sp-5);
-  font-size: 0.8rem; color: var(--text-tertiary);
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--sp-5);
+  padding: var(--sp-5);
+  font-size: 0.82rem; color: var(--text-tertiary);
   border-top: 1px solid var(--border-light);
+  flex-wrap: wrap;
+}
+.footer-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem; font-family: var(--sans);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.footer-btn:hover {
+  background: var(--bg-alt);
+  border-color: var(--text-secondary);
+  color: var(--text);
+}
+.footer-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.footer-btn.copied {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* ============================================================
-   14. Page Transition (subtle)
+   14. QR Popup
+   ============================================================ */
+.qr-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.3);
+  align-items: center; justify-content: center;
+}
+.qr-overlay.open { display: flex; }
+.qr-popup {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+  max-width: 340px; width: 90%;
+}
+.qr-popup svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.qr-popup .qr-hint {
+  margin-top: var(--sp-4);
+  font-size: 0.82rem; color: var(--text-tertiary);
+}
+.qr-popup .qr-url {
+  display: block; margin-top: var(--sp-3);
+  font-size: 0.78rem; color: var(--text-secondary);
+  word-break: break-all;
+}
+.qr-close {
+  display: inline-block; margin-top: var(--sp-4);
+  padding: 6px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem; font-family: var(--sans);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.qr-close:hover { background: var(--bg-alt); }
+
+/* ============================================================
+   15. Page Transition (subtle)
    ============================================================ */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
