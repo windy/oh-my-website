@@ -1,0 +1,236 @@
+/* ============================================================
+   动态背景组件库
+   ============================================================
+   纯 CSS / SVG 实现，零外部依赖，国内国外都能加载。
+   用法：在 <body> 第一个子元素放 <div class="bg-XXX"></div>，
+        固定铺满视口，z-index: -1，不影响内容布局。
+
+   可选风格（任选一个）：
+     .bg-gradient-flow   渐变流动      —— 米白/极简/温暖风
+     .bg-particles       粒子飘浮      —— 暗黑/赛博/科技风
+     .bg-grid-scan       网格扫光      —— 程序员/赛博风
+     .bg-geo-float       几何漂浮      —— 设计师/创意风
+     .bg-noise-stars     噪点星空      —— 写作/沉静风
+
+   建议每个页面只挂一种背景；与 main 内容应保持足够对比度。
+   ============================================================ */
+
+/* 通用容器：固定铺满视口，置于内容下方 */
+[class^="bg-"],
+[class*=" bg-"] {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ===========================================================
+   1. 渐变流动 .bg-gradient-flow
+   ===========================================================
+   柔和大色块缓慢游动，视觉非常高级，CPU 占用极低。
+   适合：米白、极简、温暖风（设计师 / 写作者 / 创业者）
+*/
+.bg-gradient-flow {
+  background:
+    radial-gradient(at 20% 30%, rgba(255, 200, 180, 0.35), transparent 50%),
+    radial-gradient(at 80% 20%, rgba(180, 220, 255, 0.30), transparent 50%),
+    radial-gradient(at 60% 80%, rgba(220, 200, 255, 0.30), transparent 50%),
+    radial-gradient(at 30% 90%, rgba(255, 230, 180, 0.25), transparent 50%);
+  background-size: 200% 200%;
+  animation: gradient-flow 18s ease-in-out infinite alternate;
+}
+@keyframes gradient-flow {
+  0%   { background-position: 0% 0%, 100% 0%, 50% 100%, 0% 100%; }
+  50%  { background-position: 100% 50%, 0% 50%, 100% 50%, 50% 0%; }
+  100% { background-position: 0% 100%, 100% 100%, 0% 0%, 100% 0%; }
+}
+
+/* 暗黑主题下的渐变流动（变体） */
+.bg-gradient-flow.dark {
+  background:
+    radial-gradient(at 20% 30%, rgba(120, 100, 255, 0.25), transparent 50%),
+    radial-gradient(at 80% 20%, rgba(80, 200, 220, 0.20), transparent 50%),
+    radial-gradient(at 60% 80%, rgba(255, 120, 180, 0.20), transparent 50%),
+    radial-gradient(at 30% 90%, rgba(100, 220, 160, 0.18), transparent 50%);
+  background-color: #0a0a14;
+  background-size: 200% 200%;
+  animation: gradient-flow 22s ease-in-out infinite alternate;
+}
+
+/* ===========================================================
+   2. 粒子飘浮 .bg-particles
+   ===========================================================
+   纯 CSS 多个 box-shadow 模拟星点，缓慢向上漂浮。
+   适合：暗黑、赛博、AI 工程师、独立开发者
+   注意：背景色建议深色，否则白点看不见。
+*/
+.bg-particles {
+  background: radial-gradient(ellipse at center, #0f0f1a 0%, #050510 100%);
+}
+.bg-particles::before,
+.bg-particles::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 60% 70%, #fff, transparent),
+    radial-gradient(1px 1px at 50% 50%, #fff, transparent),
+    radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 90% 60%, #fff, transparent),
+    radial-gradient(1px 1px at 33% 80%, rgba(180,200,255,0.9), transparent),
+    radial-gradient(1.5px 1.5px at 15% 90%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 35%, rgba(180,200,255,0.7), transparent);
+  background-size: 600px 600px;
+  background-repeat: repeat;
+  animation: particles-drift 60s linear infinite;
+  opacity: 0.85;
+}
+.bg-particles::after {
+  background-size: 900px 900px;
+  animation-duration: 90s;
+  animation-direction: reverse;
+  opacity: 0.5;
+}
+@keyframes particles-drift {
+  from { transform: translateY(0) translateX(0); }
+  to   { transform: translateY(-600px) translateX(-200px); }
+}
+
+/* ===========================================================
+   3. 网格扫光 .bg-grid-scan
+   ===========================================================
+   等距网格 + 周期性扫过的高光线，赛博朋克的标志。
+   适合：程序员、AI 工程师、独立开发者（暗色）
+*/
+.bg-grid-scan {
+  background-color: #07070d;
+  background-image:
+    linear-gradient(rgba(80, 200, 240, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 200, 240, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.bg-grid-scan::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 45%,
+    rgba(80, 200, 240, 0.15) 50%,
+    transparent 55%,
+    transparent 100%
+  );
+  animation: grid-scan-vertical 8s linear infinite;
+}
+.bg-grid-scan::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 30%,
+    rgba(7, 7, 13, 0.7) 100%
+  );
+}
+@keyframes grid-scan-vertical {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(100%); }
+}
+
+/* ===========================================================
+   4. 几何漂浮 .bg-geo-float
+   ===========================================================
+   多个半透明几何形状缓慢旋转 + 漂浮，孟菲斯风。
+   适合：设计师、创意人、年轻向品牌
+*/
+.bg-geo-float {
+  background: linear-gradient(135deg, #fff5f0 0%, #fff 50%, #f0f8ff 100%);
+}
+.bg-geo-float::before,
+.bg-geo-float::after {
+  content: "";
+  position: absolute;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  filter: blur(1px);
+  animation: geo-float 20s ease-in-out infinite;
+}
+.bg-geo-float::before {
+  top: 10%; left: 8%;
+  width: 260px; height: 260px;
+  background: linear-gradient(135deg, #ffb3c1 0%, #ffd6a5 100%);
+  opacity: 0.55;
+}
+.bg-geo-float::after {
+  bottom: 12%; right: 10%;
+  width: 320px; height: 320px;
+  background: linear-gradient(135deg, #a0c4ff 0%, #bdb2ff 100%);
+  opacity: 0.5;
+  animation-delay: -10s;
+  animation-direction: reverse;
+}
+@keyframes geo-float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+  33% {
+    transform: translate(40px, -30px) rotate(120deg) scale(1.05);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  66% {
+    transform: translate(-30px, 40px) rotate(240deg) scale(0.95);
+    border-radius: 40% 60% 60% 40% / 40% 60% 40% 60%;
+  }
+}
+
+/* ===========================================================
+   5. 噪点星空 .bg-noise-stars
+   ===========================================================
+   SVG 滤镜噪点 + 静态星点，质感细腻、不抢镜。
+   适合：写作者、内容创作者、安静风
+*/
+.bg-noise-stars {
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1f 100%);
+}
+.bg-noise-stars::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1   0 0 0 0 1   0 0 0 0 1   0 0 0 0.08 0'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>");
+  opacity: 0.6;
+  mix-blend-mode: screen;
+}
+.bg-noise-stars::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 25% 15%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1.5px 1.5px at 50% 60%, rgba(255,255,255,1), transparent),
+    radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 85% 90%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1px 1px at 40% 25%, rgba(200,220,255,0.8), transparent);
+  background-size: 800px 800px;
+  animation: stars-twinkle 6s ease-in-out infinite alternate;
+}
+@keyframes stars-twinkle {
+  from { opacity: 0.7; }
+  to   { opacity: 1.0; }
+}
+
+/* ===========================================================
+   尊重用户的「减少动画」偏好（无障碍）
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .bg-gradient-flow,
+  .bg-particles::before, .bg-particles::after,
+  .bg-grid-scan::before,
+  .bg-geo-float::before, .bg-geo-float::after,
+  .bg-noise-stars::after {
+    animation: none !important;
+  }
+}
