@@ -68,9 +68,9 @@ def load_fixture(persona)
 end
 
 def available_personas
-  Dir.children(FIXTURES_DIR).filter_map do |f|
+  Dir.children(FIXTURES_DIR).map do |f|
     f =~ /^persona-(.+)\.json$/ ? Regexp.last_match(1) : nil
-  end.sort
+  end.compact.sort
 rescue Errno::ENOENT
   []
 end
