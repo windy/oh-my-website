@@ -1,6 +1,6 @@
 ---
 name: oh-my-website
-description: '生成个性化多页个人网站（独立 HTML 文件 + 共享 CSS/JS），5 种身份自动匹配页面结构，3 套视觉风格预置完整代码。触发词：个人网站、个人主页、个人站、personal website、帮我做个网站、做个人站、生成我的主页、我的网站。'
+description: '生成个性化多页个人网站（独立 HTML 文件 + 共享 CSS/JS），5 种身份自动匹配页面结构，3 套视觉风格预置完整代码。也支持模板开发预览模式（给设计师/贡献者改主题用）。触发词：个人网站、个人主页、个人站、personal website、帮我做个网站、做个人站、生成我的主页、我的网站；以及：开发模板、做新模板、加个主题、做个新主题、改模板、改主题、template dev、新增模板、贡献模板、模板预览、预览模板。'
 disable-model-invocation: false
 user-invocable: true
 ---
@@ -9,9 +9,87 @@ user-invocable: true
 
 > 识别身份 → 追问关键信息 → 选风格 → 填充模板 → 发布上线 → 对话迭代。
 
-## 开场白
+## ⚡️ 入口分流（必读，触发时第一步执行）
 
-当用户触发本 skill 时，首先用以下话术介绍自己：
+技能触发后，先判断用户的真实意图，分流到不同流程：
+
+| 用户说什么 | 走哪条路 |
+|----------|---------|
+| 帮我做个网站 / 做个人主页 / 生成我的网站 / 做个人站 | **流程 A：生成用户网站** → 走「开场白 + Step 0~6」 |
+| 开发模板 / 做新模板 / 改模板 / 改主题 / 加个主题 / 做个新主题 / 预览模板 / 模板开发 / 我想贡献模板 | **流程 B：模板开发预览模式** → 跳到下方「模板开发模式」节，**不要**走开场白 |
+
+如果模糊（比如只说"网站"），主动问一句："你是想给自己生成一个个人网站，还是想参与模板开发（改主题样式）？"
+
+---
+
+## 模板开发模式
+
+> 仅在用户明确表达"开发/修改/预览模板"时进入。如果用户只是想要自己的网站，**不要**走这条路，直接走开场白。
+
+### 进入此模式时第一件事：启动预览服务器
+
+```bash
+ruby SKILL_DIR/dev/server.rb
+```
+
+启动后告诉用户（**原话级别贴近这个**）：
+
+> 已经开了模板开发模式，预览服务器跑在 http://localhost:4567/。
+>
+> 浏览器顶部有工具条，可以在线切换：
+> - **模板**：当前所有 `template-*`
+> - **身份**：7 套示例数据（程序员 / 设计师 / 写作者 / 学者 / 专业服务 / 创业者 / 学生）
+> - **设备宽度**：桌面 / 平板 / 手机
+>
+> 想改样式直接编辑 `assets/template-XXX/` 下的 HTML/CSS，刷新就能看到。
+> **改满意了告诉我「保存提交」**，我会帮你建主题分支并 commit/push，避免丢数据。
+
+### 用户说"做个新模板叫 XXX" / "新增一个 YYY 主题"
+
+```bash
+cd SKILL_DIR
+git checkout -b theme/<XXX>                      # 起一个主题分支，避免污染 main
+cp -r assets/template-minimal assets/template-<XXX>   # 用 minimal 起底（也可用 magazine）
+ruby dev/server.rb template-<XXX>
+```
+
+提示用户："我已经基于 template-minimal 复制了一份叫 template-`<XXX>`，浏览器里切到这个新模板就能看。改 `css/style.css` 的 `:root` 块改主题色最快。"
+
+### 用户说"保存 / 提交 / 我改完了 / 满意了 / commit"
+
+按以下步骤执行（**全部用 SKILL_DIR 的 git，不要在用户工作目录跑**）：
+
+1. 检查当前分支：`git -C SKILL_DIR branch --show-current`
+2. 如果在 `main` 上 → 先建主题分支 `git -C SKILL_DIR checkout -b theme/<合理名字>`
+   - 名字从用户改的 template 目录推断，比如改了 `template-dark-geek` → `theme/dark-geek`
+3. `git -C SKILL_DIR add -A && git -C SKILL_DIR status` 确认范围合理（不要把 dev/ 临时文件带进去）
+4. `git -C SKILL_DIR commit -m "feat(template-XXX): <一句话描述>"`
+5. `git -C SKILL_DIR push -u origin <branch>`
+6. 反馈用户：分支名 + commit hash + 远端 URL
+
+### 占位符语法（贡献者写模板要遵守）
+
+| 写法 | 含义 |
+|------|------|
+| `{{KEY}}` | 必填占位，Agent 替换为用户数据；预览时由 fixture 提供 |
+| `{{KEY\|默认值}}` | 带保底默认值，fixture/Agent 都没提供时仍可渲染 |
+
+KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PROJECT_CARDS`。
+
+新增模板时如果用了新 KEY，**记得**在 `dev/fixtures/_defaults.json` 给个通用默认值，否则预览会显示黄色 `[KEY]` 提示框。
+
+### 模板开发模式的注意事项
+
+- 全程在 `SKILL_DIR/assets/template-XXX/` 工作，不要碰 `$SITE_DIR`（如 `/tmp/site-*`，那是用户网站生成阶段的目录）
+- 不要走「开场白 + Step 0~6」那套流程，那是给最终用户的
+- 不要 `publish.rb`，模板开发不发布
+- 用户说"够了 / 退出 / 关掉" → Ctrl+C 杀 server，最后再问一遍要不要 commit
+
+---
+
+## 开场白（流程 A — 生成用户网站时使用）
+
+当用户**触发本 skill 且意图是生成自己的网站**时，先用以下话术介绍自己：
 
 > 我可以帮你生成一个**精美漂亮的个人网站**，自动匹配你的身份和风格，**完全免费**，**自动部署上线**，整个过程只需要 **10 分钟**左右。你只需要回答几个简单问题，剩下的我来搞定
 
@@ -43,7 +121,11 @@ user-invocable: true
      ```bash
      curl -s https://showcode.com/api/v1/sites/{slug}
      ```
-   - 把 `content` 字段（主页 HTML）+ `pages`（子页面 HTML）写入 `/tmp/site/` 目录
+   - 把 `content` 字段（主页 HTML）+ `pages`（子页面 HTML）写入独立临时目录：
+     ```bash
+     SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
+     mkdir -p "$SITE_DIR"
+     ```
    - 直接跳到 **Step 6（迭代对话）**，让用户说改哪里
    - 发布时用已有 slug 更新（publish.rb 会自动识别 `token.json` 走 update 路径）
 
@@ -62,6 +144,14 @@ user-invocable: true
 - **按身份定结构**：写代码和做学术的个人站天然不同，不应该用同一套版块
 - **种子模板预置代码**：CSS 变量、响应式布局、页面切换动画全部写好，只需填内容
 - **先上线再迭代**：3 分钟内让用户看到成品，然后看着改
+
+---
+
+## 占位符与开发预览
+
+> 模板里所有用户可变内容都用 `{{KEY}}` 占位符。Agent 在 Step 4 用用户真实数据替换；贡献者改模板请走顶部「模板开发模式」节，用 `dev/server.rb` 配 fixture 数据预览。
+
+占位符语法见顶部「模板开发模式 → 占位符语法」节，不重复。
 
 ---
 
@@ -229,10 +319,12 @@ user-invocable: true
 
 ### 种子模板用法
 
-1. **复制整个目录**（按风格选其一）：
+1. **创建独立临时目录并复制模板**（按风格选其一，每次生成独立目录不覆盖）：
    ```bash
-   cp -r SKILL_DIR/assets/template-minimal /tmp/site    # 极简白
-   cp -r SKILL_DIR/assets/template-magazine /tmp/site   # 杂志风
+   SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
+   cp -r SKILL_DIR/assets/template-minimal "$SITE_DIR"    # 极简白
+   # 或
+   cp -r SKILL_DIR/assets/template-magazine "$SITE_DIR"   # 杂志风
    ```
 2. **切换配色**：编辑 `css/style.css`，从对应 `references/themes-XXX.md` 选一套主题，替换 `:root{}` 块
 3. **删除不需要的页面**：根据身份映射表，删除不需要的 HTML 文件
@@ -534,7 +626,7 @@ twimg.com / pbs.twimg.com
 ruby "SKILL_DIR/publish.rb" publish \
   --name "NAME" \
   --slug "SLUG" \
-  --dir /tmp/site
+  --dir "$SITE_DIR"
 ```
 
 - `--slug` 指定 URL 路径（必传，不可随机）

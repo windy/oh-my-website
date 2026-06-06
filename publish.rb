@@ -42,6 +42,36 @@ def http_request(method, path, body: nil, token: nil)
   http.use_ssl      = uri.scheme == "https"
   http.open_timeout = 8
   http.read_timeout = 15
+def load_token_data;    load_json(TOKEN_FILE);       end
+def save_token_data(d); save_json(TOKEN_FILE, d);    end
+def load_account;       load_json(ACCOUNT_FILE);      end
+def save_account(d);    save_json(ACCOUNT_FILE, d);   end
+
+# 鉴权优先级：account.session_token > token.json.token
+#   - 有 session 时：所有 PUT/POST 都用 session_token，可操作账户名下所有 site
+#   - 首次 publish 创建 site 后，若已登录会自动 claim 绑定到账号
+#
+# Environment:
+#   SHOWCODE_API_HOST — platform base URL (default: https://showcode.com)
+
+require "net/http"
+require "uri"
+require "json"
+require "optparse"
+require "fileutils"
+
+API_HOST     = ENV.fetch("SHOWCODE_API_HOST", "https://showcode.com")
+BASE_DIR     = File.expand_path("~/clacky_workspace/oh-my-website")
+TOKEN_FILE   = File.join(BASE_DIR, "token.json")
+ACCOUNT_FILE = File.join(BASE_DIR, "account.json")
+MAX_SIZE     = 1_048_576 # 1MB
+
+def http_request(method, path, body: nil, token: nil)
+  uri  = URI.parse("#{API_HOST}#{path}")
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl      = uri.scheme == "https"
+  http.open_timeout = 8
+  http.read_timeout = 15
 
   req_class = { "GET" => Net::HTTP::Get, "POST" => Net::HTTP::Post,
                 "PUT" => Net::HTTP::Put, "DELETE" => Net::HTTP::Delete }[method]
@@ -66,10 +96,28 @@ def save_json(path, data)
   File.chmod(0600, path)
 end
 
+<<<<<<< HEAD
 def load_token_data;    load_json(TOKEN_FILE);       end
 def save_token_data(d); save_json(TOKEN_FILE, d);    end
 def load_account;       load_json(ACCOUNT_FILE);      end
 def save_account(d);    save_json(ACCOUNT_FILE, d);   end
+=======
+def load_token_data
+  load_json(TOKEN_FILE)
+end
+
+def save_token_data(d)
+  save_json(TOKEN_FILE, d)
+end
+
+def load_account
+  load_json(ACCOUNT_FILE)
+end
+
+def save_account(d)
+  save_json(ACCOUNT_FILE, d)
+end
+>>>>>>> origin/main
 
 # 鉴权优先级：登录后的 session_token > 当前 site 的 site_token
 def preferred_auth_token(site_token = nil)
@@ -91,6 +139,33 @@ def validate_size!(content, label)
   return if content.bytesize <= MAX_SIZE
   warn "❌ #{label} exceeds 1MB (#{content.bytesize / 1024}KB)"
   exit 1
+end
+
+# 检测目录下所有 HTML 是否还有未填充的 {{KEY}} 占位符。
+# 带默认值的 {{KEY|默认值}} 不算未填充（有保底，渲染后也能看）。
+# 找到则中止发布并指出哪个文件哪一行（除非 ENV['OMW_FORCE']='1'）。
+def validate_no_unfilled_placeholders!(dir)
+  unfilled_re = /\{\{\s*[A-Z][A-Z0-9_]*\s*\}\}/
+  problems = []
+  Dir.glob(File.join(dir, "**/*.html")).each do |f|
+    File.read(f, encoding: "utf-8").each_line.with_index(1) do |line, lineno|
+      line.scan(unfilled_re) do |m|
+        problems << { file: f.sub(dir + "/", ""), line: lineno, key: m }
+      end
+    end
+  end
+  return if problems.empty?
+
+  warn "❌ 发现 #{problems.size} 处未填充的占位符，发布已中止："
+  problems.first(20).each { |p| warn "   #{p[:file]}:#{p[:line]}  #{p[:key]}" }
+  warn "   ..." if problems.size > 20
+  warn ""
+  warn "   修复方法（任选一种）："
+  warn "   1. 让 Agent 重新替换这些 key，再发布"
+  warn "   2. 在模板里给占位符加默认值：{{KEY|默认值}}"
+  warn "   3. 强制跳过校验（不推荐）：OMW_FORCE=1 ruby publish.rb publish ..."
+  exit 1 unless ENV["OMW_FORCE"] == "1"
+  warn "⚠️  OMW_FORCE=1 已设置，跳过占位符校验，继续发布。"
 end
 
 # Inject <base href="/~slug/"> so relative URLs (css/style.css, js/script.js)
@@ -270,6 +345,9 @@ def publish_dir(name:, dir:, slug: nil)
     warn "❌ index.html not found in #{dir}"
     exit 1
   end
+
+  # 校验：发布前不能有未替换的 {{KEY}} 占位符（带默认值的 {{KEY|val}} 视为已有保底，允许）
+  validate_no_unfilled_placeholders!(dir)
 
   index_raw = File.read(index_file, encoding: "utf-8")
   validate_size!(index_raw, "index.html")
