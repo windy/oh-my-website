@@ -5,6 +5,7 @@
 :root {
   --bg: #f2f2f2;
   --bg-alt: #ffffff;
+  --bg-secondary: #e8e8e8;
   --text: #1d1d1f;
   --text-secondary: #86868b;
   --text-tertiary: #a1a1a6;
@@ -83,7 +84,7 @@ main {
   min-height: 80vh;
   display: flex;
   padding: 40px 60px 80px 60px;
-  background: linear-gradient(180deg, #e3e3e3 0%, var(--bg) 100%);
+  background: #eaecf0;
   margin: 20px;
   border-radius: 20px;
   overflow: hidden;
@@ -105,60 +106,48 @@ main {
   line-height: 1;
   letter-spacing: -0.04em;
   margin-bottom: 16px;
-  /* 文字阴影或倒影以突出白色大字 */
-  text-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
 .hero-subtitle {
   font-size: 1rem;
-  color: #fff;
+  color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: auto;
-  opacity: 0.9;
 }
 
 /* 参数卡片区 (替代 TAGS) */
 .hero-bento-stats {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-top: 80px;
+  margin-top: 32px;
 }
-.hero-bento-stats .skill-tag { display: none; } /* 隐藏原始标签 */
-
+.hero-bento-stats .skill-tag,
 .hero-bento-stats span[class^="fallback-stat"],
 .hero-bento-stats > * {
   display: inline-flex;
-  flex-direction: column;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  padding: 16px 24px;
-  border-radius: var(--radius-lg);
-  min-width: 140px;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
-.hero-bento-stats strong {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #000;
-  line-height: 1.2;
-}
-.hero-bento-stats em {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  font-style: normal;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
+.hero-bento-stats strong { display: inline; font-size: 0.85rem; color: var(--text); font-weight: 600; margin-right: 4px; }
+.hero-bento-stats em { display: inline; font-size: 0.85rem; color: var(--text); font-weight: 600; font-style: normal; }
 
 /* 右侧人像 5秒微变 */
 .hero-right {
-  flex: 1.2;
+  flex: 1;
   position: absolute;
-  right: -5%;
+  right: 0;
   bottom: 0;
+  width: 50%;
   height: 95%;
   z-index: 5;
   display: flex;
@@ -189,7 +178,9 @@ main {
   max-width: 700px;
   margin: 100px auto;
   text-align: center;
-  padding: 0 40px;
+  padding: 60px 40px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
 }
 .intro-eyebrow {
   font-size: 0.65rem;
@@ -368,4 +359,19 @@ footer {
   
   .bento-grid-wrapper { grid-template-columns: 1fr; }
   .b-card { min-height: 200px; }
+}
+.hero-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 100%;
+  transform: translateY(-50%);
+  font-size: clamp(6rem, 15vw, 15rem);
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.4); /* 半透明白色，因为背景浅灰 */
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  z-index: 1; /* 照片为 5，前景文字为 10 */
+  pointer-events: none;
+  user-select: none;
 }

@@ -66,10 +66,10 @@ def save_json(path, data)
   File.chmod(0600, path)
 end
 
-def load_token_data    = load_json(TOKEN_FILE)
-def save_token_data(d) = save_json(TOKEN_FILE, d)
-def load_account       = load_json(ACCOUNT_FILE)
-def save_account(d)    = save_json(ACCOUNT_FILE, d)
+def load_token_data;    load_json(TOKEN_FILE);       end
+def save_token_data(d); save_json(TOKEN_FILE, d);    end
+def load_account;       load_json(ACCOUNT_FILE);      end
+def save_account(d);    save_json(ACCOUNT_FILE, d);   end
 
 # 鉴权优先级：登录后的 session_token > 当前 site 的 site_token
 def preferred_auth_token(site_token = nil)
