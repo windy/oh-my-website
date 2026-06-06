@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#247BA0"/>
+      <stop offset="100%" stop-color="#70C1B3"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#g3)"/>
+  <text x="100" y="135" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="100" font-weight="600" fill="#fff" text-anchor="middle" opacity="0.92">陈</text>
+</svg>

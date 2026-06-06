@@ -93,6 +93,33 @@ def validate_size!(content, label)
   exit 1
 end
 
+# 检测目录下所有 HTML 是否还有未填充的 {{KEY}} 占位符。
+# 带默认值的 {{KEY|默认值}} 不算未填充（有保底，渲染后也能看）。
+# 找到则中止发布并指出哪个文件哪一行（除非 ENV['OMW_FORCE']='1'）。
+def validate_no_unfilled_placeholders!(dir)
+  unfilled_re = /\{\{\s*[A-Z][A-Z0-9_]*\s*\}\}/
+  problems = []
+  Dir.glob(File.join(dir, "**/*.html")).each do |f|
+    File.read(f, encoding: "utf-8").each_line.with_index(1) do |line, lineno|
+      line.scan(unfilled_re) do |m|
+        problems << { file: f.sub(dir + "/", ""), line: lineno, key: m }
+      end
+    end
+  end
+  return if problems.empty?
+
+  warn "❌ 发现 #{problems.size} 处未填充的占位符，发布已中止："
+  problems.first(20).each { |p| warn "   #{p[:file]}:#{p[:line]}  #{p[:key]}" }
+  warn "   ..." if problems.size > 20
+  warn ""
+  warn "   修复方法（任选一种）："
+  warn "   1. 让 Agent 重新替换这些 key，再发布"
+  warn "   2. 在模板里给占位符加默认值：{{KEY|默认值}}"
+  warn "   3. 强制跳过校验（不推荐）：OMW_FORCE=1 ruby publish.rb publish ..."
+  exit 1 unless ENV["OMW_FORCE"] == "1"
+  warn "⚠️  OMW_FORCE=1 已设置，跳过占位符校验，继续发布。"
+end
+
 # Inject <base href="/~slug/"> so relative URLs (css/style.css, js/script.js)
 # resolve correctly from any sub-page like /~slug/about
 def inject_base_tag(html, slug)
@@ -270,6 +297,9 @@ def publish_dir(name:, dir:, slug: nil)
     warn "❌ index.html not found in #{dir}"
     exit 1
   end
+
+  # 校验：发布前不能有未替换的 {{KEY}} 占位符（带默认值的 {{KEY|val}} 视为已有保底，允许）
+  validate_no_unfilled_placeholders!(dir)
 
   index_raw = File.read(index_file, encoding: "utf-8")
   validate_size!(index_raw, "index.html")

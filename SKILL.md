@@ -65,6 +65,61 @@ user-invocable: true
 
 ---
 
+## 占位符与开发预览
+
+> 模板里所有用户可变内容都用 `{{KEY}}` 占位符。Agent 在 Step 4 用用户真实数据替换；贡献者修改模板时用 `dev/server.rb` 配 fixture 数据预览。
+
+### 占位符语法
+
+| 写法 | 含义 |
+|------|------|
+| `{{KEY}}` | 必填占位，由 Agent 替换为用户数据；模板预览时由 fixture 提供 |
+| `{{KEY\|默认值}}` | 带保底默认值，fixture/Agent 都没提供时仍可渲染 |
+
+KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PROJECT_CARDS`。
+
+### 用户表达"想看模板长什么样"或"参与模板开发" → 启动预览服务器
+
+触发词："预览模板 / 看一下模板 / 我想改模板 / 帮我看看模板效果 / 我想做个新主题"。
+
+```bash
+ruby SKILL_DIR/dev/server.rb                       # 默认起 minimal + coder persona
+ruby SKILL_DIR/dev/server.rb template-magazine     # 指定模板
+ruby SKILL_DIR/dev/server.rb --persona=designer    # 指定身份数据
+```
+
+服务器跑在 `http://localhost:4567`，浏览器顶部工具条可在线切换模板/身份/设备宽度。
+
+启动后告诉用户：
+
+> 已经启动预览，浏览器打开 http://localhost:4567 就能看到。
+> 想改样式直接编辑 `assets/template-XXX/` 下的 HTML/CSS，刷新就能看到效果。
+> **改满意了告诉我「保存提交」**，我会帮你建主题分支并 commit/push，避免丢数据。
+
+### 用户说"保存 / 提交 / 我改完了 / 满意了" → 帮忙 commit
+
+按以下步骤：
+
+1. 检查当前分支：`git -C SKILL_DIR branch --show-current`
+2. 如果在 `main` 上 → 建主题分支 `git checkout -b theme/<合理名字>`（如 `theme/dark-geek`、`theme/magazine-tweak`）
+3. `git add -A && git status` 看一下范围合不合理（不要把 dev/ 临时文件带进去）
+4. `git commit -m "feat(template-XXX): <一句话描述>"`
+5. `git push -u origin <branch>`
+6. 反馈给用户：分支名 + commit hash + 远端 URL
+
+### 用户说"做个新模板叫 XXX" → 起底
+
+```bash
+cd SKILL_DIR
+git checkout -b theme/<XXX>
+cp -r assets/template-minimal assets/template-<XXX>
+ruby dev/server.rb template-<XXX>
+```
+
+然后让用户改 CSS 变量、调版式，过程中随时刷新预览。
+
+---
+
 ## Step 1 — 问名字 + 身份（Q1 + Q2）
 
 > **设计原则：全程选择题，30 秒完成。用户只需打一行名字，其余全选。**
