@@ -1,56 +1,94 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{NAME}} - 首页</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{name}} - {{profession}}</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- 顶部导航 -->
+    <nav class="navbar">
+        <div class="logo">{{name}}</div>
+        <ul class="nav-links">
+            <li><a href="#home">HOME</a></li>
+            <li><a href="#about">ABOUT</a></li>
+            <li><a href="#projects">PROJECTS</a></li>
+        </ul>
+    </nav>
 
-<nav>
-  <a href="index.html" class="nav-brand">{{NAME}}</a>
-  <button class="nav-toggle" aria-label="Menu">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
-    </svg>
-  </button>
-  <ul class="nav-links">
-    <!-- 根据身份删除不需要的页面 -->
-    <li><a href="index.html" class="active">首页</a></li>
-    <li><a href="about.html">关于</a></li>
-    <li><a href="projects.html">项目</a></li>
-    <li><a href="blog.html">博客</a></li>
-    <li><a href="portfolio.html">作品</a></li>
-    <li><a href="product.html">产品</a></li>
-    <li><a href="resume.html">简历</a></li>
-    <li><a href="contact.html">联系</a></li>
-  </ul>
-</nav>
+    <!-- Banner 区域 -->
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">{{name}}</h1>
+            <p class="hero-subtitle">{{profession}}</p>
+            <div class="hero-tags">
+                {{#each tags}}
+                <span class="tag">{{this}}</span>
+                {{/each}}
+                <!-- 预填充占位示例（由模型替换） -->
+                <span class="tag">AI / Agent</span>
+                <span class="tag">Fullstack</span>
+                <span class="tag">Design</span>
+            </div>
+        </div>
+        <div class="hero-image">
+            <!-- 占位人像图片 -->
+            <img src="{{avatar_url}}" alt="{{name}}">
+        </div>
+    </header>
 
-<main class="home-page">
-  <h1>{{NAME}}</h1>
-  <p class="tagline">{{TAGLINE}}</p>
-  <div class="bio">
-    <p>{{BIO}}</p>
-  </div>
-  <div class="cta">
-    <a href="about.html" class="btn btn-primary">了解更多</a>
-    <a href="projects.html" class="btn btn-outline">查看作品</a>
-  </div>
-</main>
+    <!-- 个人简介 -->
+    <section id="about" class="about-section">
+        <div class="section-container">
+            <h2 class="section-title">About Me</h2>
+            <p class="about-text">
+                {{bio}}
+            </p>
+        </div>
+    </section>
 
-<footer>
-  <button class="footer-btn" onclick="toggleQR()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
-    扫码访问
-  </button>
-  <button class="footer-btn" onclick="copyLink(this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-    复制链接
-  </button>
-</footer>
-<script src="js/qrcode.min.js"></script>
-<script src="js/script.js"></script>
+    <!-- 项目展示区 (Bento Grid 风格) -->
+    <section id="projects" class="projects-section">
+        <div class="section-container">
+            <h2 class="section-title">Showcase</h2>
+            <div class="bento-grid">
+                <!-- 大卡片 1 -->
+                <div class="bento-item large">
+                    <img src="{{projects.0.image}}" alt="Project 1" class="bg-img">
+                    <div class="overlay">
+                        <h3>{{projects.0.title}}</h3>
+                        <p>{{projects.0.desc}}</p>
+                    </div>
+                </div>
+                <!-- 小卡片群 -->
+                <div class="bento-item">
+                    <div class="content">
+                        <h4>{{projects.1.title}}</h4>
+                        <p>{{projects.1.desc}}</p>
+                    </div>
+                </div>
+                <div class="bento-item">
+                    <div class="content">
+                        <h4>{{projects.2.title}}</h4>
+                        <p>{{projects.2.desc}}</p>
+                    </div>
+                </div>
+                <div class="bento-item wide">
+                    <div class="content">
+                        <h4>{{projects.3.title}}</h4>
+                        <p>{{projects.3.desc}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 {{name}}. Crafted with Oh My Website.</p>
+    </footer>
 </body>
 </html>
