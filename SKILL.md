@@ -80,7 +80,7 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 ### 模板开发模式的注意事项
 
-- 全程在 `SKILL_DIR/assets/template-XXX/` 工作，不要碰 `/tmp/site`（那是用户网站生成阶段的目录）
+- 全程在 `SKILL_DIR/assets/template-XXX/` 工作，不要碰 `$SITE_DIR`（如 `/tmp/site-*`，那是用户网站生成阶段的目录）
 - 不要走「开场白 + Step 0~6」那套流程，那是给最终用户的
 - 不要 `publish.rb`，模板开发不发布
 - 用户说"够了 / 退出 / 关掉" → Ctrl+C 杀 server，最后再问一遍要不要 commit
@@ -121,7 +121,11 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
      ```bash
      curl -s https://showcode.com/api/v1/sites/{slug}
      ```
-   - 把 `content` 字段（主页 HTML）+ `pages`（子页面 HTML）写入 `/tmp/site/` 目录
+   - 把 `content` 字段（主页 HTML）+ `pages`（子页面 HTML）写入独立临时目录：
+     ```bash
+     SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
+     mkdir -p "$SITE_DIR"
+     ```
    - 直接跳到 **Step 6（迭代对话）**，让用户说改哪里
    - 发布时用已有 slug 更新（publish.rb 会自动识别 `token.json` 走 update 路径）
 
@@ -315,10 +319,12 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 ### 种子模板用法
 
-1. **复制整个目录**（按风格选其一）：
+1. **创建独立临时目录并复制模板**（按风格选其一，每次生成独立目录不覆盖）：
    ```bash
-   cp -r SKILL_DIR/assets/template-minimal /tmp/site    # 极简白
-   cp -r SKILL_DIR/assets/template-magazine /tmp/site   # 杂志风
+   SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
+   cp -r SKILL_DIR/assets/template-minimal "$SITE_DIR"    # 极简白
+   # 或
+   cp -r SKILL_DIR/assets/template-magazine "$SITE_DIR"   # 杂志风
    ```
 2. **切换配色**：编辑 `css/style.css`，从对应 `references/themes-XXX.md` 选一套主题，替换 `:root{}` 块
 3. **删除不需要的页面**：根据身份映射表，删除不需要的 HTML 文件
@@ -620,7 +626,7 @@ twimg.com / pbs.twimg.com
 ruby "SKILL_DIR/publish.rb" publish \
   --name "NAME" \
   --slug "SLUG" \
-  --dir /tmp/site
+  --dir "$SITE_DIR"
 ```
 
 - `--slug` 指定 URL 路径（必传，不可随机）
