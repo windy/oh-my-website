@@ -1,0 +1,634 @@
+/* ============================================================
+   暖意工作室 · 共享样式 — Warm Studio Shared Stylesheet
+   ----------------------------------------------------------
+   暖米色 + 深咖啡 + 大粗标题 + 左文右图 hero
+   适合：生活方式 / 健身瑜伽 / 设计师 / 自由职业 / 女性创业
+   ============================================================
+   目录:
+   1.  CSS Variables (:root)   — 替换整个块来切换主题
+   2.  Reset & Base
+   3.  Typography
+   4.  Navigation
+   5.  Page Layout
+   6.  Home
+   7.  About
+   8.  Projects / Portfolio
+   9.  Blog
+   10. Resume
+   11. Product
+   12. Contact
+   13. Footer
+   14. Page Transition
+   ============================================================ */
+
+/* ============================================================
+   1. CSS Variables
+   替换规则: 从 references/themes-minimal.md 选一套配色，
+   整体替换本块。
+   ============================================================ */
+:root {
+  /* --- 颜色（暖米色调） --- */
+  --bg: #ECE3D6;             /* 主底：暖米色 */
+  --bg-alt: #E2D7C6;         /* 次底：略深的米 */
+  --bg-cream: #F5EFE5;       /* 最浅奶油色，用于卡片浮起 */
+  --text: #2E2520;           /* 深咖啡，几乎接近黑但更暖 */
+  --text-secondary: #6B5A4E; /* 中咖啡，正文 */
+  --text-tertiary: #9B8A7C;  /* 浅咖啡，辅助文字 */
+  --accent: #3D2F2A;         /* 强调色：可可咖啡 */
+  --accent-hover: #574239;
+  --accent-text: #F5EFE5;    /* 按钮上的字：奶油白 */
+  --border: #D4C7B5;
+  --border-light: #DFD3C0;
+  --card-bg: #F5EFE5;
+  --card-hover: #EFE7D8;
+  --tag-bg: #DFD3C0;
+  --tag-text: #574239;
+  --shadow: 0 1px 3px rgba(60,40,30,0.05);
+  --shadow-hover: 0 8px 24px rgba(60,40,30,0.10);
+
+  /* --- 字体源（4 套字体栈，跨平台都能命中体面的字体） --- */
+  --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+          'Microsoft YaHei', 'Source Han Sans CN', 'Noto Sans CJK SC',
+          'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --serif: ui-serif, 'Iowan Old Style', 'Apple Garamond', Georgia,
+           'Times New Roman', 'Songti SC', 'STSong',
+           'Source Han Serif CN', 'Noto Serif CJK SC', SimSun, serif;
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code',
+          'Roboto Mono', Menlo, Monaco, Consolas,
+          'PingFang SC', monospace;
+  --display: ui-rounded, -apple-system-ui-rounded, 'PingFang SC',
+             'Hiragino Sans GB', 'Microsoft YaHei UI',
+             'Source Han Sans CN', system-ui, sans-serif;
+
+  /* --- 字体角色（按页面元素绑定，身份切换只改这 3 个） --- */
+  --font-display: var(--sans);   /* 大标题 / hero 名字 */
+  --font-body:    var(--sans);   /* 正文 / 段落 */
+  --font-accent:  var(--serif);  /* 强调元素：引言 / 数字 / meta */
+
+  /* --- 间距 (8px 基准) --- */
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+
+  /* --- 布局 --- */
+  --max-width: 1200px;        /* 比 minimal 宽，给左文右图留空间 */
+  --content-width: 720px;     /* 文字内容最大宽度 */
+  --nav-height: 72px;         /* 比 minimal 高一点，更舒展 */
+  --radius: 10px;
+  --radius-lg: 18px;
+}
+
+/* ============================================================
+   2. Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-top: var(--nav-height);
+}
+
+/* ============================================================
+   3. Typography
+   暖意工作室：标题超大、特粗，紧凑字距，呼应「冲击感」
+   ============================================================ */
+h1 { font-family: var(--font-display); font-size: 4rem; font-weight: 800; line-height: 1.05; letter-spacing: -0.035em; color: var(--text); }
+h2 { font-family: var(--font-display); font-size: 2.25rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; color: var(--text); }
+h3 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; color: var(--text); }
+p  { color: var(--text-secondary); }
+a  { color: var(--accent); text-decoration: none; transition: color 0.2s ease; }
+a:hover { color: var(--accent-hover); }
+
+/* ============================================================
+   4. Navigation — 顶部分散横排，logo 左 / 菜单中 / 图标右
+   ============================================================ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--nav-height);
+  background: rgba(236, 227, 214, 0.85);   /* 暖米半透明 */
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid rgba(60, 40, 30, 0.06);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--sp-7);
+}
+.nav-brand {
+  font-weight: 700; font-size: 1.15rem;
+  color: var(--text); letter-spacing: -0.02em;
+  font-family: var(--font-display);
+}
+.nav-links {
+  display: flex; gap: var(--sp-7);   /* 菜单项之间间距更大，"分散" */
+  list-style: none;
+  position: absolute; left: 50%; transform: translateX(-50%);
+  /* 居中绝对定位，让 logo 居左、图标居右、菜单居中 */
+}
+.nav-links a {
+  font-size: 0.95rem; font-weight: 500;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  position: relative;
+  transition: color 0.2s;
+}
+.nav-links a::after {
+  content: ''; position: absolute;
+  left: 50%; bottom: -2px; transform: translateX(-50%);
+  width: 0; height: 2px; background: var(--accent);
+  transition: width 0.25s ease;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text);
+}
+.nav-links a.active::after,
+.nav-links a:hover::after { width: 100%; }
+
+/* Hamburger */
+.nav-toggle {
+  display: none; background: none; border: none; cursor: pointer;
+  padding: 4px; color: var(--text);
+}
+.nav-toggle svg { width: 24px; height: 24px; }
+
+/* ============================================================
+   4b. Mobile / Tablet 响应式
+   ============================================================ */
+@media (max-width: 960px) {
+  nav { padding: 0 var(--sp-5); }
+  .home-page {
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+    text-align: left;
+    padding: var(--sp-6) var(--sp-5);
+    min-height: auto;
+  }
+  .home-page .hero-visual {
+    aspect-ratio: 16 / 11;
+    order: -1;     /* 图放上，文字在下 — 移动端更顺 */
+    max-width: 100%;
+  }
+  .home-page .hero-visual .placeholder-mark { font-size: 10rem; }
+  h1 { font-size: 3rem; }
+}
+@media (max-width: 640px) {
+  .nav-toggle { display: block; }
+  .nav-links {
+    display: none;
+    position: fixed; top: var(--nav-height); left: 0; right: 0;
+    transform: none;
+    flex-direction: column;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: var(--sp-4) var(--sp-5);
+    gap: var(--sp-3);
+  }
+  .nav-links.open { display: flex; }
+  h1 { font-size: 2.4rem; }
+  h2 { font-size: 1.65rem; }
+  main { padding: var(--sp-6) var(--sp-5); }
+  .home-page { padding: var(--sp-5) var(--sp-5); gap: var(--sp-5); }
+  .home-page .hero-visual .placeholder-mark { font-size: 7rem; }
+}
+
+/* ============================================================
+   5. Page Layout
+   ============================================================ */
+main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--sp-8) var(--sp-7);
+  min-height: calc(100vh - var(--nav-height) - 40px);
+}
+/* 非首页：内容仍保持窄列阅读舒适 */
+main:not(.home-page) {
+  max-width: var(--content-width);
+  padding-left: var(--sp-5);
+  padding-right: var(--sp-5);
+}
+
+/* ============================================================
+   6. Home — 左文右图大 hero
+   ============================================================ */
+.home-page {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--sp-8);
+  align-items: center;
+  min-height: calc(100vh - var(--nav-height) - 42px);  /* -42 给 dev toolbar 留 */
+  padding: var(--sp-7) var(--sp-7);
+  text-align: left;
+}
+.home-page .hero-text {
+  display: flex; flex-direction: column;
+  gap: var(--sp-5);
+  max-width: 560px;
+}
+.home-page h1 {
+  margin: 0;
+  /* 大字 + 紧凑字距 + 自动换行支持破折号断行 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.home-page .tagline {
+  font-size: 1.15rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+  font-family: var(--font-accent);
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+.home-page .bio {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 460px;
+  line-height: 1.75;
+  margin-top: var(--sp-3);
+}
+.home-page .bio p { margin: 0; }
+.home-page .cta {
+  display: flex; gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-top: var(--sp-4);
+}
+/* 右侧图区（占位 + 用户头像 / 背景图通用容器） */
+.home-page .hero-visual {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  /* 多层暖色渐变：浅裸粉 + 柔和光感（呼应原图 FitZone 的肤色背景） */
+  background:
+    radial-gradient(ellipse at 65% 25%, #FAF3E8 0%, transparent 60%),
+    radial-gradient(ellipse at 35% 85%, #E8D7C0 0%, transparent 65%),
+    linear-gradient(135deg, #EFDFC9 0%, #E2CDB0 60%, #C9B091 100%);
+  box-shadow: var(--shadow-hover);
+}
+.home-page .hero-visual::before {
+  /* 颗粒纹理（用 SVG 内联噪点，类似胶片质感，强度调低更细腻） */
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.12  0 0 0 0 0.10  0 0 0 0.10 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 200px 200px;
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.home-page .hero-visual::after {
+  /* 暖光叠层 */
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,250,240,0.30) 0%, transparent 55%),
+    radial-gradient(circle at 70% 80%, rgba(80,55,40,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.home-page .hero-visual img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  position: relative; z-index: 1;
+}
+/* 没有图时显示一个大字符号作为装饰 */
+.home-page .hero-visual .placeholder-mark {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 18rem; font-weight: 800;
+  color: rgba(60, 40, 30, 0.14);
+  line-height: 1; letter-spacing: -0.05em;
+  user-select: none;
+  z-index: 2;
+}
+
+/* ============================================================
+   按钮（暖意工作室：圆角矩形 + 深色实心 + 略大留白）
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center;
+  padding: 14px 32px;
+  border-radius: var(--radius);
+  font-size: 0.95rem; font-weight: 500;
+  font-family: var(--font-body);
+  transition: background 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  letter-spacing: 0.01em;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary {
+  background: var(--accent); color: var(--accent-text);
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  background: var(--accent-hover); color: var(--accent-text);
+  box-shadow: 0 6px 18px rgba(60,40,30,0.18);
+}
+.btn-outline {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--text);
+}
+.btn-outline:hover {
+  background: var(--text); color: var(--accent-text);
+}
+
+/* ============================================================
+   7. About
+   ============================================================ */
+.about-text {
+  font-size: 1.05rem; line-height: 1.8;
+  margin-bottom: var(--sp-6);
+}
+.about-text p { margin-bottom: var(--sp-4); }
+.skills {
+  display: flex; flex-wrap: wrap; gap: var(--sp-2);
+  margin-bottom: var(--sp-7);
+}
+.skill-tag {
+  display: inline-block; padding: 4px 14px;
+  background: var(--tag-bg); color: var(--tag-text);
+  border-radius: 20px; font-size: 0.85rem;
+  font-weight: 500;
+}
+.timeline { list-style: none; }
+.timeline li {
+  display: flex; gap: var(--sp-4);
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.timeline li:last-child { border-bottom: none; }
+.timeline .period {
+  flex-shrink: 0; width: 120px;
+  font-size: 0.85rem; color: var(--text-tertiary);
+  font-weight: 500;
+}
+.timeline .detail h4 { font-size: 1rem; font-weight: 600; margin-bottom: 2px; }
+.timeline .detail p  { font-size: 0.9rem; color: var(--text-secondary); }
+
+/* ============================================================
+   8. Projects / Portfolio
+   ============================================================ */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-5);
+}
+.project-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--sp-5);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.project-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+.project-card h3 { margin-bottom: var(--sp-2); }
+.project-card p  { font-size: 0.9rem; margin-bottom: var(--sp-3); }
+.project-card .tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: var(--sp-3);
+}
+.project-card .tags span {
+  font-size: 0.78rem; padding: 2px 10px;
+  background: var(--tag-bg); color: var(--tag-text);
+  border-radius: 12px; font-weight: 500;
+}
+.project-card .links {
+  display: flex; gap: var(--sp-3);
+}
+.project-card .links a {
+  font-size: 0.88rem; font-weight: 500;
+}
+
+/* ============================================================
+   9. Blog
+   ============================================================ */
+.article-list { list-style: none; }
+.article-list li {
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.article-list li:last-child { border-bottom: none; }
+.article-list .date {
+  font-size: 0.82rem; color: var(--text-tertiary);
+  font-weight: 500; margin-bottom: 2px;
+}
+.article-list h3 { margin-bottom: var(--sp-2); }
+.article-list h3 a { color: var(--text); }
+.article-list h3 a:hover { color: var(--accent); }
+.article-list p { font-size: 0.9rem; }
+
+/* ============================================================
+   10. Resume
+   ============================================================ */
+.resume-section { margin-bottom: var(--sp-6); }
+.resume-section h3 {
+  font-size: 1rem; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-tertiary);
+  margin-bottom: var(--sp-3); padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--border);
+}
+.resume-item { margin-bottom: var(--sp-4); }
+.resume-item .head {
+  display: flex; justify-content: space-between;
+  align-items: baseline; flex-wrap: wrap;
+}
+.resume-item h4 { font-size: 1rem; font-weight: 600; }
+.resume-item .meta { font-size: 0.85rem; color: var(--text-tertiary); }
+.resume-item p { font-size: 0.9rem; margin-top: 4px; }
+
+/* ============================================================
+   11. Product
+   ============================================================ */
+.product-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-5);
+  transition: box-shadow 0.2s;
+}
+.product-card:hover { box-shadow: var(--shadow-hover); }
+.product-card h3 { margin-bottom: var(--sp-2); }
+.product-card .tagline {
+  font-size: 0.95rem; color: var(--accent);
+  font-weight: 500; margin-bottom: var(--sp-3);
+}
+.product-card p { margin-bottom: var(--sp-3); }
+.metrics {
+  display: flex; gap: var(--sp-5);
+  font-size: 0.85rem; color: var(--text-tertiary);
+}
+
+/* ============================================================
+   12. Contact
+   ============================================================ */
+.contact-page { text-align: center; }
+.contact-intro { margin-bottom: var(--sp-6); }
+.social-links {
+  list-style: none;
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--sp-3);
+}
+.social-links li a {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  color: var(--text); font-size: 1rem;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  transition: background 0.15s, border-color 0.15s;
+  min-width: 220px; justify-content: center;
+}
+.social-links li a:hover {
+  background: var(--bg-alt);
+  border-color: var(--text-secondary);
+  color: var(--text);
+}
+.social-links .icon { font-size: 1.2rem; }
+
+/* ============================================================
+   13. Footer
+   ============================================================ */
+footer {
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--sp-5);
+  padding: var(--sp-5);
+  font-size: 0.82rem; color: var(--text-tertiary);
+  border-top: 1px solid var(--border-light);
+  flex-wrap: wrap;
+}
+.footer-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem; font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.footer-btn:hover {
+  background: var(--bg-alt);
+  border-color: var(--text-secondary);
+  color: var(--text);
+}
+.footer-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.footer-btn.copied {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ============================================================
+   14. QR Popup
+   ============================================================ */
+.qr-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.3);
+  align-items: center; justify-content: center;
+}
+.qr-overlay.open { display: flex; }
+.qr-popup {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+  max-width: 340px; width: 90%;
+}
+.qr-popup svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.qr-popup .qr-hint {
+  margin-top: var(--sp-4);
+  font-size: 0.82rem; color: var(--text-tertiary);
+}
+.qr-popup .qr-url {
+  display: block; margin-top: var(--sp-3);
+  font-size: 0.78rem; color: var(--text-secondary);
+  word-break: break-all;
+}
+.qr-close {
+  display: inline-block; margin-top: var(--sp-4);
+  padding: 6px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem; font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.qr-close:hover { background: var(--bg-alt); }
+
+/* ============================================================
+   15. Page Transition (subtle)
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+main { animation: fadeIn 0.35s ease; }
+
+/* ============================================================
+   身份字体变体
+   ============================================================
+   在 <body> 上加一个 class 即可切换字体角色，不动其他变量。
+   不加任何 class 时走默认（sans + sans + mono），适合大多数程序员。
+
+   用法示例：<body class="persona-writer">
+*/
+
+/* 程序员：标题/正文都用无衬线，强调用等宽（默认即可，这里显式写出方便覆盖） */
+.persona-coder {
+  --font-display: var(--sans);
+  --font-body:    var(--sans);
+  --font-accent:  var(--mono);
+}
+
+/* 设计师：标题用圆体显示字体，正文无衬线，引言/标语用衬线增加格调 */
+.persona-designer {
+  --font-display: var(--display);
+  --font-body:    var(--sans);
+  --font-accent:  var(--serif);
+}
+
+/* 写作者：标题/正文都用衬线（阅读舒适），meta 信息用无衬线区隔 */
+.persona-writer {
+  --font-display: var(--serif);
+  --font-body:    var(--serif);
+  --font-accent:  var(--sans);
+}
+.persona-writer p { line-height: 1.85; }  /* 衬线正文需要更宽行距 */
+
+/* 创业者/产品人：标题用圆体显示字体（亲切），正文无衬线，数据指标等宽 */
+.persona-founder {
+  --font-display: var(--display);
+  --font-body:    var(--sans);
+  --font-accent:  var(--mono);
+}
+
+/* 学生/求职：紧凑无衬线，简历感 */
+.persona-student {
+  --font-display: var(--sans);
+  --font-body:    var(--sans);
+  --font-accent:  var(--sans);
+}
+
+/* 通用强调样式：用 .accent-text 给特定元素套强调字体
+   适合：MRR 数字、版本号、引言、"独立开发者 · since 2020" 这类 meta */
+.accent-text { font-family: var(--font-accent); }

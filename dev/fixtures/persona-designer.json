@@ -26,5 +26,7 @@
   "WORK_3_YEAR": "2023",
   "WORK_3_DESCRIPTION": "用一套黑白几何语言，重新定义独立书店的现代感。",
   "WORK_3_PLACEHOLDER_LABEL": "无界书店",
-  "PORTFOLIO_ITEMS": "<article class=\"work-card\"><img src=\"/__omw_stock/works/work-02.svg\" alt=\"拾光咖啡\" style=\"width:100%;border-radius:6px;display:block;\"><h3>拾光咖啡 · 品牌升级</h3><p>2025 · 品牌系统</p></article><article class=\"work-card\"><img src=\"/__omw_stock/works/work-04.svg\" alt=\"南风音乐节\" style=\"width:100%;border-radius:6px;display:block;\"><h3>南风音乐节 2024</h3><p>2024 · 视觉与海报</p></article><article class=\"work-card\"><img src=\"/__omw_stock/works/work-06.svg\" alt=\"无界书店\" style=\"width:100%;border-radius:6px;display:block;\"><h3>无界书店 · VI</h3><p>2023 · VI 系统</p></article>"
+  "PORTFOLIO_ITEMS": "<article class=\"work-card\"><img src=\"/__omw_stock/works/work-02.svg\" alt=\"拾光咖啡\" style=\"width:100%;border-radius:6px;display:block;\"><h3>拾光咖啡 · 品牌升级</h3><p>2025 · 品牌系统</p></article><article class=\"work-card\"><img src=\"/__omw_stock/works/work-04.svg\" alt=\"南风音乐节\" style=\"width:100%;border-radius:6px;display:block;\"><h3>南风音乐节 2024</h3><p>2024 · 视觉与海报</p></article><article class=\"work-card\"><img src=\"/__omw_stock/works/work-06.svg\" alt=\"无界书店\" style=\"width:100%;border-radius:6px;display:block;\"><h3>无界书店 · VI</h3><p>2023 · VI 系统</p></article>",
+  "HERO_HEADLINE": "做设计 ——<br>有温度地看见",
+  "HERO_INITIAL": "苏"
 }

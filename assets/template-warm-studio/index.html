@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{NAME}} - 首页</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="persona-designer">
+
+<nav>
+  <a href="index.html" class="nav-brand">{{NAME_BRAND}}</a>
+  <button class="nav-toggle" aria-label="Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+    </svg>
+  </button>
+  <ul class="nav-links">
+    <!-- 根据身份删除不需要的页面 -->
+    <li><a href="index.html" class="active">首页</a></li>
+    <li><a href="about.html">关于</a></li>
+    <li><a href="projects.html">项目</a></li>
+    <li><a href="blog.html">博客</a></li>
+    <li><a href="portfolio.html">作品</a></li>
+    <li><a href="product.html">产品</a></li>
+    <li><a href="resume.html">简历</a></li>
+    <li><a href="contact.html">联系</a></li>
+  </ul>
+</nav>
+
+<main class="home-page">
+  <div class="hero-text">
+    <h1>{{HERO_HEADLINE}}</h1>
+    <p class="tagline">{{ROLE_LABEL|做点有意思的事}}</p>
+    <div class="bio">
+      <p>{{BIO}}</p>
+    </div>
+    <div class="cta">
+      <a href="about.html" class="btn btn-primary">了解更多</a>
+      <a href="contact.html" class="btn btn-outline">联系我</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <span class="placeholder-mark">{{HERO_INITIAL}}</span>
+    <!-- 用户提供照片时，Agent 把这一行替换为：
+         <img src="data:image/jpeg;base64,..." alt="{{NAME}}"> -->
+  </div>
+</main>
+
+<footer>
+  <button class="footer-btn" onclick="toggleQR()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
+    扫码访问
+  </button>
+  <button class="footer-btn" onclick="copyLink(this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    复制链接
+  </button>
+</footer>
+<script src="js/qrcode.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

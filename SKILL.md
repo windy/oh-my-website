@@ -472,37 +472,58 @@ template-minimal/
 
 ## Step 4.5 — 媒体处理规约（图片 / 视频 / 动态背景）
 
-> **核心原则：零外部资源依赖。所有图片、视频、字体、CDN 必须本地化或内联。**
-> 任何"贴个外链"的偷懒方案在国内用户那里都会挂掉，**禁止使用**。
+> **核心原则：图片直接放进站点目录，发布时整盘打 zip 推送到 CDN。**
+> 不再 base64 内联（zip 体积可控 + 浏览器缓存友好）。
+> 仍然禁止任何"贴个外链"：所有素材必须本地化在站点目录里。
 
-### 图片：默认内联 base64
+### 图片：放在 `images/` 下，HTML 里引相对路径
 
 #### 流程
 
-1. 用户给出本地图片路径或外链。
-2. 检查文件大小：
-   - **< 200KB** → 直接 base64 内联到 HTML
-   - **≥ 200KB** → 先压缩，压完仍 ≥ 200KB 提示用户换图或缩小尺寸
-3. 写入 HTML：`<img src="data:image/jpeg;base64,...">`
+1. 站点目录约定（template 已预置）：
+   ```
+   site/
+     index.html
+     about.html
+     css/style.css
+     js/script.js
+     images/         ← 用户图片放这里
+       avatar.jpg
+       project-1.jpg
+   ```
+2. 拿到用户图片后：
+   - 压缩（见下方命令）
+   - 复制到 `images/` 下，文件名用语义化的英文 + 小写
+   - HTML 里用 **相对路径** 引用：`<img src="images/avatar.jpg" alt="...">`
+3. **不要**用 `data:` URL，不要 base64 内联。
+
+#### 单文件 / 总大小限制
+
+| 项 | 限制 |
+|----|------|
+| 单个文件 | ≤ 5MB |
+| 整个 zip 总大小 | ≤ 20MB |
+| 图片建议尺寸 | 头像 ≤ 400×400；横图 ≤ 1600px 长边 |
+| 图片建议体积 | 单图 ≤ 300KB（首屏可见图最好 ≤ 100KB） |
+
+超限 `publish.rb` 会直接报错。
 
 #### 压缩命令（macOS 自带 sips）
 
 ```bash
-# JPEG 压缩到最长边 1200px，质量 60
-sips -Z 1200 -s formatOptions 60 input.jpg --out /tmp/compressed.jpg
+# JPEG 压缩到最长边 1200px，质量 70
+sips -Z 1200 -s formatOptions 70 input.jpg --out images/photo.jpg
 
-# PNG 压缩到最长边 800px
-sips -Z 800 input.png --out /tmp/compressed.png
+# 头像压到 400px 足够
+sips -Z 400 -s formatOptions 80 avatar-orig.jpg --out images/avatar.jpg
 
-# 转 base64 并写入剪贴板（Agent 可读取拼到 HTML）
-base64 -i /tmp/compressed.jpg | tr -d '\n'
+# PNG 压缩
+sips -Z 800 input.png --out images/icon.png
 ```
-
-头像建议先 `sips -Z 400`（400px 足够），多数能压到 50KB 以内。
 
 #### 外链域名禁用清单
 
-**绝对禁止**生成 `<img src>` 指向以下任一域名（国内访问不稳或被墙）：
+**禁止**让 `<img src>` 指向以下任一域名（国内访问不稳）：
 
 ```
 github.com / raw.githubusercontent.com / objects.githubusercontent.com
@@ -517,14 +538,14 @@ twimg.com / pbs.twimg.com
 
 #### 用户给了外链怎么办
 
-1. 先用 `curl -I` 或 `curl -o` 把图片**下载到本地**：
-   ```bash
-   curl -L -o /tmp/user_img.jpg "USER_PROVIDED_URL"
-   ```
-2. 然后走标准内联流程（压缩 + base64）。
-3. 如果 curl 失败（403/404/超时）→ 告诉用户该链接拿不到图，请换一个或直接给本地文件路径。
+```bash
+curl -L -o /tmp/user_img.jpg "USER_PROVIDED_URL"
+sips -Z 1200 -s formatOptions 70 /tmp/user_img.jpg --out images/photo.jpg
+```
 
-**永远不要**直接把外链 URL 粘到 HTML 里，哪怕用户坚持。
+curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直接给本地文件路径。
+
+**永远不要**把外链 URL 直接粘到 HTML 里。
 
 ### 视频：默认不用真视频，用动态背景代替
 
@@ -568,10 +589,7 @@ twimg.com / pbs.twimg.com
 
 #### 真要用视频怎么办（罕见场景）
 
-如果用户**坚持**要真背景视频（比如咖啡馆品牌站要海浪），告诉用户两个事实：
-
-1. showcode 不提供视频托管（控制服务端成本）
-2. 用户需要自己上传到国内可访问的 CDN（阿里云 OSS / 腾讯云 COS / 七牛云），把直链给 Agent
+视频文件大，**不要塞进 zip**（容易超 20MB 上限）。让用户自己上传到国内 CDN（阿里云 OSS / 腾讯云 COS / 七牛云），把直链给 Agent。
 
 拿到直链后用 `<video>` 标签：
 ```html
@@ -630,14 +648,24 @@ ruby "SKILL_DIR/publish.rb" publish \
 ```
 
 - `--slug` 指定 URL 路径（必传，不可随机）
-- `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面）
-- `index.html` 作为主页面内容，其余 `.html` 文件通过子页面 API（`POST /api/v1/sites/:slug/pages`）逐页上传
-- 子页面标题取自 HTML `<title>` 标签，找不到时用文件名去扩展名后首字母大写
+- `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面、css/、js/、images/）
+- 整个目录会被打成 zip 上传（**总大小 ≤ 20MB，单文件 ≤ 5MB**），服务器解压后整盘覆盖到 CDN，旧文件会被清掉
+- 子页面通过相对路径访问（`href="about.html"`），CSS/JS 用相对路径（`href="css/style.css"`）
 - 首次发布 → 创建新站点，token 保存到 `~/clacky_workspace/oh-my-website/token.json`
-- 后续运行 → 更新主页面 + 逐页更新所有子页面
+- 后续运行 → 重新打 zip 整盘覆盖
 - 从 stdout 提取 `✅` 开头的 URL 返回给用户
 
-> 仅发布单个 HTML 文件时可用 `--html-file` 替代 `--dir`（向后兼容）。
+> 仅发布单个 HTML 文件时可用 `--html-file` 替代 `--dir`（内部会自动包成单文件 zip）。
+
+### 编辑现有网站（拉回来改）
+
+如果用户在另一台机器上想继续改，或本地 `~/clacky_workspace/oh-my-website/` 下没有源文件了：
+
+```bash
+ruby "SKILL_DIR/publish.rb" fetch --slug "SLUG" --out /path/to/edit
+```
+
+会把 CDN 上的整个 site zip 下载下来解压到 `--out` 目录。改完之后正常 `publish --dir` 即可。
 
 ### 删除网站
 
