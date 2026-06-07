@@ -1,140 +1,57 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{NAME}} — 首页</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{NAME}} - 个人主页</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="persona-coder">
 
-<nav>
-  <a href="index.html" class="nav-brand">{{NAME}}</a>
-  <button class="nav-toggle" aria-label="菜单">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
-    </svg>
-  </button>
-  <ul class="nav-links">
-    <li><a href="index.html" class="active">首页</a></li>
-    <li><a href="about.html">关于</a></li>
-    <li><a href="projects.html">项目</a></li>
-    <li><a href="blog.html">博客</a></li>
-    <li><a href="portfolio.html">作品</a></li>
-    <li><a href="product.html">产品</a></li>
-    <li><a href="resume.html">简历</a></li>
-    <li><a href="contact.html">联系</a></li>
-  </ul>
-</nav>
-
-<main>
-  <!-- 模块 1：全屏 Hero (Banner 左文右图 + 左下 Bento 提炼词) -->
-  <section class="apple-hero">
-    <!-- 背景巨型拼音字 -->
-    <div class="hero-bg-text">DUANXIAOYU</div>
-    
-    <div class="hero-left">
-      <h1 class="huge-title">{{NAME}}</h1>
-      <p class="hero-subtitle">{{SUBTITLE}}</p>
-      
-      <!-- 这里是 Banner 个人提炼词卡片。为了贴合占位符，我们将 {{TAGS}} 通过 CSS 重制成了左下角的 Bento 参数卡片形制 -->
-      <div class="hero-bento-stats">
-        {{TAGS}} 
-        <!-- 兜底备用：如果 TAGS 没有渲染出来，这里放 3 个默认示例占位卡保证结构 -->
-        <span class="fallback-stat"><strong>2026</strong><em>Since</em></span>
-        <span class="fallback-stat"><strong>Design</strong><em>Focus</em></span>
-        <span class="fallback-stat"><strong>10K+</strong><em>Hours</em></span>
-      </div>
-    </div>
-    <div class="hero-right">
-      <!-- 5 秒微放大的极致抠图占位 -->
-      <div class="zoom-avatar-wrap">
-        {{AVATAR}}
-      </div>
-    </div>
-  </section>
-
-  <!-- 模块 2：居中说明段落 (参考图中间的黑字描述) -->
-  <section class="apple-intro">
-    <p class="intro-eyebrow">Personal Concept</p>
-    <div class="intro-text">
-      {{META}}
-    </div>
-  </section>
-
-  <!-- 模块 3：巨型过场（半透明背景字 + 重叠模块） -->
-  <section class="apple-showcase">
-    <div class="bg-huge-text" aria-hidden="true">{{NAME}}</div>
-    <div class="showcase-content">
-      <div class="showcase-mock-img">
-        <!-- 替身占位：由于 AI 只提供一张 AVATAR，我们通过复用或特效制作中间的特写图 -->
-        <div class="mock-avatar">{{AVATAR}}</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 模块 4：底部项目展示 (经典 Apple Bento Grid，黑白混搭) -->
-  <section class="apple-bento-projects">
-    <div class="bento-grid-wrapper">
-      
-      <!-- 卡 1：深色大幅 -->
-      <div class="b-card b-large b-dark" style="grid-area: 1 / 1 / 3 / 3;">
-        <span class="b-eyebrow">Key Project</span>
-        <h3>Excellent Stability</h3>
-        <p>Advanced system rendering for {{SUBTITLE}}</p>
-      </div>
-
-      <!-- 卡 2：白色中幅 (横) -->
-      <div class="b-card b-wide b-light" style="grid-area: 1 / 3 / 2 / 5;">
-        <span class="b-eyebrow">Basic computing power</span>
-        <h3>Architecture</h3>
-      </div>
-
-      <!-- 卡 3 & 4：白色小幅 -->
-      <div class="b-card b-square b-light" style="grid-area: 2 / 3 / 3 / 4;">
-        <span class="b-eyebrow">Endurance</span>
-        <h3>9000mAh</h3>
-      </div>
-      
-      <div class="b-card b-square b-light" style="grid-area: 2 / 4 / 3 / 5;">
-        <span class="b-eyebrow">Duration</span>
-        <h3>2 hours</h3>
-      </div>
-
-      <!-- 卡 5：白色宽图幅 -->
-      <div class="b-card b-wide-image b-light" style="grid-area: 3 / 1 / 4 / 4;">
-        <div class="b-inner-text">
-          <span class="b-eyebrow">Intelligent system</span>
-          <h3>OTA upgrade</h3>
-          <p>Next-gen platform integration.</p>
+    <!-- 顶部 Banner / Hero 区域，确保恰好一屏高度 -->
+    <header id="home" class="hero">
+        
+        <!-- 巨大水印背书：默认展示拼音，极其淡的颜色 -->
+        <div class="hero-watermark">
+            <!-- 这个默认可以用 JS 或者后端去剥离，目前我们做死样式，到时候可以用插值占位 -->
+            {{NAME_PINYIN|ZHANG SAN}}
         </div>
-      </div>
 
-      <!-- 卡 6：深色竖幅图 -->
-      <div class="b-card b-tall b-dark" style="grid-area: 3 / 4 / 4 / 5; min-height: 250px;">
-        <span class="b-eyebrow">Ecosystem</span>
-        <h3>Speaker</h3>
-      </div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <!-- 名字与身份 -->
+                <h1 class="hero-title">{{NAME}}</h1>
+                <p class="hero-subtitle">{{ROLE_LABEL|新媒体运营}}</p>
+            </div>
+            
+            <!-- 人像区域，留出宽裕空间 -->
+            <div class="hero-image">
+                <img src="hero-sample.png" alt="人像" />
+            </div>
+        </div>
 
-    </div>
-  </section>
-</main>
+        <!-- 底部数据/标签栏，毛玻璃质感 -->
+        <div class="hero-stats-wrapper">
+            <div class="hero-stats">
+                <div class="stats-label">
+                    <span>个人标签</span>
+                    <span class="arrow-circle">
+                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </span>
+                </div>
+                <div class="stats-list">
+                    <div class="stat-item">{{YEARS_EXPERIENCE|10}}年经验</div>
+                    <div class="stat-item">10W+粉丝</div>
+                    <div class="stat-item">GW认证</div>
+                </div>
+            </div>
+        </div>
+    </header>
 
-<footer>
-  <div class="footer-actions">
-    <button class="footer-btn" onclick="toggleQR()">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
-      扫码访问
-    </button>
-    <button class="footer-btn" onclick="copyLink(this)">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      复制链接
-    </button>
-  </div>
-  <div>&copy; {{YEAR}} {{NAME}}</div>
-</footer>
+    <!-- 主体内容区（后续模块扩展处） -->
+    <main style="height: 100vh; display: flex; align-items: center; justify-content: center; background: #fff; color: #ccc;">
+        <h2>下方模块尚未开发...</h2>
+    </main>
 
-<script src="js/qrcode.min.js"></script>
-<script src="js/script.js"></script>
 </body>
 </html>
