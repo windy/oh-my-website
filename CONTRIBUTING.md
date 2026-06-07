@@ -56,7 +56,9 @@ oh-my-website/
 │   └── stock/
 │       ├── works/*.svg      ← 作品图占位（程序化生成的渐变 SVG）
 │       └── avatars/*.svg    ← 头像占位
-├── publish.rb               ← 发布到 showcode 的脚本（贡献者一般不动）
+├── scripts/
+│   ├── publish.rb           ← 发布到 showcode 的脚本
+│   └── matting.rb           ← AI 抠图脚本
 ├── SKILL.md                 ← 给 AI 看的运行手册（贡献者一般不动）
 └── CONTRIBUTING.md          ← 你正在看的这份
 ```

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- avatar-3: 沈知秋，盘发，奶油+橄榄绿 -->
+  <defs>
+    <clipPath id="c3"><circle cx="60" cy="60" r="60"/></clipPath>
+  </defs>
+  <g clip-path="url(#c3)">
+    <rect width="120" height="120" fill="#F2E8D5"/>
+    <!-- 脸 -->
+    <ellipse cx="60" cy="64" rx="22" ry="25" fill="#EBC9A4"/>
+    <!-- 盘发：头顶丸子 -->
+    <ellipse cx="60" cy="34" rx="11" ry="9" fill="#4a2818"/>
+    <!-- 包裹刘海+鬓发 -->
+    <path d="M38 56 Q40 38 60 38 Q80 38 82 56 Q78 46 60 44 Q42 46 38 56 Z" fill="#4a2818"/>
+    <!-- 鬓发碎发 -->
+    <path d="M40 56 Q36 70 39 84" stroke="#4a2818" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M80 56 Q84 70 81 84" stroke="#4a2818" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- 颈+肩 -->
+    <rect x="51" y="84" width="18" height="13" fill="#EBC9A4"/>
+    <path d="M22 120 Q22 95 60 95 Q98 95 98 120 Z" fill="#7A8068"/>
+    <!-- 耳环 -->
+    <circle cx="38" cy="68" r="1.8" fill="#C9A57B"/>
+    <circle cx="82" cy="68" r="1.8" fill="#C9A57B"/>
+    <!-- 五官 -->
+    <ellipse cx="52" cy="64" rx="1.6" ry="2.2" fill="#3a1f10"/>
+    <ellipse cx="68" cy="64" rx="1.6" ry="2.2" fill="#3a1f10"/>
+    <path d="M55 75 Q60 78 65 75" stroke="#a55a30" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

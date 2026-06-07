@@ -41,11 +41,148 @@
     </div>
   </div>
   <div class="hero-visual">
-    <span class="placeholder-mark">{{HERO_INITIAL}}</span>
-    <!-- 用户提供照片时，Agent 把这一行替换为：
-         <img src="data:image/jpeg;base64,..." alt="{{NAME}}"> -->
+    <img src="{{HERO_IMAGE}}" alt="{{NAME}}" class="hero-portrait">
   </div>
 </main>
+
+<!-- ============================================================
+     Services — 左标题列 + 右 2×2 卡片网格
+     ============================================================ -->
+<section class="services">
+  <div class="services-intro">
+    <h2 class="services-heading">{{SERVICES_HEADING|我能为你做什么}}</h2>
+    <p class="services-lead">{{SERVICES_LEAD|每个项目都从一次轻松的对话开始。}}</p>
+    <a href="contact.html" class="services-cta">聊聊合作 →</a>
+  </div>
+
+  <div class="services-grid">
+    <article class="service-card service-card--featured">
+      <span class="service-badge">最常合作</span>
+      <h3 class="service-title">{{SERVICE_1_TITLE|品牌设计}}</h3>
+      <p class="service-meta">{{SERVICE_1_META|起价 ¥12,000 · 4 周交付}}</p>
+      <p class="service-desc">{{SERVICE_1_DESC|从 logo、色彩、字体到延展物料的完整品牌系统。}}</p>
+    </article>
+
+    <article class="service-card">
+      <h3 class="service-title">{{SERVICE_2_TITLE|网站视觉}}</h3>
+      <p class="service-meta">{{SERVICE_2_META|起价 ¥8,000 · 3 周交付}}</p>
+      <p class="service-desc">{{SERVICE_2_DESC|落地页、品牌站、作品集站点的视觉与交互设计。}}</p>
+    </article>
+
+    <article class="service-card">
+      <h3 class="service-title">{{SERVICE_3_TITLE|插画定制}}</h3>
+      <p class="service-meta">{{SERVICE_3_META|起价 ¥3,000 / 张}}</p>
+      <p class="service-desc">{{SERVICE_3_DESC|海报、书籍封面、社交媒体配图等手绘风格创作。}}</p>
+    </article>
+
+    <article class="service-card">
+      <h3 class="service-title">{{SERVICE_4_TITLE|长期顾问}}</h3>
+      <p class="service-meta">{{SERVICE_4_META|按月议价}}</p>
+      <p class="service-desc">{{SERVICE_4_DESC|为成长期团队提供持续的视觉指导与设计评审。}}</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============================================================
+     Projects — 精选作品 3×2 网格
+     ============================================================ -->
+<section class="projects">
+  <header class="projects-header">
+    <h2 class="projects-heading">{{PROJECTS_HEADING|精选作品}}</h2>
+    <p class="projects-lead">{{PROJECTS_LEAD|过去几年里那些让我自己也满意的项目。}}</p>
+  </header>
+
+  <div class="projects-grid">
+    <a class="project-card" href="{{PROJECT_1_URL|#}}">
+      <div class="project-cover"><img src="{{PROJECT_1_IMAGE|stock/works/work-1.svg}}" alt="{{PROJECT_1_TITLE|项目一}}" loading="lazy"></div>
+      <div class="project-info">
+        <h3 class="project-title">{{PROJECT_1_TITLE|温室花艺品牌全案}}</h3>
+        <p class="project-meta">{{PROJECT_1_CATEGORY|品牌设计}} · {{PROJECT_1_YEAR|2025}}</p>
+      </div>
+    </a>
+
+    <a class="project-card" href="{{PROJECT_2_URL|#}}">
+      <div class="project-cover"><img src="{{PROJECT_2_IMAGE|stock/works/work-2.svg}}" alt="{{PROJECT_2_TITLE|项目二}}" loading="lazy"></div>
+      <div class="project-info">
+        <h3 class="project-title">{{PROJECT_2_TITLE|独立书店视觉系统}}</h3>
+        <p class="project-meta">{{PROJECT_2_CATEGORY|品牌设计}} · {{PROJECT_2_YEAR|2024}}</p>
+      </div>
+    </a>
+
+    <a class="project-card" href="{{PROJECT_3_URL|#}}">
+      <div class="project-cover"><img src="{{PROJECT_3_IMAGE|stock/works/work-3.svg}}" alt="{{PROJECT_3_TITLE|项目三}}" loading="lazy"></div>
+      <div class="project-info">
+        <h3 class="project-title">{{PROJECT_3_TITLE|城市记忆插画集}}</h3>
+        <p class="project-meta">{{PROJECT_3_CATEGORY|插画定制}} · {{PROJECT_3_YEAR|2024}}</p>
+      </div>
+    </a>
+
+    <a class="project-card" href="{{PROJECT_4_URL|#}}">
+      <div class="project-cover"><img src="{{PROJECT_4_IMAGE|stock/works/work-4.svg}}" alt="{{PROJECT_4_TITLE|项目四}}" loading="lazy"></div>
+      <div class="project-info">
+        <h3 class="project-title">{{PROJECT_4_TITLE|手作工坊网站}}</h3>
+        <p class="project-meta">{{PROJECT_4_CATEGORY|网站视觉}} · {{PROJECT_4_YEAR|2024}}</p>
+      </div>
+    </a>
+
+    <a class="project-card" href="{{PROJECT_5_URL|#}}">
+      <div class="project-cover"><img src="{{PROJECT_5_IMAGE|stock/works/work-5.svg}}" alt="{{PROJECT_5_TITLE|项目五}}" loading="lazy"></div>
+      <div class="project-info">
+        <h3 class="project-title">{{PROJECT_5_TITLE|展览主视觉海报}}</h3>
+        <p class="project-meta">{{PROJECT_5_CATEGORY|海报设计}} · {{PROJECT_5_YEAR|2023}}</p>
+      </div>
+    </a>
+
+    <a class="project-card" href="{{PROJECT_6_URL|#}}">
+      <div class="project-cover"><img src="{{PROJECT_6_IMAGE|stock/works/work-6.svg}}" alt="{{PROJECT_6_TITLE|项目六}}" loading="lazy"></div>
+      <div class="project-info">
+        <h3 class="project-title">{{PROJECT_6_TITLE|播客封面设计}}</h3>
+        <p class="project-meta">{{PROJECT_6_CATEGORY|插画定制}} · {{PROJECT_6_YEAR|2023}}</p>
+      </div>
+    </a>
+  </div>
+
+  <a href="{{PROJECTS_MORE_URL|projects.html}}" class="projects-more">查看全部作品 →</a>
+</section>
+
+<section class="testimonials">
+  <header class="testimonials-header">
+    <h2 class="testimonials-heading">{{TESTIMONIALS_HEADING|1000+ 好评推荐}}</h2>
+    <a href="{{TESTIMONIALS_MORE_URL|#}}" class="testimonials-more">查看全部评价 →</a>
+  </header>
+  <div class="testimonials-grid">
+    <article class="testimonial-card">
+      <p class="testimonial-quote">{{TESTIMONIAL_1_QUOTE|"和她合作后，我们品牌不只是好看，而是能被人记住。她对色彩和气质的把握很有自己一套，每次提案都让我惊喜。"}}</p>
+      <div class="testimonial-meta">
+        <img class="testimonial-avatar" src="{{TESTIMONIAL_1_AVATAR|/__omw_stock/avatars-warm/avatar-1.svg}}" alt="头像" loading="lazy">
+        <div class="testimonial-person">
+          <div class="testimonial-stars" aria-label="{{TESTIMONIAL_1_RATING|5}}星好评">★★★★★</div>
+          <div class="testimonial-name">{{TESTIMONIAL_1_NAME|林小满 · 品牌主理人}}</div>
+        </div>
+      </div>
+    </article>
+    <article class="testimonial-card">
+      <p class="testimonial-quote">{{TESTIMONIAL_2_QUOTE|"沟通起来非常顺畅，她会先听你想说什么，再用画面替你说出来。交付的物料质量也很稳，每个细节都打磨过。"}}</p>
+      <div class="testimonial-meta">
+        <img class="testimonial-avatar" src="{{TESTIMONIAL_2_AVATAR|/__omw_stock/avatars-warm/avatar-2.svg}}" alt="头像" loading="lazy">
+        <div class="testimonial-person">
+          <div class="testimonial-stars" aria-label="{{TESTIMONIAL_2_RATING|5}}星好评">★★★★★</div>
+          <div class="testimonial-name">{{TESTIMONIAL_2_NAME|周野 · 独立厂牌创始人}}</div>
+        </div>
+      </div>
+    </article>
+    <article class="testimonial-card">
+      <p class="testimonial-quote">{{TESTIMONIAL_3_QUOTE|"找她做了一整套店铺视觉，到货那天我们团队都觉得：'对，就是这种气质。'她真的能把空间的温度做出来。"}}</p>
+      <div class="testimonial-meta">
+        <img class="testimonial-avatar" src="{{TESTIMONIAL_3_AVATAR|/__omw_stock/avatars-warm/avatar-3.svg}}" alt="头像" loading="lazy">
+        <div class="testimonial-person">
+          <div class="testimonial-stars" aria-label="{{TESTIMONIAL_3_RATING|5}}星好评">★★★★★</div>
+          <div class="testimonial-name">{{TESTIMONIAL_3_NAME|沈知秋 · 咖啡馆主理人}}</div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
 
 <footer>
   <button class="footer-btn" onclick="toggleQR()">

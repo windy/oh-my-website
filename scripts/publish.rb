@@ -401,7 +401,8 @@ def cmd_fetch(slug: nil, out_dir: nil)
         dest = File.join(out_dir, rel)
         FileUtils.mkdir_p(File.dirname(dest))
         File.delete(dest) if File.exist?(dest)
-        entry.extract(dest)
+        # 用 IO 写入更稳（rubyzip 2.x/3.x extract 签名不同）
+        File.binwrite(dest, entry.get_input_stream.read)
       end
     end
 
@@ -463,16 +464,14 @@ when "publish"
     opts.on("--html-file FILE") { |v| options[:html_file] = v }
     opts.on("--dir DIR")        { |v| options[:dir]       = v }
   end.parse!
-  unless options[:name]
-    warn "Usage: ruby publish.rb publish --name NAME [--html-file FILE | --dir DIR]"
-    exit 1
-  end
   if options[:dir]
+    options[:name] ||= File.basename(File.expand_path(options[:dir]))
     publish_dir(name: options[:name], dir: File.expand_path(options[:dir]), slug: options[:slug])
   elsif options[:html_file]
+    options[:name] ||= File.basename(options[:html_file], ".*")
     publish_single(name: options[:name], html_file: File.expand_path(options[:html_file]), slug: options[:slug])
   else
-    warn "❌ Must specify --html-file or --dir"
+    warn "Usage: ruby publish.rb publish [--name NAME] [--slug SLUG] [--html-file FILE | --dir DIR]"
     exit 1
   end
 

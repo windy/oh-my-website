@@ -1,0 +1,11 @@
+{
+  "id": "minimal",
+  "name": "极简白",
+  "description": "大量留白、细线分割、黑白灰+单一强调色、无衬线、克制排版",
+  "suitable_for": ["coder", "professional", "founder", "student"],
+  "style_tags": ["简洁", "克制", "现代", "专业"],
+  "persona_classes": ["persona-coder", "persona-student", "persona-founder"],
+  "preview_colors": { "bg": "#ffffff", "text": "#1a1a1a", "accent": "#0066cc" },
+  "default_bg": "bg-gradient-flow",
+  "pages": ["index", "about", "projects", "blog", "portfolio", "product", "resume", "contact"]
+}

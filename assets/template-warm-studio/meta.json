@@ -1,0 +1,11 @@
+{
+  "id": "warm-studio",
+  "name": "暖意工作室",
+  "description": "暖米色+深咖啡+大粗标题+左文右图hero，柔和温暖，适合生活方式/自由职业",
+  "suitable_for": ["designer", "writer", "founder"],
+  "style_tags": ["温暖", "柔和", "左文右图", "女性友好"],
+  "persona_classes": ["persona-designer", "persona-writer", "persona-founder"],
+  "preview_colors": { "bg": "#ECE3D6", "text": "#2E2520", "accent": "#3D2F2A" },
+  "default_bg": "bg-gradient-flow",
+  "pages": ["index", "about", "projects", "blog", "portfolio", "product", "resume", "contact"]
+}

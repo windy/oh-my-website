@@ -1,0 +1,11 @@
+{
+  "id": "magazine",
+  "name": "杂志风",
+  "description": "超大衬线标题、暖米白底+一抹强调色、不对称排版、大序号+粗分割线",
+  "suitable_for": ["designer", "writer", "academic"],
+  "style_tags": ["设计感", "文艺", "不对称", "大胆"],
+  "persona_classes": ["persona-designer", "persona-writer"],
+  "preview_colors": { "bg": "#fefaf3", "text": "#2c2416", "accent": "#d44a2c" },
+  "default_bg": "bg-geo-float",
+  "pages": ["index", "about", "portfolio", "contact"]
+}
