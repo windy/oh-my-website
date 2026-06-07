@@ -333,6 +333,12 @@ cat SKILL_DIR/assets/template-*/meta.json | ruby -rjson -e '
 
 **步骤**：
 
+0. **必须先读模板 README.md**：
+   ```bash
+   cat SKILL_DIR/assets/template-<ID>/README.md
+   ```
+   里面描述了该模板的图片处理要求（哪些位置要抠图、哪些不需要）、注意事项和特殊约束。填充内容前必须读完。
+
 1. 复制所选模板到独立临时目录：
    ```bash
    SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
