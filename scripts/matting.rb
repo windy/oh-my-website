@@ -140,9 +140,16 @@ MAX_POLLS.times do |i|
 
   case status["status"]
   when "completed"
-    result_url = "#{API_HOST}#{status["result_url"]}"
+    raw_url = status["result_url"]
+    # API 返回的 result_url 可能已是完整 URL（含 https://），也可能只是 path
+    result_url = raw_url.start_with?("http") ? raw_url : "#{API_HOST}#{raw_url}"
     log "完成！下载: #{result_url}"
-    http_download(result_url, tmp_output, token: tk)
+    begin
+      http_download(result_url, tmp_output, token: tk)
+    rescue => e
+      log "Ruby HTTP 下载失败 (#{e.class})，回退到 curl..."
+      system("curl", "-s", "-L", "-H", "Authorization: Bearer #{tk}", "-o", tmp_output, result_url, exception: true)
+    end
 
     if options[:resize]
       log "Resize 到 #{options[:resize]}px..."
