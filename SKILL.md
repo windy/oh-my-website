@@ -1,6 +1,6 @@
 ---
 name: oh-my-website
-description: '生成个性化多页个人网站（独立 HTML 文件 + 共享 CSS/JS），5 种身份自动匹配页面结构，3 套视觉风格预置完整代码。也支持模板开发预览模式（给设计师/贡献者改主题用）。触发词：个人网站、个人主页、个人站、personal website、帮我做个网站、做个人站、生成我的主页、我的网站；以及：开发模板、做新模板、加个主题、做个新主题、改模板、改主题、template dev、新增模板、贡献模板、模板预览、预览模板。'
+description: '生成个性化多页个人网站（独立 HTML 文件 + 共享 CSS/JS），N 种身份自动匹配页面结构，多套视觉风格动态发现（扫描 assets/template-*/meta.json）。也支持模板开发预览模式（给设计师/贡献者改主题用，仅用户明确说"开发模板/改主题"时触发）。触发词：个人网站、个人主页、个人站、personal website、帮我做个网站、做个人站、生成我的主页、我的网站；以及：开发模板、做新模板、加个主题、做个新主题、改模板、改主题、template dev、新增模板、贡献模板、模板预览、预览模板。'
 disable-model-invocation: false
 user-invocable: true
 ---
@@ -11,14 +11,14 @@ user-invocable: true
 
 ## ⚡️ 入口分流（必读，触发时第一步执行）
 
-技能触发后，先判断用户的真实意图，分流到不同流程：
+技能触发后，先判断用户的真实意图：
 
 | 用户说什么 | 走哪条路 |
 |----------|---------|
-| 帮我做个网站 / 做个人主页 / 生成我的网站 / 做个人站 | **流程 A：生成用户网站** → 走「开场白 + Step 0~6」 |
 | 开发模板 / 做新模板 / 改模板 / 改主题 / 加个主题 / 做个新主题 / 预览模板 / 模板开发 / 我想贡献模板 | **流程 B：模板开发预览模式** → 跳到下方「模板开发模式」节，**不要**走开场白 |
+| 其他一切（帮我做个网站 / 做个人主页 / 生成我的网站 / 做个人站 / 个人网站 / 甚至只说"网站"） | **流程 A：生成用户网站** → 走「开场白 + Step 0~6」 |
 
-如果模糊（比如只说"网站"），主动问一句："你是想给自己生成一个个人网站，还是想参与模板开发（改主题样式）？"
+**除非用户明确说"开发/修改/预览模板"，否则一律走流程 A。** 不要问"你想生成网站还是开发模板"——绝大多数用户就是来建站的。
 
 ---
 
@@ -36,10 +36,10 @@ ruby SKILL_DIR/dev/server.rb
 
 > 已经开了模板开发模式，预览服务器跑在 http://localhost:4567/。
 >
-> 浏览器顶部有工具条，可以在线切换：
-> - **模板**：当前所有 `template-*`
-> - **身份**：7 套示例数据（程序员 / 设计师 / 写作者 / 学者 / 专业服务 / 创业者 / 学生）
-> - **设备宽度**：桌面 / 平板 / 手机
+> 用 URL 参数切换（无工具栏，纯链接）：
+> - `?persona=designer` → 切换身份预览
+> - `?template=minimal` → 切换模板
+> - `?template=minimal&persona=writer` → 同时切换
 >
 > 想改样式直接编辑 `assets/template-XXX/` 下的 HTML/CSS，刷新就能看到。
 > **改满意了告诉我「保存提交」**，我会帮你建主题分支并 commit/push，避免丢数据。
@@ -89,11 +89,15 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 ## 开场白（流程 A — 生成用户网站时使用）
 
-当用户**触发本 skill 且意图是生成自己的网站**时，先用以下话术介绍自己：
+当用户触发本 skill 且意图是生成自己的网站时，先用以下话术介绍自己（**原话级别贴近**）：
 
-> 我可以帮你生成一个**精美漂亮的个人网站**，自动匹配你的身份和风格，**完全免费**，**自动部署上线**，整个过程只需要 **10 分钟**左右。你只需要回答几个简单问题，剩下的我来搞定
+> 我可以帮你生成一个漂亮美观的个人网站，自动匹配你的身份和风格，**完全免费**，**自动部署上线**，整个过程只需要 **10 分钟**左右。之后你可以随时找我迭代修改。
+>
+> 你只需要回答几个简单问题，剩下的我来搞定。
 
-然后立即进入 **Step 0 检查已有网站**。
+话术要点：
+- 必须涵盖：漂亮美观、10 分钟、免费部署、可不断迭代
+- 说完**立刻进入 Step 0 检查已有网站**，不要再问"要不要开始"之类的废话
 
 ---
 
@@ -259,11 +263,7 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 > C. 杂志排版，设计感强
 > D. 你帮我定
 
-**Q4 解析**：
-- 选 A → Agent 追问"有想放首屏的照片吗？"（本地路径或可下载链接）。下一步走 hero-image 模板（待开发，暂用 minimal + 大图 hero section 代替）
-- 选 B → 极简白
-- 选 C → 杂志风
-- 选 D → Agent 按 Q2 类型自动匹配（见 Step 3）
+**Q4 解析**：见 Step 3 匹配规则。Q4 的 A/B/C/D 直接对应模板选择方向。
 
 ### Q5. 有想放的社交/平台链接吗？（一句话，可跳过）
 
@@ -283,19 +283,47 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 ## Step 3 — 选择视觉风格
 
-### 三套风格
+### 动态发现模板
 
-| 风格 | 种子模板 | 配色参考 | 特征 | 适合 |
-|-----|---------|---------|------|------|
-| **极简白** | `assets/template-minimal/` | `references/themes-minimal.md` | 大量留白、细线分割、黑白灰 + 单一强调色、无衬线、克制排版 | A（代码/产品）、E（专业服务）、F（创业）、G（学生） |
-| **杂志风** | `assets/template-magazine/` | `references/themes-magazine.md` | 超大衬线标题、暖米白底 + 一抹强调色、不对称排版、大序号 + 粗分割线 | B（设计/创意）、C（内容）、D（学术） |
-| **暗色极客** _(待开发)_ | — | — | 深色背景、霓虹强调色、等宽字体元素、终端美学 | 偏好极客审美的用户 |
+**不要硬编码模板名。** 每次触发时动态扫描：
+
+```bash
+cat SKILL_DIR/assets/template-*/meta.json | ruby -rjson -e '
+  ARGF.each_line do |line|
+    next unless line.strip.length > 0
+    m = JSON.parse(line)
+    puts "#{m["id"]} | #{m["name"]} | #{m["description"]} | 适合: #{m["suitable_for"].join(", ")} | 标签: #{m["style_tags"].join(", ")}"
+  end
+'
+```
+
+把结果按以下格式展示给用户（括号中标注适合的身份类型）：
+
+> 可用的视觉风格（从模板目录自动发现）：
+> 1. **极简白** − 大量留白、细线分割、克制排版（适合 写代码/专业服务/创业/学生）
+> 2. **杂志风** − 衬线大字、不对称排版、设计感（适合 设计/内容/学术）
+> 3. **暖意工作室** − 暖米色+深咖啡、柔和温暖（适合 设计/内容/创业）
+>
+> 你偏好哪种？或者选 D 让我帮你匹配。
 
 ### 匹配规则
 
-1. Q4 用户选了风格 → 用用户选的（Q4-A → hero 方向 / Q4-B → 极简白 / Q4-C → 杂志风 / Q4-D → Agent 按身份自动匹配）
-2. Agent 自动匹配：B/C/D（设计/内容/学术）→ 杂志风，A/E/F/G（代码/专业服务/创业/学生）→ 极简白
-3. 没有对应种子模板 → 用最接近的模板 + 调整 CSS 变量。例如想用暗色极客但只有极简白模板时，将 `--bg` 改为 `#0d1117`，`--text` 改为 `#c9d1d9`，强调色改为霓虹绿 `#3fb950`
+**Q4 选择优先**：
+- Q4-A → hero 方向（大图首屏），选包含 hero section 的模板
+- Q4-B → 极简白（minimal）
+- Q4-C → 杂志风（magazine）
+- Q4-D → Agent 按下方身份规则自动匹配
+
+**用户选 D 或不表态时**，根据 `meta.json` 的 `suitable_for` 字段和用户 Q2 身份匹配：
+
+| 用户身份类型 | 匹配规则 |
+|------------|---------|
+| 设计/内容/学术 (B/C/D) | 优先 magazine，其次 warm-studio |
+| 代码/专业服务/创业/学生 (A/E/F/G) | 优先 minimal，其次 warm-studio |
+
+- 没有完全匹配的模板 → 选 `suitable_for` 列表里包含用户身份的第一个，或最接近的
+- 如果用户 Q4 明确选了风格 → 尊重用户选择，不覆盖
+- 没有对应种子模板 → 用最接近的模板 + 调整 CSS 变量（如暗色方向：`--bg: #0d1117; --text: #c9d1d9; --accent: #3fb950`）
 
 ---
 
@@ -303,35 +331,25 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 ### 选择种子模板
 
-| 风格 | 目录 | 适合 | 内置页面 |
-|------|------|------|---------|
-| **极简白** | `assets/template-minimal/` | A/E/F/G（代码/专业服务/创业/学生） | index / about / projects / blog / portfolio / product / resume / contact |
-| **杂志风** | `assets/template-magazine/` | B/C/D（设计/内容/学术） | index / about / portfolio / contact（更精简，无 blog/projects/resume） |
+**动态发现模板，不要硬编码。** 从 Step 3 扫描到的 `meta.json` 列表中选匹配用户身份的模板。
 
-**选择规则**：
+提取所选模板的 `pages` 字段得知可用页面列表，提取 `persona_classes` 字段得知支持的 body class。
 
-1. 用户 Q2 选了 B/C/D（设计/内容/学术） → 默认用 **杂志风**
-2. 用户 Q4 选 B"极简白底" → 极简白
-3. 用户 Q4 选 C"杂志排版" → 杂志风
-4. 用户 Q4 选 A"大图冲击" → 当前用极简白 + 大幅 hero section（含 base64 内联照片），待 hero-image 模板开发后切换
-5. D 类用户（学术）想用极简白 → 极简白 + `persona-writer` body class
-6. A 类用户（代码）想要文艺感 → 杂志风（但建议先确认，杂志风更适合作品展示而非项目列表）
+**步骤**：
 
-### 种子模板用法
+0. **必须先读模板 README.md**：
+   ```bash
+   cat SKILL_DIR/assets/template-<ID>/README.md
+   ```
+   里面描述了该模板的图片处理要求（哪些位置要抠图、哪些不需要）、注意事项和特殊约束。填充内容前必须读完。
 
-1. **创建独立临时目录并复制模板**（按风格选其一，每次生成独立目录不覆盖）：
+1. 复制所选模板到独立临时目录：
    ```bash
    SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
-   cp -r SKILL_DIR/assets/template-minimal "$SITE_DIR"    # 极简白
-   # 或
-   cp -r SKILL_DIR/assets/template-magazine "$SITE_DIR"   # 杂志风
+   cp -r SKILL_DIR/assets/template-<ID> "$SITE_DIR"
    ```
-2. **切换配色**：编辑 `css/style.css`，从对应 `references/themes-XXX.md` 选一套主题，替换 `:root{}` 块
-3. **删除不需要的页面**：根据身份映射表，删除不需要的 HTML 文件
-4. **清理导航**：在每个保留的 HTML 文件中，删除导航中对应已删除页面的 `<li>`
-5. **填充内容**：逐个编辑每个 HTML 文件，替换 `{{PLACEHOLDER}}` 标记
-6. **加身份字体 class**：在 `<body>` 加 `class="persona-XXX"`（见 Step 4.4）
-7. **调整文案**：确保自我介绍、项目描述等文案自然流畅
+2. 如果偏好的模板内置页面不够，可以从页面更全的模板中补拷需要的 HTML 文件
+3. 后续按 Step 4 流程：删不需要的页面 → 清理导航 → 填充内容
 
 ### 模板目录结构
 
@@ -472,37 +490,114 @@ template-minimal/
 
 ## Step 4.5 — 媒体处理规约（图片 / 视频 / 动态背景）
 
-> **核心原则：零外部资源依赖。所有图片、视频、字体、CDN 必须本地化或内联。**
-> 任何"贴个外链"的偷懒方案在国内用户那里都会挂掉，**禁止使用**。
+> **核心原则：图片直接放进站点目录，发布时整盘打 zip 推送到 CDN。**
+> 不再 base64 内联（zip 体积可控 + 浏览器缓存友好）。
+> 仍然禁止任何"贴个外链"：所有素材必须本地化在站点目录里。
 
-### 图片：默认内联 base64
+### 图片：放在 `images/` 下，HTML 里引相对路径
 
 #### 流程
 
-1. 用户给出本地图片路径或外链。
-2. 检查文件大小：
-   - **< 200KB** → 直接 base64 内联到 HTML
-   - **≥ 200KB** → 先压缩，压完仍 ≥ 200KB 提示用户换图或缩小尺寸
-3. 写入 HTML：`<img src="data:image/jpeg;base64,...">`
+1. 站点目录约定（template 已预置）：
+   ```
+   site/
+     index.html
+     about.html
+     css/style.css
+     js/script.js
+     images/         ← 用户图片放这里
+       avatar.jpg
+       project-1.jpg
+   ```
+2. 拿到用户图片后：
+   - 压缩（见下方命令）
+   - 复制到 `images/` 下，文件名用语义化的英文 + 小写
+   - HTML 里用 **相对路径** 引用：`<img src="images/avatar.jpg" alt="...">`
+3. **不要**用 `data:` URL，不要 base64 内联。
+
+#### 单文件 / 总大小限制
+
+| 项 | 限制 |
+|----|------|
+| 单个文件 | ≤ 5MB |
+| 整个 zip 总大小 | ≤ 20MB |
+| 图片建议尺寸 | 头像 ≤ 400×400；横图 ≤ 1600px 长边 |
+| 图片建议体积 | 单图 ≤ 300KB（首屏可见图最好 ≤ 100KB） |
+
+> ⚠️ **压缩黄金法则：宁大勿糊。** 用户说"糊"是最高优先级投诉——远比"加载慢"严重。
+> Hero 区大图 / 用户照片：优先保留原始分辨率，仅当超过 5MB 限制时才压缩。
+> 头像：400px 足够。普通配图：1200px 长边。**不要自作主张压小 hero 图。**
+
+超限 `publish.rb` 会直接报错。
 
 #### 压缩命令（macOS 自带 sips）
 
 ```bash
-# JPEG 压缩到最长边 1200px，质量 60
-sips -Z 1200 -s formatOptions 60 input.jpg --out /tmp/compressed.jpg
+# 原则：先看原始尺寸，再决定压多少。不确定就少压。
+sips -g pixelWidth -g pixelHeight input.jpg  # 先看原始尺寸
 
-# PNG 压缩到最长边 800px
-sips -Z 800 input.png --out /tmp/compressed.png
+# Hero 大图 — 不压缩分辨率，只降 JPEG 质量（保持 1200px+ 宽）
+sips -s formatOptions 80 input.jpg --out images/hero.jpg
 
-# 转 base64 并写入剪贴板（Agent 可读取拼到 HTML）
-base64 -i /tmp/compressed.jpg | tr -d '\n'
+# 普通配图 — 最长边 1200px，质量 70
+sips -Z 1200 -s formatOptions 70 input.jpg --out images/photo.jpg
+
+# 头像 — 400px 足够
+sips -Z 400 -s formatOptions 80 avatar-orig.jpg --out images/avatar.jpg
+
+# PNG 抠图结果 — 不要再压缩分辨率！原始分辨率直出
+# 如果 PNG 太大（>2MB），用 sips -s formatOptions 降低 PNG 质量
+sips -s formatOptions 60 input.png --out images/output.png
 ```
 
-头像建议先 `sips -Z 400`（400px 足够），多数能压到 50KB 以内。
+### AI 抠图（背景移除）
+
+> **人像照片 / 自拍自动去背景**，基于腾讯云数据万象 AI 人像分割。
+> 当用户提供了带背景的人像照片（头像、自拍、Hero 图），**主动询问是否去背景**。
+
+#### 使用场景
+
+| 用户给的图片 | 建议处理 |
+|------------|---------|
+| 自拍 / 人像照片（有背景） | **问一句"要不要去掉背景？效果更干净"** |
+| 已有透明背景的 PNG | 跳过 |
+| 纯景物 / 截图 / Logo | 跳过（抠图无意义） |
+
+#### 用户同意后执行
+
+抠图脚本通过 showcode.com 生产 API 完成，需要已登录。先检查登录状态：
+
+```bash
+ruby "SKILL_DIR/scripts/publish.rb" whoami
+```
+
+如果未登录，引导用户注册/登录（见下方「账户管理」节）。
+
+已登录则直接调用抠图脚本：
+
+```bash
+# Hero 大图抠图 — 保留原始分辨率
+ruby "SKILL_DIR/scripts/matting.rb" PHOTO.jpg images/hero.png
+
+# 头像抠图 — 缩小到 400px
+ruby "SKILL_DIR/scripts/matting.rb" --resize 400 AVATAR_ORIG.jpg images/avatar.png
+```
+
+成功则输出到指定路径（PNG 透明背景），失败返回非 0 退出码。
+
+HTML 里用抠图后的图片：`<img src="images/avatar.png" alt="...">`
+
+#### 注意事项
+
+- 输入图片 ≤ 10MB；抠图结果保留透明背景（PNG）
+- matting.rb 下载时有 SSL 兼容性问题时会自动回退到 curl，不用手动干预
+- 抠图结果默认 **原始分辨率**（不压缩），PNG 体积可能较大（300-500KB），这是正常的
+- 如果抠图失败（exit code ≠ 0），**静默回退用原图**，不中断流程
+- 用户说"不用去背景 / 保留原图" → 直接跳过
 
 #### 外链域名禁用清单
 
-**绝对禁止**生成 `<img src>` 指向以下任一域名（国内访问不稳或被墙）：
+**禁止**让 `<img src>` 指向以下任一域名（国内访问不稳）：
 
 ```
 github.com / raw.githubusercontent.com / objects.githubusercontent.com
@@ -517,14 +612,14 @@ twimg.com / pbs.twimg.com
 
 #### 用户给了外链怎么办
 
-1. 先用 `curl -I` 或 `curl -o` 把图片**下载到本地**：
-   ```bash
-   curl -L -o /tmp/user_img.jpg "USER_PROVIDED_URL"
-   ```
-2. 然后走标准内联流程（压缩 + base64）。
-3. 如果 curl 失败（403/404/超时）→ 告诉用户该链接拿不到图，请换一个或直接给本地文件路径。
+```bash
+curl -L -o /tmp/user_img.jpg "USER_PROVIDED_URL"
+sips -Z 1200 -s formatOptions 70 /tmp/user_img.jpg --out images/photo.jpg
+```
 
-**永远不要**直接把外链 URL 粘到 HTML 里，哪怕用户坚持。
+curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直接给本地文件路径。
+
+**永远不要**把外链 URL 直接粘到 HTML 里。
 
 ### 视频：默认不用真视频，用动态背景代替
 
@@ -568,10 +663,7 @@ twimg.com / pbs.twimg.com
 
 #### 真要用视频怎么办（罕见场景）
 
-如果用户**坚持**要真背景视频（比如咖啡馆品牌站要海浪），告诉用户两个事实：
-
-1. showcode 不提供视频托管（控制服务端成本）
-2. 用户需要自己上传到国内可访问的 CDN（阿里云 OSS / 腾讯云 COS / 七牛云），把直链给 Agent
+视频文件大，**不要塞进 zip**（容易超 20MB 上限）。让用户自己上传到国内 CDN（阿里云 OSS / 腾讯云 COS / 七牛云），把直链给 Agent。
 
 拿到直链后用 `<video>` 标签：
 ```html
@@ -600,7 +692,7 @@ twimg.com / pbs.twimg.com
 2. 调用 `check-slug` 命令测试哪些候选可用：
 
    ```bash
-   ruby "SKILL_DIR/publish.rb" check-slug --q yafei,yafei-li,yafeilee
+   ruby "SKILL_DIR/scripts/publish.rb" check-slug --q yafei,yafei-li,yafeilee
    ```
 
    输出示例：
@@ -623,26 +715,36 @@ twimg.com / pbs.twimg.com
 5. 用户确认后，执行发布命令：
 
 ```bash
-ruby "SKILL_DIR/publish.rb" publish \
+ruby "SKILL_DIR/scripts/publish.rb" publish \
   --name "NAME" \
   --slug "SLUG" \
   --dir "$SITE_DIR"
 ```
 
 - `--slug` 指定 URL 路径（必传，不可随机）
-- `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面）
-- `index.html` 作为主页面内容，其余 `.html` 文件通过子页面 API（`POST /api/v1/sites/:slug/pages`）逐页上传
-- 子页面标题取自 HTML `<title>` 标签，找不到时用文件名去扩展名后首字母大写
+- `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面、css/、js/、images/）
+- 整个目录会被打成 zip 上传（**总大小 ≤ 20MB，单文件 ≤ 5MB**），服务器解压后整盘覆盖到 CDN，旧文件会被清掉
+- 子页面通过相对路径访问（`href="about.html"`），CSS/JS 用相对路径（`href="css/style.css"`）
 - 首次发布 → 创建新站点，token 保存到 `~/clacky_workspace/oh-my-website/token.json`
-- 后续运行 → 更新主页面 + 逐页更新所有子页面
+- 后续运行 → 重新打 zip 整盘覆盖
 - 从 stdout 提取 `✅` 开头的 URL 返回给用户
 
-> 仅发布单个 HTML 文件时可用 `--html-file` 替代 `--dir`（向后兼容）。
+> 仅发布单个 HTML 文件时可用 `--html-file` 替代 `--dir`（内部会自动包成单文件 zip）。
+
+### 编辑现有网站（拉回来改）
+
+如果用户在另一台机器上想继续改，或本地 `~/clacky_workspace/oh-my-website/` 下没有源文件了：
+
+```bash
+ruby "SKILL_DIR/scripts/publish.rb" fetch --slug "SLUG" --out /path/to/edit
+```
+
+会把 CDN 上的整个 site zip 下载下来解压到 `--out` 目录。改完之后正常 `publish --dir` 即可。
 
 ### 删除网站
 
 ```bash
-ruby "SKILL_DIR/publish.rb" delete
+ruby "SKILL_DIR/scripts/publish.rb" delete
 ```
 
 ---
@@ -666,13 +768,13 @@ ruby "SKILL_DIR/publish.rb" delete
 2. 调命令注册：
 
    ```bash
-   ruby "SKILL_DIR/publish.rb" register --email USER_EMAIL --password USER_PASSWORD
+   ruby "SKILL_DIR/scripts/publish.rb" register --email USER_EMAIL --password USER_PASSWORD
    ```
 
 3. 注册成功后，**自动把当前本地 site 绑到账户**：
 
    ```bash
-   ruby "SKILL_DIR/publish.rb" claim
+   ruby "SKILL_DIR/scripts/publish.rb" claim
    ```
 
    `claim` 不带参数时会读取本地 `token.json` 中的 slug + site_token，调 API 把这个 site 的所有权绑给当前登录用户。
@@ -680,7 +782,7 @@ ruby "SKILL_DIR/publish.rb" delete
 ### 登录流程（已有账号）
 
 ```bash
-ruby "SKILL_DIR/publish.rb" login --email USER_EMAIL --password USER_PASSWORD
+ruby "SKILL_DIR/scripts/publish.rb" login --email USER_EMAIL --password USER_PASSWORD
 ```
 
 登录后 session_token 存到 `~/clacky_workspace/oh-my-website/account.json`，**所有后续 publish/update 都会优先用 session 鉴权**，自动覆盖账号下所有 site。
@@ -688,8 +790,8 @@ ruby "SKILL_DIR/publish.rb" login --email USER_EMAIL --password USER_PASSWORD
 ### 检查登录状态 / 登出
 
 ```bash
-ruby "SKILL_DIR/publish.rb" whoami      # 查看当前登录账号
-ruby "SKILL_DIR/publish.rb" logout      # 登出（清本地 session）
+ruby "SKILL_DIR/scripts/publish.rb" whoami      # 查看当前登录账号
+ruby "SKILL_DIR/scripts/publish.rb" logout      # 登出（清本地 session）
 ```
 
 ### 鉴权优先级（参考）
@@ -726,15 +828,20 @@ publish.rb 内部按以下顺序选 token：
 | "改成暗色背景" | 调整 `--bg`/`--text` CSS 变量，或切到暗色风格 |
 | "删掉博客页" | 删除对应 `<section>` 和导航项 |
 | "导航改成左侧竖排" | 调整 CSS 导航布局 |
+| "有缓存/还是旧的/没变" | 给图片 src 加 `?v=N` 参数破缓存（N 递增），然后重新发布 |
 
 ---
 
 ## 后续路线图
 
-- [x] `assets/template-minimal/css/animated-bg.css` — 5 套 CSS/SVG 动态背景（无外部依赖）
-- [x] `assets/template-magazine/` — 杂志风种子模板（衬线大字 + 暖色 + 大序号 + 粗分割线）
-- [x] `references/themes-magazine.md` — 杂志风配色（3 套）
-- [ ] `assets/template-dark/` — 暗色极客种子模板（终端美学）
+- [x] `assets/template-minimal/` — 极简白种子模板（黑白灰+强调色）
+- [x] `assets/template-magazine/` — 杂志风种子模板（衬线大字+暖色+大序号+粗分割线）
+- [x] `assets/template-warm-studio/` — 暖意工作室种子模板（暖米色+深咖啡+左文右图hero）
+- [x] `assets/template-*/meta.json` — 模板自描述文件，skill 动态发现不再硬编码
+- [x] `css/animated-bg.css` — 5 套 CSS/SVG 动态背景（无外部依赖）
+- [x] `references/themes-minimal.md` — 极简白配色
+- [x] `references/themes-magazine.md` — 杂志风配色
+- [ ] `assets/template-dark/` — 暗色极客种子模板（终端美学，深色背景+霓虹强调色）
 - [ ] `references/themes-dark.md` — 暗色极客配色
-- [ ] 独立开发者特化模板（产品矩阵 + MRR/用户数版块）
+- [ ] 独立开发者特化模板（产品矩阵+MRR/用户数版块）
 - [ ] 视频背景方案：仅在用户主动要求时启用，需自带 CDN

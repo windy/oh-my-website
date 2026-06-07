@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+  <!-- 拾光咖啡 · 品牌全案：暖咖色 + 圆形 logo 蒙太奇 -->
+  <rect width="600" height="450" fill="#C9A57B"/>
+  <circle cx="300" cy="210" r="120" fill="#5C3A1E"/>
+  <circle cx="300" cy="210" r="78" fill="#C9A57B"/>
+  <text x="300" y="225" text-anchor="middle" font-family="Georgia,serif" font-size="42" font-weight="700" fill="#5C3A1E" letter-spacing="6">拾光</text>
+  <rect x="40" y="380" width="80" height="6" fill="#5C3A1E"/>
+  <text x="40" y="420" font-family="Georgia,serif" font-size="14" fill="#5C3A1E" opacity="0.7">SHIGUANG · 2025</text>
+</svg>

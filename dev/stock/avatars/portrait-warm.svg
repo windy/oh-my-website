@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <defs>
+    <linearGradient id="silhouette" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6B5040"/>
+      <stop offset="100%" stop-color="#4A3528"/>
+    </linearGradient>
+    <!-- 衣领镂空 mask：黑色=透明，白色=保留 -->
+    <mask id="collar-cut">
+      <rect width="400" height="500" fill="white"/>
+      <ellipse cx="200" cy="198" rx="28" ry="18" fill="black"/>
+    </mask>
+  </defs>
+  <!-- 人物剪影（透明底，衣领镂空透出页面背景） -->
+  <g transform="translate(200,260)" mask="url(#collar-cut)">
+    <ellipse cx="0" cy="-120" rx="52" ry="58" fill="url(#silhouette)"/>
+    <path d="M-70,-60 C-90,20 -85,110 -75,150 L75,150 C85,110 90,20 70,-60 Z" fill="url(#silhouette)"/>
+  </g>
+</svg>

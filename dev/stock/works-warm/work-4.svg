@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+  <!-- 城市记忆插画集：橄榄绿底 + 城市天际线剪影 + 暖橘月亮 -->
+  <rect width="600" height="450" fill="#7A8068"/>
+  <circle cx="480" cy="130" r="55" fill="#E8B563"/>
+  <circle cx="465" cy="120" r="50" fill="#7A8068"/>
+  <g fill="#3D3829">
+    <rect x="0" y="280" width="40" height="170"/>
+    <rect x="50" y="240" width="55" height="210"/>
+    <polygon points="115,240 145,200 175,240 175,450 115,450"/>
+    <rect x="185" y="260" width="70" height="190"/>
+    <rect x="265" y="220" width="50" height="230"/>
+    <polygon points="325,260 360,200 360,450 325,450"/>
+    <rect x="370" y="290" width="60" height="160"/>
+    <rect x="440" y="270" width="80" height="180"/>
+    <rect x="530" y="240" width="70" height="210"/>
+  </g>
+  <g fill="#E8B563" opacity="0.9">
+    <rect x="60" y="270" width="6" height="6"/>
+    <rect x="80" y="290" width="6" height="6"/>
+    <rect x="200" y="290" width="6" height="6"/>
+    <rect x="280" y="270" width="6" height="6"/>
+    <rect x="450" y="310" width="6" height="6"/>
+    <rect x="540" y="280" width="6" height="6"/>
+  </g>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+  <!-- 落日播客封面：圆形构图 + 暖橘渐变落日 + 海面线条 -->
+  <defs>
+    <linearGradient id="sunset" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F5C892"/>
+      <stop offset="60%" stop-color="#E8985A"/>
+      <stop offset="100%" stop-color="#C9633A"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="450" fill="url(#sunset)"/>
+  <circle cx="300" cy="220" r="90" fill="#FFE6B8" opacity="0.95"/>
+  <circle cx="300" cy="220" r="90" fill="none" stroke="#FFFEFA" stroke-width="1.5"/>
+  <g stroke="#3D2817" stroke-width="2" opacity="0.5">
+    <line x1="60" y1="335" x2="540" y2="335"/>
+    <line x1="60" y1="350" x2="540" y2="350" stroke-dasharray="6,8"/>
+    <line x1="60" y1="365" x2="540" y2="365" stroke-dasharray="3,12"/>
+  </g>
+  <text x="300" y="60" text-anchor="middle" font-family="Georgia,serif" font-size="14" letter-spacing="6" fill="#3D2817" opacity="0.8">PODCAST · EP.42</text>
+  <text x="300" y="425" text-anchor="middle" font-family="Georgia,serif" font-size="32" font-weight="700" fill="#3D2817" font-style="italic">在落日里散步</text>
+</svg>

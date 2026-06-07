@@ -4,13 +4,16 @@
 # oh-my-website — 模板开发预览服务器
 #
 # 用法：
-#   ruby dev/server.rb                       # 列出可用模板，自动启动
+#   ruby dev/server.rb                       # 列出可用模板，自动启动第一个
 #   ruby dev/server.rb template-minimal      # 指定模板
-#   ruby dev/server.rb template-magazine --persona=writer
-#   ruby dev/server.rb template-minimal --port=4567
+#   ruby dev/server.rb --persona=writer      # 指定身份（默认 coder）
+#   ruby dev/server.rb --port=4567
 #
-# 浏览器访问 http://localhost:4567/
-# 顶部工具栏可切换 persona / 设备宽度。
+# 浏览器访问：
+#   http://localhost:4567/                          → 默认模板 + 默认身份
+#   http://localhost:4567/?persona=designer         → 切换身份
+#   http://localhost:4567/?template=minimal&persona=writer  → 切换模板+身份
+#   http://localhost:4567/about.html?persona=writer → 子页面也支持
 #
 # 占位符语法：
 #   {{KEY}}            → 优先 fixture，未命中查 _defaults.json，再不命中显示 [KEY]
@@ -87,42 +90,18 @@ def render(html, fixture)
     elsif default_val
       default_val
     else
-      # 显式提示这个 key 未定义，方便贡献者发现
       %(<span style="background:#ffe066;color:#333;padding:2px 6px;border-radius:3px;font-family:monospace;font-size:0.85em;border:1px dashed #b8860b;">[#{key}]</span>)
     end
   end
 end
 
-# ---------- 注入开发工具条 ----------
-def inject_toolbar(html, current_template, current_persona, all_templates, all_personas)
-  toolbar = <<~HTML
-    <div id="__omw_toolbar" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#1a1a1a;color:#fff;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;padding:8px 14px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.2);">
-      <strong style="color:#7df9ff;">🛠 oh-my-website dev</strong>
-      <label>模板：
-        <select onchange="window.location.search='?template='+this.value+'&persona=#{current_persona}'" style="background:#333;color:#fff;border:1px solid #555;padding:2px 6px;border-radius:3px;">
-          #{all_templates.map { |t| %(<option value="#{t}"#{t == current_template ? ' selected' : ''}>#{t}</option>) }.join}
-        </select>
-      </label>
-      <label>身份：
-        <select onchange="window.location.search='?template=#{current_template}&persona='+this.value" style="background:#333;color:#fff;border:1px solid #555;padding:2px 6px;border-radius:3px;">
-          #{all_personas.map { |p| %(<option value="#{p}"#{p == current_persona ? ' selected' : ''}>#{p}</option>) }.join}
-        </select>
-      </label>
-      <label>设备：
-        <select onchange="document.body.style.maxWidth=this.value;document.body.style.margin=this.value==='100%'?'':'40px auto';document.body.style.boxShadow=this.value==='100%'?'':'0 0 24px rgba(0,0,0,.15)';" style="background:#333;color:#fff;border:1px solid #555;padding:2px 6px;border-radius:3px;">
-          <option value="100%">桌面</option>
-          <option value="768px">平板</option>
-          <option value="375px">手机</option>
-        </select>
-      </label>
-      <span style="margin-left:auto;color:#aaa;font-size:11px;">满意了告诉 Agent 「保存提交」</span>
-    </div>
-    <style>body{padding-top:42px !important;}</style>
-  HTML
-  if html =~ /<body[^>]*>/
-    html.sub(/<body[^>]*>/) { |m| m + toolbar }
+# ---------- 加载模板 meta（供首页索引用）----------
+def load_template_meta(template_dir_name)
+  meta_path = File.join(ASSETS_DIR, template_dir_name, 'meta.json')
+  if File.exist?(meta_path)
+    JSON.parse(File.read(meta_path))
   else
-    toolbar + html
+    { 'id' => template_dir_name.sub('template-', ''), 'name' => template_dir_name }
   end
 end
 
@@ -130,7 +109,6 @@ end
 server = WEBrick::HTTPServer.new(Port: port, DocumentRoot: TEMPLATE_DIR, AccessLog: [], Logger: WEBrick::Log.new(File::NULL))
 
 server.mount_proc '/__omw_stock' do |req, res|
-  # 提供 dev/stock 静态资源
   rel = req.path.sub('/__omw_stock', '')
   path = File.join(STOCK_DIR, rel)
   if File.file?(path)
@@ -149,13 +127,37 @@ server.mount_proc '/__omw_stock' do |req, res|
 end
 
 server.mount_proc '/' do |req, res|
-  # query 参数可切换模板/persona（不重启）
   q_template = req.query['template']
   q_persona = req.query['persona']
 
   current_template = q_template && available_templates.include?(q_template) ? q_template : template
   current_persona = q_persona || persona
   current_template_dir = File.join(ASSETS_DIR, current_template)
+
+  # 首页索引：列出所有模板和身份
+  if req.path == '/' && !File.exist?(File.join(current_template_dir, 'index.html'))
+    metas = available_templates.map { |t| load_template_meta(t) }
+    personas = available_personas
+    res.body = <<~HTML
+      <!DOCTYPE html>
+      <html lang="zh-CN">
+      <head><meta charset="UTF-8"><title>oh-my-website dev</title>
+      <style>body{font:-apple-system,BlinkMacSystemFont,sans-serif;max-width:640px;margin:60px auto;padding:0 20px;background:#fafafa;color:#1a1a1a}
+      h1{font-size:24px}h2{font-size:16px;color:#666;margin-top:40px}
+      a{display:block;padding:8px 12px;border-radius:6px;margin:4px 0;text-decoration:none;color:#1a1a1a;background:#fff;border:1px solid #e0e0e0}
+      a:hover{background:#f0f0f0}.tag{font-size:12px;color:#999;float:right;margin-top:3px}</style></head>
+      <body>
+      <h1>🎨 oh-my-website dev</h1>
+      <p>模板开发预览 — 纯 URL 参数驱动，无工具栏</p>
+      <h2>模板（点击用默认身份打开）</h2>
+      #{metas.map { |m| %(<a href="/?template=template-#{m['id']}">#{m['name']} <span class="tag">#{m['description'][0..40]}…</span></a>) }.join}
+      <h2>身份（用当前默认模板打开）</h2>
+      #{personas.map { |p| %(<a href="/?persona=#{p}">#{p}</a>) }.join}
+      </body></html>
+    HTML
+    res['Content-Type'] = 'text/html; charset=utf-8'
+    next
+  end
 
   rel_path = req.path == '/' ? '/index.html' : req.path
   file_path = File.join(current_template_dir, rel_path)
@@ -172,11 +174,9 @@ server.mount_proc '/' do |req, res|
     raw = File.read(file_path)
     fixture = load_fixture(current_persona)
     rendered = render(raw, fixture)
-    rendered = inject_toolbar(rendered, current_template, current_persona, available_templates, available_personas)
     res.body = rendered
     res['Content-Type'] = 'text/html; charset=utf-8'
   else
-    # 其他静态资源直接读
     res.body = File.binread(file_path)
     res['Content-Type'] = case ext
                           when '.css' then 'text/css; charset=utf-8'
@@ -209,7 +209,11 @@ puts <<~BANNER
     身份：  #{persona}     （可用：#{available_personas.join(', ')}）
     端口：  http://localhost:#{port}/
 
-    工具条已注入页面顶部，可在浏览器直接切换模板/身份/设备宽度。
+    URL 参数切换（无工具栏，纯链接）：
+      ?persona=designer        → 切换身份
+      ?template=minimal        → 切换模板
+      ?template=minimal&persona=writer  → 同时切换
+
     修改 assets/#{template}/ 下的 HTML/CSS 后，刷新浏览器即可看到。
 
     ✅  改完满意了，告诉 Agent：「保存提交」
