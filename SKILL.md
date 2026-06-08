@@ -121,14 +121,11 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
    > 选哪个？
 
 3. **用户选"编辑"**：
-   - 调用 API 获取当前网站内容：
-     ```bash
-     curl -s https://showcode.com/api/v1/sites/{slug}
-     ```
-   - 把 `content` 字段（主页 HTML）+ `pages`（子页面 HTML）写入独立临时目录：
+   - 用 `publish.rb fetch` 拉取 CDN 上当前网站内容到临时目录：
      ```bash
      SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
      mkdir -p "$SITE_DIR"
+     ruby "SKILL_DIR/scripts/publish.rb" fetch --slug "{slug}" --out "$SITE_DIR"
      ```
    - 直接跳到 **Step 6（迭代对话）**，让用户说改哪里
    - 发布时用已有 slug 更新（publish.rb 会自动识别 `token.json` 走 update 路径）
