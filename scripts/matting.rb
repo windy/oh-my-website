@@ -11,8 +11,10 @@ require "uri"
 require "fileutils"
 require "optparse"
 
-API_HOST = "https://showcode.com"
-ACCOUNT_FILE = File.expand_path("~/clacky_workspace/oh-my-website/account.json")
+API_HOST = ENV.fetch("SHOWCODE_API_HOST", "https://showcode.com")
+BASE_DIR = File.expand_path("~/.oh-my-site")
+TOKEN_FILE   = File.join(BASE_DIR, "token.json")
+ACCOUNT_FILE = File.join(BASE_DIR, "account.json")
 MAX_POLLS = 10
 POLL_INTERVAL = 2
 
@@ -20,17 +22,21 @@ def log(msg)
   $stderr.puts "[matting] #{msg}"
 end
 
+def load_json(path)
+  return {} unless File.exist?(path)
+  JSON.parse(File.read(path)) rescue {}
+end
+
+# 复用 publish.rb 的认证：优先 session_token（登录后），否则 site_token（已发布站点）
 def token
-  unless File.exist?(ACCOUNT_FILE)
-    log "❌ 未登录（account.json 不存在）"
-    exit 1
-  end
-  t = JSON.parse(File.read(ACCOUNT_FILE))["session_token"]
-  unless t
-    log "❌ account.json 中没有 session_token"
-    exit 1
-  end
-  t
+  session_token = load_json(ACCOUNT_FILE)["session_token"]
+  return session_token if session_token.to_s.length > 0
+
+  site_token = load_json(TOKEN_FILE)["site_token"]
+  return site_token if site_token.to_s.length > 0
+
+  log "❌ 未找到认证 token：请先用 publish.rb 发布过站点（生成 token.json），或登录账号（生成 account.json）"
+  exit 1
 end
 
 def http_json(method, path, token:, body: nil)

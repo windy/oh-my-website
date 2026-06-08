@@ -105,11 +105,11 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 **必须先检查，不要跳过。**
 
-1. 检查 `~/clacky_workspace/oh-my-website/token.json` 是否存在且包含 `slug`：
+1. 检查 `~/.oh-my-site/token.json` 是否存在且包含 `slug`：
 
    ```bash
-   ls ~/clacky_workspace/oh-my-website/token.json 2>/dev/null
-   cat ~/clacky_workspace/oh-my-website/token.json 2>/dev/null
+   ls ~/.oh-my-site/token.json 2>/dev/null
+   cat ~/.oh-my-site/token.json 2>/dev/null
    ```
 
 2. **如果存在已有网站（slug 非空）**，告知用户并让用户选择：
@@ -560,15 +560,7 @@ template-minimal/
 
 #### 用户同意后执行
 
-抠图脚本通过 showcode.com 生产 API 完成，需要已登录。先检查登录状态：
-
-```bash
-ruby "SKILL_DIR/scripts/publish.rb" whoami
-```
-
-如果未登录，引导用户注册/登录（见下方「账户管理」节）。
-
-已登录则直接调用抠图脚本：
+抠图脚本调用 showcode.com API，**复用 publish.rb 的认证**——发布过站点（生成 `~/.oh-my-site/token.json`）或登录账号（`account.json`）后即可直接使用，无需额外配置。
 
 ```bash
 # Hero 大图抠图 — 保留原始分辨率
@@ -718,7 +710,7 @@ ruby "SKILL_DIR/scripts/publish.rb" publish \
 - `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面、css/、js/、images/）
 - 整个目录会被打成 zip 上传（**总大小 ≤ 20MB，单文件 ≤ 5MB**），服务器解压后整盘覆盖到 CDN，旧文件会被清掉
 - 子页面通过相对路径访问（`href="about.html"`），CSS/JS 用相对路径（`href="css/style.css"`）
-- 首次发布 → 创建新站点，token 保存到 `~/clacky_workspace/oh-my-website/token.json`
+- 首次发布 → 创建新站点，token 保存到 `~/.oh-my-site/token.json`
 - 后续运行 → 重新打 zip 整盘覆盖
 - 从 stdout 提取 `✅` 开头的 URL 返回给用户
 
@@ -726,7 +718,7 @@ ruby "SKILL_DIR/scripts/publish.rb" publish \
 
 ### 编辑现有网站（拉回来改）
 
-如果用户在另一台机器上想继续改，或本地 `~/clacky_workspace/oh-my-website/` 下没有源文件了：
+如果用户在另一台机器上想继续改，或本地 `~/.oh-my-site/` 下没有源文件了：
 
 ```bash
 ruby "SKILL_DIR/scripts/publish.rb" fetch --slug "SLUG" --out /path/to/edit
@@ -778,7 +770,7 @@ ruby "SKILL_DIR/scripts/publish.rb" delete
 ruby "SKILL_DIR/scripts/publish.rb" login --email USER_EMAIL --password USER_PASSWORD
 ```
 
-登录后 session_token 存到 `~/clacky_workspace/oh-my-website/account.json`，**所有后续 publish/update 都会优先用 session 鉴权**，自动覆盖账号下所有 site。
+登录后 session_token 存到 `~/.oh-my-site/account.json`，**所有后续 publish/update 都会优先用 session 鉴权**，自动覆盖账号下所有 site。
 
 ### 检查登录状态 / 登出
 
