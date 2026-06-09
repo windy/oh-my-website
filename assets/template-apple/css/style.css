@@ -627,21 +627,48 @@ body {
 /* 响应式调整 */
 @media (max-width: 900px) {
   .contact-container {
-    flex-direction: column; /* 变为上下结构 */
+    flex-direction: column;
+    align-items: center;
     gap: var(--sp-2xl);
   }
   
   .contact-header {
     flex: none;
     width: 100%;
+    text-align: center;
     margin-bottom: var(--sp-lg);
+  }
+
+  .contact-list {
+    grid-template-columns: 1fr;
+    width: 100%;
+    justify-items: center;
+  }
+
+  .contact-item {
+    text-align: center;
+    width: 100%;
+  }
+
+  .contact-num-line {
+    display: none;
   }
 }
 
 @media (max-width: 600px) {
   .contact-list {
-    grid-template-columns: 1fr; /* 手机端变为上下两行 */
+    grid-template-columns: 1fr;
     gap: var(--sp-2xl);
+    justify-items: center;
+  }
+
+  .contact-item {
+    text-align: center;
+    width: 100%;
+  }
+
+  .contact-num-line {
+    display: none;
   }
 }
 
