@@ -105,11 +105,11 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 **必须先检查，不要跳过。**
 
-1. 检查 `~/clacky_workspace/oh-my-website/token.json` 是否存在且包含 `slug`：
+1. 检查 `~/.oh-my-site/token.json` 是否存在且包含 `slug`：
 
    ```bash
-   ls ~/clacky_workspace/oh-my-website/token.json 2>/dev/null
-   cat ~/clacky_workspace/oh-my-website/token.json 2>/dev/null
+   ls ~/.oh-my-site/token.json 2>/dev/null
+   cat ~/.oh-my-site/token.json 2>/dev/null
    ```
 
 2. **如果存在已有网站（slug 非空）**，告知用户并让用户选择：
@@ -121,14 +121,11 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
    > 选哪个？
 
 3. **用户选"编辑"**：
-   - 调用 API 获取当前网站内容：
-     ```bash
-     curl -s https://showcode.com/api/v1/sites/{slug}
-     ```
-   - 把 `content` 字段（主页 HTML）+ `pages`（子页面 HTML）写入独立临时目录：
+   - 用 `publish.rb fetch` 拉取 CDN 上当前网站内容到临时目录：
      ```bash
      SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
      mkdir -p "$SITE_DIR"
+     ruby "SKILL_DIR/scripts/publish.rb" fetch --slug "{slug}" --out "$SITE_DIR"
      ```
    - 直接跳到 **Step 6（迭代对话）**，让用户说改哪里
    - 发布时用已有 slug 更新（publish.rb 会自动识别 `token.json` 走 update 路径）
@@ -159,9 +156,27 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 ---
 
+## Step 0.5 — 智能跳过（用户已经给的信息别再问）
+
+> **关键：Step 0 完成后，先检查用户触发时附带的消息里已经包含了哪些信息。已经给过的，跳过对应问题。**
+
+| 用户已经给了 | 跳过 | 处理方式 |
+|------------|------|---------|
+| 名字 | Q1 | 直接用，不重复问 |
+| 职业/身份描述（如"新媒体运营""前端工程师"） | Q2 | Agent 自行映射到 7 选 1 的类型，**一句话确认**（"你是新媒体运营，归到 C 写东西/做内容类，对吗？"），不等用户回复直接继续 |
+| 亮点/成就/项目经历 | Q3 | Agent 从内容推断 Q3 答案，不追问。信息不够再补一句 |
+| 风格偏好 | Q4 | 直接用，不重复问 |
+| 社交/平台链接 | Q5 | 直接用，不重复问 |
+
+**核心原则：用户触发时说了什么就用了什么，不问第二遍。只问真正缺的信息。**
+
+---
+
 ## Step 1 — 问名字 + 身份（Q1 + Q2）
 
 > **设计原则：全程选择题，30 秒完成。用户只需打一行名字，其余全选。**
+>
+> **注意：Step 0.5 检测到用户已经给了名字/身份 → 跳过对应问题，不要重复问。**
 
 ### Q1. 你的名字？
 
@@ -199,6 +214,8 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 ---
 
 ## Step 2 — 追问亮点 + 风格 + 链接（Q3 + Q4 + Q5）
+
+> **注意：Step 0.5 检测到用户已经给了亮点/风格/链接 → 跳过对应问题，只问缺的。**
 
 > Q3 是关键——用"选"代替"写"，定位用户最想展示的核心成果。
 > Agent 根据 Q2 的答案**动态展示对应选项**，用户只需 4 选 1。
@@ -483,16 +500,11 @@ template-minimal/
 
 - ❌ `<link href="https://fonts.googleapis.com/...">` — 国内打不开
 - ❌ `<link href="https://cdn.jsdelivr.net/.../font.css">` — 国内不稳
-- ❌ 自托管字体到 showcode 服务器 — 违反零成本约束
 - ❌ 在 HTML 里写死 `font-family: "PingFang SC"` — 应该走变量
 
 ---
 
 ## Step 4.5 — 媒体处理规约（图片 / 视频 / 动态背景）
-
-> **核心原则：图片直接放进站点目录，发布时整盘打 zip 推送到 CDN。**
-> 不再 base64 内联（zip 体积可控 + 浏览器缓存友好）。
-> 仍然禁止任何"贴个外链"：所有素材必须本地化在站点目录里。
 
 ### 图片：放在 `images/` 下，HTML 里引相对路径
 
@@ -524,31 +536,11 @@ template-minimal/
 | 图片建议尺寸 | 头像 ≤ 400×400；横图 ≤ 1600px 长边 |
 | 图片建议体积 | 单图 ≤ 300KB（首屏可见图最好 ≤ 100KB） |
 
-> ⚠️ **压缩黄金法则：宁大勿糊。** 用户说"糊"是最高优先级投诉——远比"加载慢"严重。
+> **压缩黄金法则：宁大勿糊。** 用户说"糊"是最高优先级投诉——远比"加载慢"严重。
 > Hero 区大图 / 用户照片：优先保留原始分辨率，仅当超过 5MB 限制时才压缩。
 > 头像：400px 足够。普通配图：1200px 长边。**不要自作主张压小 hero 图。**
 
 超限 `publish.rb` 会直接报错。
-
-#### 压缩命令（macOS 自带 sips）
-
-```bash
-# 原则：先看原始尺寸，再决定压多少。不确定就少压。
-sips -g pixelWidth -g pixelHeight input.jpg  # 先看原始尺寸
-
-# Hero 大图 — 不压缩分辨率，只降 JPEG 质量（保持 1200px+ 宽）
-sips -s formatOptions 80 input.jpg --out images/hero.jpg
-
-# 普通配图 — 最长边 1200px，质量 70
-sips -Z 1200 -s formatOptions 70 input.jpg --out images/photo.jpg
-
-# 头像 — 400px 足够
-sips -Z 400 -s formatOptions 80 avatar-orig.jpg --out images/avatar.jpg
-
-# PNG 抠图结果 — 不要再压缩分辨率！原始分辨率直出
-# 如果 PNG 太大（>2MB），用 sips -s formatOptions 降低 PNG 质量
-sips -s formatOptions 60 input.png --out images/output.png
-```
 
 ### AI 抠图（背景移除）
 
@@ -565,15 +557,7 @@ sips -s formatOptions 60 input.png --out images/output.png
 
 #### 用户同意后执行
 
-抠图脚本通过 showcode.com 生产 API 完成，需要已登录。先检查登录状态：
-
-```bash
-ruby "SKILL_DIR/scripts/publish.rb" whoami
-```
-
-如果未登录，引导用户注册/登录（见下方「账户管理」节）。
-
-已登录则直接调用抠图脚本：
+抠图脚本调用 showcode.com API，**复用 publish.rb 的认证**——发布过站点（生成 `~/.oh-my-site/token.json`）或登录账号（`account.json`）后即可直接使用，无需额外配置。
 
 ```bash
 # Hero 大图抠图 — 保留原始分辨率
@@ -590,7 +574,6 @@ HTML 里用抠图后的图片：`<img src="images/avatar.png" alt="...">`
 #### 注意事项
 
 - 输入图片 ≤ 10MB；抠图结果保留透明背景（PNG）
-- matting.rb 下载时有 SSL 兼容性问题时会自动回退到 curl，不用手动干预
 - 抠图结果默认 **原始分辨率**（不压缩），PNG 体积可能较大（300-500KB），这是正常的
 - 如果抠图失败（exit code ≠ 0），**静默回退用原图**，不中断流程
 - 用户说"不用去背景 / 保留原图" → 直接跳过
@@ -612,10 +595,7 @@ twimg.com / pbs.twimg.com
 
 #### 用户给了外链怎么办
 
-```bash
-curl -L -o /tmp/user_img.jpg "USER_PROVIDED_URL"
-sips -Z 1200 -s formatOptions 70 /tmp/user_img.jpg --out images/photo.jpg
-```
+下载完，并检查控制到一定的尺寸。
 
 curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直接给本地文件路径。
 
@@ -651,15 +631,17 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
 
 #### Agent 自动选择规则
 
-| 风格主题（用户选的视觉） | 默认动态背景 |
-|------------------------|-------------|
-| 极简白 / 米白 / 温暖 | `.bg-gradient-flow` |
-| 暗色极客 / 黑客风 | `.bg-grid-scan` |
-| 暗色 + AI/独立开发者 | `.bg-particles` |
-| 杂志风 / B 类设计 | `.bg-geo-float` |
-| C 类内容 / D 类学术（沉静向） | `.bg-noise-stars` |
+**核心原则：模板文字颜色决定能用的动态背景**。每个 `.bg-*` 类在 `animated-bg.css` 中标注了 `@bg-mode: light` 或 `@bg-mode: dark`。
 
-用户主动说"我要换个粒子背景 / 加点动效 / 太花了去掉" → 直接换 class 或删掉那个 `<div>`。
+**当前所有模板都是深色文字 + 浅色底**（`--text` 为 #1a1a1a 或 #3d322b），**只能使用 `@bg-mode: light` 的动态背景**：
+
+| 模板 | 可用动态背景 |
+|------|------------|
+| minimal / magazine / warm-studio | `.bg-gradient-flow` 或 `.bg-geo-float` |
+
+> **禁止给当前任何模板使用 `@bg-mode: dark` 的背景**（`.bg-noise-stars`、`.bg-particles`、`.bg-grid-scan`），这些是为将来暗色模板（template-dark）预留的。黑字叠黑底完全不可见。
+
+用户主动说"我要换个粒子背景 / 加点动效 / 太花了去掉" → 先检查 mode 兼容，再换 class 或删掉那个 `<div>`。
 
 #### 真要用视频怎么办（罕见场景）
 
@@ -704,8 +686,8 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
 3. 将可用候选列出，让用户选一个。提示 URL 预览 `https://showcode.com/~{slug}`：
 
    ```
-   ✨ 以下 slug 可用：
-   1. yafei-li → https://showcode.com/~yafei-li
+   以下访问链接可用，你更喜欢哪一个：
+   1. yafei → https://showcode.com/~yafei
    2. yafeilee → https://showcode.com/~yafeilee
    选哪个？（输入序号或自定义）
    ```
@@ -725,7 +707,7 @@ ruby "SKILL_DIR/scripts/publish.rb" publish \
 - `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面、css/、js/、images/）
 - 整个目录会被打成 zip 上传（**总大小 ≤ 20MB，单文件 ≤ 5MB**），服务器解压后整盘覆盖到 CDN，旧文件会被清掉
 - 子页面通过相对路径访问（`href="about.html"`），CSS/JS 用相对路径（`href="css/style.css"`）
-- 首次发布 → 创建新站点，token 保存到 `~/clacky_workspace/oh-my-website/token.json`
+- 首次发布 → 创建新站点，token 保存到 `~/.oh-my-site/token.json`
 - 后续运行 → 重新打 zip 整盘覆盖
 - 从 stdout 提取 `✅` 开头的 URL 返回给用户
 
@@ -733,7 +715,7 @@ ruby "SKILL_DIR/scripts/publish.rb" publish \
 
 ### 编辑现有网站（拉回来改）
 
-如果用户在另一台机器上想继续改，或本地 `~/clacky_workspace/oh-my-website/` 下没有源文件了：
+如果用户在另一台机器上想继续改，或本地 `~/.oh-my-site/` 下没有源文件了：
 
 ```bash
 ruby "SKILL_DIR/scripts/publish.rb" fetch --slug "SLUG" --out /path/to/edit
@@ -785,7 +767,7 @@ ruby "SKILL_DIR/scripts/publish.rb" delete
 ruby "SKILL_DIR/scripts/publish.rb" login --email USER_EMAIL --password USER_PASSWORD
 ```
 
-登录后 session_token 存到 `~/clacky_workspace/oh-my-website/account.json`，**所有后续 publish/update 都会优先用 session 鉴权**，自动覆盖账号下所有 site。
+登录后 session_token 存到 `~/.oh-my-site/account.json`，**所有后续 publish/update 都会优先用 session 鉴权**，自动覆盖账号下所有 site。
 
 ### 检查登录状态 / 登出
 
