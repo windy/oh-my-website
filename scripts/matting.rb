@@ -12,7 +12,7 @@ require "fileutils"
 require "optparse"
 
 API_HOST = ENV.fetch("SHOWCODE_API_HOST", "https://showcode.com")
-BASE_DIR = File.expand_path("~/.oh-my-site")
+BASE_DIR = File.expand_path("~/.oh-my-website")
 TOKEN_FILE   = File.join(BASE_DIR, "token.json")
 ACCOUNT_FILE = File.join(BASE_DIR, "account.json")
 MAX_POLLS = 10

@@ -105,11 +105,11 @@ KEY 命名约定：全大写下划线分词，如 `NAME`、`WORK_1_TITLE`、`PRO
 
 **必须先检查，不要跳过。**
 
-1. 检查 `~/.oh-my-site/token.json` 是否存在且包含 `slug`：
+1. 检查 `~/.oh-my-website/token.json` 是否存在且包含 `slug`：
 
    ```bash
-   ls ~/.oh-my-site/token.json 2>/dev/null
-   cat ~/.oh-my-site/token.json 2>/dev/null
+   ls ~/.oh-my-website/token.json 2>/dev/null
+   cat ~/.oh-my-website/token.json 2>/dev/null
    ```
 
 2. **如果存在已有网站（slug 非空）**，告知用户并让用户选择：
@@ -539,7 +539,7 @@ template-minimal/
 
 #### 用户同意后执行
 
-抠图脚本调用 showcode.com API，**复用 publish.rb 的认证**——发布过站点（生成 `~/.oh-my-site/token.json`）或登录账号（`account.json`）后即可直接使用，无需额外配置。
+抠图脚本调用 showcode.com API，**复用 publish.rb 的认证**——发布过站点（生成 `~/.oh-my-website/token.json`）或登录账号（`account.json`）后即可直接使用，无需额外配置。
 
 ```bash
 # Hero 大图抠图 — 保留原始分辨率
@@ -645,7 +645,7 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
 ## Step 4.6 — 平台内容抓取（B站/小红书/抖音）
 
 > 当用户在 Q5 或后续提供了 B站空间链接、小红书主页、抖音主页时，Agent 应抓取其公开作品内容，填入成果展示/作品集模块。
-> 
+>
 > **重要：B站/小红书/抖音页面均为 SPA 客户端渲染，普通 HTTP 请求拿不到数据，必须使用浏览器工具。**
 
 ### 流程
@@ -657,7 +657,7 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
    输出 `{"platform":"bilibili","uid":"546195"}` 或 `xiaohongshu` / `douyin`。
 
 2. **浏览器抓取**（三平台通用流程）：
-   
+
    **B站** — 打开 `https://space.bilibili.com/{uid}/video`：
    - 等待页面加载完成（`.video-items` 或 `.small-item` 出现）
    - 在 console 执行以下 JS 收集数据：
@@ -673,7 +673,7 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
      }))
    })
    ```
-   
+
    **小红书** — 打开 `https://www.xiaohongshu.com/user/profile/{uid}`：
    - 等待笔记卡片加载
    - 在 console 执行 JS 收集封面图和标题
@@ -689,7 +689,7 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
      }))
    })
    ```
-   
+
    **抖音** — 打开 `https://www.douyin.com/user/{sec_uid}`：
    - 等待视频列表加载
    - 在 console 执行 JS 收集数据
@@ -725,9 +725,9 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
    - 输出完整的 JSON（含本地图片路径），Agent 用此数据生成 HTML 卡片
 
 5. **生成 WORKS_CARDS HTML**：Agent 根据输出的 JSON 拼装 `.work-card` HTML，替换模板中的 `{{WORKS_CARDS}}`。
-   
+
    卡片序号从 01 开始，平台标签用 `PlatformDetector.platform_badge()` 映射（Bilibili / RedBook / Douyin）。
-   
+
    示例卡片 HTML：
    ```html
    <div class="work-card">
@@ -787,7 +787,7 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
    - C 类：`从0到1搭建品牌内容矩阵`、`单月10W+爆文拆解复盘`、`全域流量漏斗搭建实录`
    - A 类：`高并发微服务架构实践`、`开源 CLI 工具 1K Star 之路`
    - B 类：`新消费品牌 VI 升级全案`、`动态视觉识别系统设计`
-   
+
 6. **描述**：30-60 字中文，自然段落，描述项目背景/方法/成果
 
 7. **标签**：每张卡片 3 个标签，从对应身份标签池中随机选，不重复
@@ -873,7 +873,7 @@ ruby "SKILL_DIR/scripts/publish.rb" publish \
 - `--dir` 指定网站目录路径（包含 `index.html` 及所有子页面、css/、js/、images/）
 - 整个目录会被打成 zip 上传（**总大小 ≤ 20MB，单文件 ≤ 5MB**），服务器解压后整盘覆盖到 CDN，旧文件会被清掉
 - 子页面通过相对路径访问（`href="about.html"`），CSS/JS 用相对路径（`href="css/style.css"`）
-- 首次发布 → 创建新站点，token 保存到 `~/.oh-my-site/token.json`
+- 首次发布 → 创建新站点，token 保存到 `~/.oh-my-website/token.json`
 - 后续运行 → 重新打 zip 整盘覆盖
 - 从 stdout 提取 `✅` 开头的 URL 返回给用户
 
@@ -881,7 +881,7 @@ ruby "SKILL_DIR/scripts/publish.rb" publish \
 
 ### 编辑现有网站（拉回来改）
 
-如果用户在另一台机器上想继续改，或本地 `~/.oh-my-site/` 下没有源文件了：
+如果用户在另一台机器上想继续改，或本地 `~/.oh-my-website/` 下没有源文件了：
 
 ```bash
 ruby "SKILL_DIR/scripts/publish.rb" fetch --slug "SLUG" --out /path/to/edit
@@ -933,7 +933,7 @@ ruby "SKILL_DIR/scripts/publish.rb" delete
 ruby "SKILL_DIR/scripts/publish.rb" login --email USER_EMAIL --password USER_PASSWORD
 ```
 
-登录后 session_token 存到 `~/.oh-my-site/account.json`，**所有后续 publish/update 都会优先用 session 鉴权**，自动覆盖账号下所有 site。
+登录后 session_token 存到 `~/.oh-my-website/account.json`，**所有后续 publish/update 都会优先用 session 鉴权**，自动覆盖账号下所有 site。
 
 ### 检查登录状态 / 登出
 
