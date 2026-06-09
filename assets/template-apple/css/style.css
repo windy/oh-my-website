@@ -46,6 +46,135 @@ body {
   overflow-x: hidden;
 }
 
+/* ============================================================
+   顶部导航：默认透明，滚动后毛玻璃
+   ============================================================ */
+.apple-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4vw;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid transparent;
+  transition: background 0.35s ease, backdrop-filter 0.35s ease, border-color 0.35s ease;
+}
+
+/* 滚动后状态：白色毛玻璃 */
+.apple-nav.scrolled {
+  background: rgba(248, 247, 244, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.apple-nav .nav-brand {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  z-index: 101;
+}
+
+.apple-nav .nav-links {
+  display: flex;
+  list-style: none;
+  gap: 1.8rem;
+  margin: 0;
+  padding: 0;
+}
+
+.apple-nav .nav-links a {
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #444;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease;
+  position: relative;
+  padding: 4px 0;
+}
+
+.apple-nav .nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1.5px;
+  background: #111;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+
+.apple-nav .nav-links a:hover,
+.apple-nav .nav-links a.active {
+  color: #111;
+}
+
+.apple-nav .nav-links a.active::after,
+.apple-nav .nav-links a:hover::after {
+  transform: scaleX(1);
+}
+
+/* 汉堡按钮 */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: #111;
+  z-index: 101;
+}
+.nav-toggle svg { width: 22px; height: 22px; display: block; }
+
+/* 移动端 */
+@media (max-width: 900px) {
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .apple-nav .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 75%;
+    max-width: 320px;
+    height: 100vh;
+    flex-direction: column;
+    background: rgba(248, 247, 244, 0.96);
+    backdrop-filter: saturate(180%) blur(28px);
+    -webkit-backdrop-filter: saturate(180%) blur(28px);
+    padding: 88px 2rem 2rem;
+    gap: 1.4rem;
+    box-shadow: -4px 0 30px rgba(0, 0, 0, 0.08);
+    transition: right 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .apple-nav .nav-links.open {
+    right: 0;
+  }
+
+  .apple-nav .nav-links a {
+    font-size: 1.05rem;
+    color: #222;
+  }
+
+  .apple-nav .nav-links a::after {
+    display: none;
+  }
+}
+
 /* ---- Hero Banner: 恰好一屏高度 ---- */
 .hero {
   position: relative;
@@ -674,66 +803,629 @@ body {
 }
 
 /* ========================================================= */
-/* Footer / 页脚 */
+/* Footer / 页脚 — 扫码 + 复制链接 + 版权（与其他模板一致） */
 /* ========================================================= */
-.site-footer {
-  width: 100vw;
-  background-color: #f8f7f4; /* 回归到首屏那种稍微暖一点的米白色，形成视觉的首尾呼应 */
-  padding: 3vw 4vw;
+footer {
   display: flex;
+  align-items: center;
   justify-content: center;
-  border-top: 1px solid rgba(0,0,0,0.05); /* 极细极淡的分割线 */
-}
-
-.footer-container {
-  max-width: 1200px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer-left {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-lg);
-}
-
-.footer-logo {
-  font-family: var(--font-serif);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #111;
-  letter-spacing: 0.1em;
-}
-
-.footer-copyright {
-  font-size: 0.85rem;
+  flex-wrap: wrap;
+  gap: var(--sp-md);
+  padding: var(--sp-2xl) var(--sp-lg);
+  font-size: 0.82rem;
   color: #888;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fafaf8;
 }
 
-.footer-right .footer-link {
-  font-size: 0.9rem;
-  color: #555;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
+.footer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  background: transparent;
+  color: #444;
+  font-size: 0.82rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
-.footer-right .footer-link:hover {
+.footer-btn:hover {
+  background: #f0eee9;
+  border-color: rgba(0, 0, 0, 0.25);
   color: #111;
+  transform: translateY(-1px);
 }
 
-/* 响应式调整 */
+.footer-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.footer-btn.copied {
+  color: #111;
+  border-color: #111;
+}
+
+.footer-copy {
+  margin-left: var(--sp-md);
+  color: #aaa;
+  font-size: 0.78rem;
+}
+
 @media (max-width: 600px) {
-  .footer-container {
-    flex-direction: column;
-    gap: var(--sp-md);
-  }
-  
-  .footer-left {
+  footer {
     flex-direction: column;
     gap: var(--sp-sm);
-    text-align: center;
+    padding: var(--sp-xl) var(--sp-md);
   }
+  .footer-copy { margin-left: 0; }
+}
+
+/* ========================================================= */
+/* 滚动渐入动效 (Scroll Reveal) */
+/* ========================================================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.85s cubic-bezier(0.25, 0.1, 0.25, 1),
+              transform 0.85s cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* skill-card 悬停效果 */
+.skill-card {
+  transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
+              background-color 0.35s ease;
+}
+.skill-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  background-color: #fff;
+}
+.skill-card .skill-icon {
+  transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.skill-card:hover .skill-icon {
+  transform: scale(1.1);
+}
+
+/* work-card 悬停效果 */
+.work-card {
+  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.work-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+.work-card .work-image img,
+.work-card .work-image svg {
+  transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.work-card:hover .work-image img,
+.work-card:hover .work-image svg {
+  transform: scale(1.04);
+}
+
+/* hero 入场提示动效 */
+@keyframes apple-hero-fade {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-content,
+.hero-image,
+.hero-stats-wrapper {
+  animation: apple-hero-fade 1s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+.hero-content { animation-delay: 0.05s; }
+.hero-image { animation-delay: 0.2s; }
+.hero-stats-wrapper { animation-delay: 0.4s; }
+
+/* hero 水印慢速漂浮 */
+@keyframes apple-watermark-drift {
+  0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+  50% { transform: translate(-50%, -50%) translateX(-1.5%); }
+}
+
+.hero-watermark {
+  animation: apple-watermark-drift 18s ease-in-out infinite;
+}
+
+/* ============================================================
+   QR Popup —— 分享浮层
+   ============================================================ */
+.qr-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+  animation: qr-fade-in 0.25s ease;
+}
+.qr-overlay.open { display: flex; }
+
+@keyframes qr-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.qr-popup {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  max-width: 340px; width: 90%;
+  animation: qr-pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qr-pop-in {
+  from { opacity: 0; transform: scale(0.92) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.qr-popup .qr-code-container svg {
+  display: block; margin: 0 auto;
+  max-width: 100%; height: auto;
+  border-radius: 8px;
+}
+.qr-popup .qr-hint {
+  margin: 16px 0 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #6e6e73);
+}
+.qr-popup .qr-url {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #86868b);
+  word-break: break-all;
+  font-family: var(--mono, ui-monospace, SFMono-Regular, monospace);
+  background: #f5f5f7;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.qr-close {
+  display: inline-block;
+  padding: 8px 24px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-primary, #1d1d1f);
+  font-size: 0.88rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.qr-close:hover {
+  background: #f5f5f7;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   子页面 —— 内页布局
+   ============================================================ */
+
+/* 子页面导航：不透明毛玻璃（默认就显示，因为没 hero 衬底）
+   index 页的 nav 仍走透明 → scrolled 逻辑 */
+.apple-nav--inner {
+  background: rgba(248, 247, 244, 0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+.apple-nav--inner.scrolled {
+  background: rgba(248, 247, 244, 0.92);
+}
+
+/* main 容器 —— 顶部留 nav 高度，居中限宽 */
+.page-main {
+  padding-top: 96px;
+  padding-bottom: 80px;
+  min-height: calc(100vh - 56px);
+  background: #fafaf8;
+}
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 6vw;
+}
+
+/* 页面级标题 */
+.page-main h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+  margin: 0 0 32px;
+  line-height: 1.15;
+}
+.page-main h3 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #1d1d1f;
+  margin: 48px 0 16px;
+}
+.page-main h3:first-child { margin-top: 0; }
+
+.page-main p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #4a4a4a;
+  margin: 0 0 18px;
+}
+
+.page-main .about-text p {
+  font-size: 1.05rem;
+  color: #333;
+}
+
+/* skill 标签云 */
+.page-main .skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0 8px;
+}
+.page-main .skills .skill-tag,
+.page-main .skills span {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  color: #444;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.page-main .skills .skill-tag:hover,
+.page-main .skills span:hover {
+  background: #f0eee9;
+  transform: translateY(-1px);
+}
+
+/* 经历 timeline */
+.page-main .timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 2px solid rgba(0, 0, 0, 0.08);
+}
+.page-main .timeline li {
+  position: relative;
+  padding: 12px 0 20px 24px;
+  color: #4a4a4a;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+.page-main .timeline li::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 18px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #1d1d1f;
+}
+
+/* ========================================================= */
+/* 简历页 (resume.html) — timeline + honor 网格               */
+/* ========================================================= */
+.resume-section {
+  margin-bottom: 64px;
+  position: relative;
+}
+.resume-section h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #6e6e73;
+  margin: 0 0 28px;
+  padding-left: 12px;
+  border-left: 3px solid #1d1d1f;
+  line-height: 1;
+}
+
+/* 教育 / 实习经历：timeline 列表 —— fixture 给的是裸 <li>，
+   通过隐式包裹（display:flex on .resume-section > li 不行，所以包成 ul 视觉效果）。
+   我们直接对 .resume-section 内的 li 做 timeline 样式（无需 ul 包裹）。 */
+.resume-section > li,
+.resume-section ul > li {
+  list-style: none;
+  position: relative;
+  padding: 0 0 28px 152px;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #1d1d1f;
+  line-height: 1.7;
+}
+.resume-section > li::before,
+.resume-section ul > li::before {
+  content: '';
+  position: absolute;
+  left: 119px;
+  top: 8px;
+  bottom: -8px;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.1);
+}
+.resume-section > li:last-child::before,
+.resume-section ul > li:last-child::before {
+  display: none;
+}
+.resume-section > li::after,
+.resume-section ul > li::after {
+  content: '';
+  position: absolute;
+  left: 115px;
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #1d1d1f;
+  box-shadow: 0 0 0 4px #fafaf8;
+}
+.resume-section > li > strong:first-child,
+.resume-section ul > li > strong:first-child {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 100px;
+  font-family: var(--mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6e6e73;
+  letter-spacing: 0.04em;
+  text-align: right;
+  padding-right: 8px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.resume-section > li > br + span,
+.resume-section ul > li > br + span {
+  display: block;
+  font-size: 0.88rem;
+  color: #6e6e73;
+  margin-top: 4px;
+  line-height: 1.7;
+}
+
+/* 技能区：彩色描边胶囊，更像分组徽章 */
+.resume-section .skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-left: 0;
+}
+.resume-section .skills span {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  color: #1d1d1f;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.2s;
+}
+.resume-section .skills span:hover {
+  background: #1d1d1f;
+  color: #fafaf8;
+  transform: translateY(-2px);
+}
+
+/* 荣誉奖项：横向卡片网格 */
+.resume-section:has(> li:only-child) {
+  /* 单行教育，不另作处理 */
+}
+/* 当 li 仅为单行文本（无 strong 时间标签）—— 荣誉条目做卡片化 */
+.resume-section > li:not(:has(strong)),
+.resume-section ul > li:not(:has(strong)) {
+  display: inline-block;
+  padding: 14px 20px;
+  margin: 0 8px 10px 0;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  color: #1d1d1f;
+  line-height: 1.5;
+}
+.resume-section > li:not(:has(strong))::before,
+.resume-section > li:not(:has(strong))::after,
+.resume-section ul > li:not(:has(strong))::before,
+.resume-section ul > li:not(:has(strong))::after {
+  display: none;
+}
+
+/* 项目网格 */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+.project-grid > * {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 28px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.project-grid > *:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* portfolio/作品页：work-card 在 project-grid 里走竖排
+   work SVG 自带项目名+分类，因此卡片就是纯图，下方文字隐藏，
+   hover 时整图轻微推升 + 阴影 */
+.project-grid .work-card {
+  display: block;
+  padding: 0;
+  background: transparent;
+  border-radius: 14px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.project-grid .work-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+.project-grid .work-card img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+  border-radius: 0 !important;
+}
+/* SVG 已经承载了项目名 + 分类，模板下方文字隐藏避免重复 */
+.project-grid .work-card h3,
+.project-grid .work-card p {
+  display: none;
+}
+
+/* 产品页 product-grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+.product-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s, box-shadow 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+.product-card h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #1d1d1f;
+}
+.product-card .tagline {
+  font-size: 0.95rem;
+  color: #4a4a4a;
+  margin: 0 0 20px;
+  line-height: 1.6;
+}
+.product-card .metrics {
+  font-size: 0.85rem;
+  color: #6e6e73;
+  margin-bottom: 20px;
+}
+.product-card .metrics .accent-text {
+  color: #1d1d1f;
+  font-weight: 600;
+  font-family: var(--mono, ui-monospace, SFMono-Regular, monospace);
+}
+.product-card a {
+  align-self: flex-start;
+  margin-top: auto;
+  color: #1d1d1f;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 18px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  transition: background 0.2s, transform 0.2s;
+}
+.product-card a:hover {
+  background: #f0eee9;
+  transform: translateY(-1px);
+}
+
+/* 联系页 social links */
+.contact-intro {
+  font-size: 1.05rem;
+  margin-bottom: 32px !important;
+}
+.social-links {
+  list-style: none;
+  padding: 0;
+  margin: 32px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.social-links li {
+  margin: 0;
+}
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  color: #1d1d1f;
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.social-links a:hover {
+  transform: translateY(-2px);
+  background: #f0eee9;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* 文章列表 */
+.article-list {
+  list-style: none;
+  padding: 0;
+  margin: 32px 0 0;
+}
+.article-list li {
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transition: padding-left 0.2s;
+}
+.article-list li:hover { padding-left: 8px; }
+.article-list li:last-child { border-bottom: none; }
+.article-list a {
+  color: #1d1d1f;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.article-list a:hover { color: #0066cc; }
+
+/* 移动端微调 */
+@media (max-width: 720px) {
+  .page-main { padding-top: 80px; padding-bottom: 60px; }
+  .page-main h2 { margin-bottom: 24px; }
+  .page-main h3 { margin: 36px 0 12px; }
 }

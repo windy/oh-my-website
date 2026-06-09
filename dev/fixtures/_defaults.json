@@ -4,7 +4,7 @@
   "TAGLINE": "做点有意思的事",
   "HERO_HEADLINE": "做点有意思的事 —<br>做点不一样的事",
   "HERO_INITIAL": "Z",
-  "HERO_IMAGE": "/__omw_stock/avatars/portrait-warm.svg",
+  "HERO_IMAGE": "/__omw_stock/heroes/portrait-default.png",
   "ROLE_LABEL": "示例身份",
   "BIO": "这是一段示例自我介绍，用来在开发模板时校验排版。生成正式网站时，Agent 会根据用户的真实信息撰写 3-5 句自然中文。",
   "EMAIL": "demo@example.com",

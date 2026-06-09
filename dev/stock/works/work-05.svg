@@ -8,5 +8,4 @@
   <rect width="600" height="400" fill="url(#g)"/>
   <text x="40" y="340" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="48" font-weight="700" fill="#fff">Pico CMS</text>
   <text x="40" y="372" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="18" font-weight="400" fill="#fff" opacity="0.7">开源 · 2.3K Star</text>
-  <circle cx="540" cy="60" r="8" fill="#fff" opacity="0.5"/>
 </svg>

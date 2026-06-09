@@ -6,8 +6,8 @@
   <title>{{NAME}} - 项目</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-<nav>
+<body class="persona-coder">
+<nav class="apple-nav apple-nav--inner" id="appleNav">
   <a href="index.html" class="nav-brand">{{NAME}}</a>
   <button class="nav-toggle" aria-label="Menu">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -15,20 +15,22 @@
     </svg>
   </button>
   <ul class="nav-links">
-    <li><a href="index.html">首页</a></li>
-    <li><a href="about.html">关于</a></li>
-    <li><a href="projects.html" class="active">项目</a></li>
-    <li><a href="blog.html">博客</a></li>
-    <li><a href="portfolio.html">作品</a></li>
-    <li><a href="product.html">产品</a></li>
-    <li><a href="resume.html">简历</a></li>
-    <li><a href="contact.html">联系</a></li>
+      <li><a href="index.html">首页</a></li>
+      <li><a href="about.html">关于</a></li>
+      <li><a href="projects.html" class="active">项目</a></li>
+      <li><a href="blog.html">博客</a></li>
+      <li><a href="portfolio.html">作品</a></li>
+      <li><a href="product.html">产品</a></li>
+      <li><a href="resume.html">简历</a></li>
+      <li><a href="contact.html">联系</a></li>
   </ul>
 </nav>
-<main>
+<main class="page-main">
+  <div class="page-container">
   <h2 style="margin-bottom:var(--sp-5)">项目</h2>
   <div class="project-grid">
     {{PROJECT_CARDS}}
+  </div>
   </div>
 </main>
 <footer>
@@ -42,6 +44,30 @@
   </button>
 </footer>
 <script src="js/qrcode.min.js"></script>
+<script>
+(function () {
+  var nav = document.getElementById('appleNav');
+  if (!nav) return;
+  var threshold = 40;
+  function onScroll() {
+    if (window.scrollY > threshold) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  var toggle = nav.querySelector('.nav-toggle');
+  var links = nav.querySelector('.nav-links');
+  if (toggle && links) {
+    toggle.addEventListener('click', function () {
+      nav.classList.toggle('menu-open');
+    });
+    links.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') nav.classList.remove('menu-open');
+    });
+  }
+})();
+</script>
 <script src="js/script.js"></script>
 </body>
 </html>

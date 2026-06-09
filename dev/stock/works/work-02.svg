@@ -8,5 +8,4 @@
   <rect width="600" height="400" fill="url(#g)"/>
   <text x="40" y="340" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="48" font-weight="700" fill="#3d2c1e">拾光咖啡</text>
   <text x="40" y="372" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="18" font-weight="400" fill="#3d2c1e" opacity="0.7">品牌系统 · 2025</text>
-  <circle cx="540" cy="60" r="8" fill="#3d2c1e" opacity="0.5"/>
 </svg>

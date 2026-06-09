@@ -4,16 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{NAME}} - 个人主页</title>
+    <link rel="stylesheet" href="css/animated-bg.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="persona-coder">
+
+    <!-- 顶部导航：默认透明，滚动后毛玻璃 -->
+    <nav class="apple-nav" id="appleNav">
+        <a href="index.html" class="nav-brand">{{NAME}}</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html" class="active">首页</a></li>
+            <li><a href="about.html">关于</a></li>
+            <li><a href="projects.html">项目</a></li>
+            <li><a href="blog.html">博客</a></li>
+            <li><a href="portfolio.html">作品</a></li>
+            <li><a href="product.html">产品</a></li>
+            <li><a href="resume.html">简历</a></li>
+            <li><a href="contact.html">联系</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="菜单">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="13" x2="20" y2="13"/><line x1="4" y1="19" x2="20" y2="19"/>
+            </svg>
+        </button>
+    </nav>
 
     <!-- 顶部 Banner / Hero 区域，确保恰好一屏高度 -->
     <header id="home" class="hero">
         
         <!-- 巨大水印背书：默认展示拼音，极其淡的颜色 -->
         <div class="hero-watermark">
-            <!-- 这个默认可以用 JS 或者后端去剥离，目前我们做死样式，到时候可以用插值占位 -->
             {{NAME_PINYIN|ZHANG SAN}}
         </div>
 
@@ -26,7 +46,7 @@
             
             <!-- 人像区域，留出宽裕空间 -->
             <div class="hero-image">
-                <img src="hero-sample.png" alt="人像" />
+                <img src="{{HERO_IMAGE|}}" alt="{{NAME}}" />
             </div>
         </div>
 
@@ -51,7 +71,7 @@
     <!-- 主体内容区 -->
     <main>
         <!-- 个人简介区 -->
-        <section id="about" class="about-section">
+        <section id="about" class="about-section reveal">
             <div class="about-container">
                 <h2 class="about-title">个人简介</h2>
                 <div class="about-desc">
@@ -63,7 +83,7 @@
         </section>
 
         <!-- 核心优势/擅长领域 模块 -->
-        <section id="skills" class="skills-section">
+        <section id="skills" class="skills-section reveal">
             <div class="skills-container">
                 <h2 class="section-title">核心能力</h2>
                 <div class="skills-grid">
@@ -135,7 +155,7 @@
               </div>
             </div>
         -->
-        <section id="works" class="works-section">
+        <section id="works" class="works-section reveal">
             <div class="works-container">
                 <h2 class="section-title">成果展示</h2>
                 <div class="works-grid">
@@ -186,7 +206,7 @@
         </section>
 
         <!-- 联系方式 模块 -->
-        <section id="contact" class="contact-section">
+        <section id="contact" class="contact-section reveal">
             <div class="contact-container">
                 <!-- 左侧大标题 -->
                 <div class="contact-header">
@@ -222,19 +242,71 @@
     </main>
 
     <!-- 页脚 Footer -->
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-left">
-                <span class="footer-logo">{{NAME}}</span>
-                <span class="footer-copyright">© 2026 All Rights Reserved.</span>
-            </div>
-            
-            <div class="footer-right">
-                <!-- 返回顶部 -->
-                <a href="#home" class="footer-link">Back to Top ↑</a>
-            </div>
-        </div>
+    <footer>
+        <button class="footer-btn" onclick="toggleQR()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
+            扫码访问
+        </button>
+        <button class="footer-btn" onclick="copyLink(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            复制链接
+        </button>
+        <span class="footer-copy">© 2026 {{NAME}}</span>
     </footer>
 
+    <script src="js/qrcode.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+    /* 1. 导航滚动检测：滚出 hero 后变毛玻璃 */
+    (function() {
+      var nav = document.getElementById('appleNav');
+      if (!nav) return;
+      var threshold = 80;
+      function onScroll() {
+        if (window.scrollY > threshold) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+
+    /* 2. 移动端汉堡菜单 */
+    (function() {
+      var toggle = document.getElementById('navToggle');
+      var links = document.getElementById('navLinks');
+      if (!toggle || !links) return;
+      toggle.addEventListener('click', function() {
+        links.classList.toggle('open');
+        toggle.classList.toggle('open');
+      });
+      // 点击链接后自动收起
+      links.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          links.classList.remove('open');
+          toggle.classList.remove('open');
+        });
+      });
+    })();
+
+    /* 3. 滚动渐入：每个 .reveal section 进入视口时加 .visible */
+    (function() {
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+    })();
+    </script>
 </body>
 </html>
