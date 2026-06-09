@@ -121,6 +121,9 @@ end
 
 output ||= File.join(File.dirname(input), "#{File.basename(input, File.extname(input))}_nobg.png")
 
+# 确保输出目录存在（关键修复：避免 ENOENT / curl exit 56）
+FileUtils.mkdir_p(File.dirname(output))
+
 if File.size(input) > 10 * 1024 * 1024
   log "❌ 图片超过 10MB，请先压缩"
   exit 1
@@ -153,8 +156,12 @@ MAX_POLLS.times do |i|
     begin
       http_download(result_url, tmp_output, token: tk)
     rescue => e
-      log "Ruby HTTP 下载失败 (#{e.class})，回退到 curl..."
-      system("curl", "-s", "-L", "-H", "Authorization: Bearer #{tk}", "-o", tmp_output, result_url, exception: true)
+      log "Ruby HTTP 下载失败 (#{e.class}: #{e.message})，回退到 curl..."
+      ok = system("curl", "-fsSL", "-H", "Authorization: Bearer #{tk}", "-o", tmp_output, result_url)
+      unless ok
+        log "❌ curl 下载也失败 (exit #{$?.exitstatus})。检查目录是否存在: #{File.dirname(tmp_output)}"
+        exit 1
+      end
     end
 
     if options[:resize]

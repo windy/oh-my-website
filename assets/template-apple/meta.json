@@ -7,5 +7,16 @@
   "persona_classes": ["persona-coder", "persona-writer", "persona-designer", "persona-founder", "persona-student"],
   "preview_colors": { "bg": "#f8f7f4", "text": "#111111", "accent": "#333333" },
   "default_bg": "bg-gradient-flow",
-  "pages": ["index", "about", "projects", "blog", "portfolio", "product", "resume", "contact"]
+  "pages": ["index", "about", "projects", "blog", "portfolio", "product", "resume", "contact"],
+  "image_slots": [
+    {
+      "key": "HERO_IMAGE",
+      "required": false,
+      "type": "portrait",
+      "where": "首屏右侧大图",
+      "description": "建议人像半身照（西装/正装最佳），抠图后透明背景 PNG。无图时左侧文字会自动撑满。",
+      "ask_user": "Hero 区右侧想放一张你的照片吗？发我一张原图，我帮你抠掉背景。不发就走纯文字版。",
+      "fallback": "纯左文版（无图区折叠，标题撑满）"
+    }
+  ]
 }

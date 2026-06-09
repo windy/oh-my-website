@@ -272,6 +272,23 @@ body {
 }
 
 /* ========================================================= */
+/* HERO_IMAGE 缺省 fallback：无图时折叠右侧，让左侧文字撑满 */
+/* ========================================================= */
+.hero-image:has(img[src=""]),
+.hero-image:has(img:not([src])) {
+  display: none;
+}
+.hero-container:has(.hero-image:has(img[src=""])),
+.hero-container:has(.hero-image:has(img:not([src]))) {
+  justify-content: flex-start;
+}
+.hero-container:has(.hero-image:has(img[src=""])) .hero-content,
+.hero-container:has(.hero-image:has(img:not([src]))) .hero-content {
+  max-width: 100%;
+  flex: 1;
+}
+
+/* ========================================================= */
 /* 底部数据栏：玻璃质感，完全覆盖屏幕底部 */
 /* ========================================================= */
 .hero-stats-wrapper {

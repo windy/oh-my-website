@@ -378,6 +378,8 @@ template-minimal/
 - **独立 HTML 文件，共享 CSS/JS**：每页 `<link rel="stylesheet" href="css/style.css">` 和 `<script src="js/script.js">`
 - **零外部资源**：不引用 CDN、Google Fonts、外部图片。字体用系统栈。QR 码库 `qrcode.min.js` 为本地文件（qrcode-generator, MIT 协议）
 - **媒体铁律见下方「Step 4.5 媒体处理规约」**，所有图片/视频处理必须遵守
+- **先做 Step 4.3 媒体询问 checkpoint**：模板 `meta.json` 的 `image_slots` 字段会列出所有需要图的位置，必须主动问用户后再填占位符
+- **图片占位符默认值必须是空字符串**：`<img src="{{HERO_IMAGE|}}">`，不要在模板里硬编码示例图路径作 fallback（会泄漏到真实用户成品）
 - **移动端优先，响应式**：`<meta name="viewport">`，导航在小屏上有汉堡菜单
 - **有效 HTML5**，语义标签
 - **所有外部链接 `target="_blank" rel="noopener"`**
@@ -412,6 +414,74 @@ template-minimal/
 - **排版比装饰重要**：字号对比、行距、间距比花哨 CSS 更重要
 - **文案自然**：AI 写自我介绍时，要像真人说话，不要官腔
 - **动画克制**：页面切换可以有 subtle 过渡，不加花哨入场动画
+
+---
+
+## Step 4.3 — 媒体素材询问 checkpoint（必做，不能跳）
+
+> **痛点回顾**：以前 Agent 直接拿模板默认占位生成，hero 图槽位最后是空的，发布上线一片白。
+> 现在每个模板的 `meta.json` 里有 `image_slots` 字段，**自报需要哪些图**。Agent 必须在写 HTML **之前**，主动询问用户。
+
+### 触发时机
+
+读完模板 `README.md`、复制模板到 `$SITE_DIR` 之后、**填充任何 `{{...}}` 占位符之前**。
+
+### 流程
+
+1. **读 meta.json 的 `image_slots`**（如果该字段不存在 → 跳过本 Step，按老流程走）：
+   ```bash
+   jq '.image_slots // []' "$SITE_DIR/meta.json"
+   ```
+
+2. **逐个 slot 处理**：
+
+   每个 slot 的字段含义：
+   - `key`：占位符名（如 `HERO_IMAGE`、`AVATAR`）
+   - `required`：是否必填。`true` 时即便用户拒绝也要追问或换模板
+   - `type`：`portrait`（人像，可抠图）/ `photo`（普通照片）/ `logo` / `screenshot`
+   - `where`：放在页面哪里（用于跟用户描述）
+   - `description`：素材建议（尺寸、比例、风格）
+   - `ask_user`：直接拿这句话问用户
+   - `fallback`：用户拒绝时的处理说明（agent 据此决定怎么降级）
+
+3. **询问模式**：
+
+   按 slot 顺序，**用 `ask_user` 字段的原话问用户**。一次问一个，等回复。例如：
+
+   > Hero 区右侧想放一张你的照片吗？发我一张原图，我帮你抠掉背景。不发就走纯文字版。
+
+4. **三种用户回复的处理**：
+
+   | 用户回复 | 处理 |
+   |---------|------|
+   | 发了图（粘附件 / 给路径 / 粘 URL） | 走 Step 4.5 的抠图 / 压缩流程，落到 `images/<key小写>.png`，模板填 `images/<key小写>.png` |
+   | "不要 / 不用 / 跳过 / 没图" | 占位符填 **空字符串**，模板自带 fallback CSS 接管（如 hero 折叠） |
+   | "用占位 / 用默认 / 你看着办" | 从 `dev/stock/` 找匹配 `type` 的占位资源（如 `portrait` → `dev/stock/heroes/`），**不要**直接填 dev 路径，先复制到 `$SITE_DIR/images/` |
+
+5. **必填项 `required: true` 的 slot**：用户拒绝时不能放过——再追问一次说明该位置必须有图，或建议换一个不需要这张图的模板。
+
+### 占位符填充约定（重要）
+
+模板 HTML 里的写法**必须**是：
+
+```html
+<img src="{{HERO_IMAGE|}}" alt="...">
+```
+
+注意 `|` 后的默认值是**空字符串**，**绝对不要**写 `{{HERO_IMAGE|images/hero-sample.png}}` 这种"自带样图"的兜底——会让真实用户的成品里出现别人的脸。
+
+CSS 端的 fallback 用 `:has(img[src=""])` 或 `:has(img:not([src]))` 选择器折叠/降级。模板作者要为每个 image_slot 在 CSS 里写好"无图态"。
+
+### Checkpoint 自检
+
+进入 Step 4.5 / 写 HTML 前，确认：
+
+- [ ] 每个 `image_slots` 都问过用户
+- [ ] 用户给的图已经处理完落到 `$SITE_DIR/images/`
+- [ ] 用户拒绝的 slot，占位符填空字符串
+- [ ] 用了占位资源的，已经复制到 `$SITE_DIR/images/`，不再引用 `dev/stock/`
+
+任何一项没做就回去补，**不要带病往下走**。
 
 ---
 
