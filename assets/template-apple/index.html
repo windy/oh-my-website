@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{NAME}} - 个人主页</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="persona-coder">
+
+    <!-- 顶部 Banner / Hero 区域，确保恰好一屏高度 -->
+    <header id="home" class="hero">
+        
+        <!-- 巨大水印背书：默认展示拼音，极其淡的颜色 -->
+        <div class="hero-watermark">
+            <!-- 这个默认可以用 JS 或者后端去剥离，目前我们做死样式，到时候可以用插值占位 -->
+            {{NAME_PINYIN|ZHANG SAN}}
+        </div>
+
+        <div class="hero-container">
+            <div class="hero-content">
+                <!-- 名字与身份 -->
+                <h1 class="hero-title">{{NAME}}</h1>
+                <p class="hero-subtitle">{{ROLE_LABEL|新媒体运营}}</p>
+            </div>
+            
+            <!-- 人像区域，留出宽裕空间 -->
+            <div class="hero-image">
+                <img src="hero-sample.png" alt="人像" />
+            </div>
+        </div>
+
+        <!-- 底部数据/标签栏，毛玻璃质感 -->
+        <div class="hero-stats-wrapper">
+            <div class="hero-stats">
+                <div class="stats-label">
+                    <span>个人标签</span>
+                    <span class="arrow-circle">
+                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </span>
+                </div>
+                <div class="stats-list">
+                    <div class="stat-item">{{YEARS_EXPERIENCE|10}}年经验</div>
+                    <div class="stat-item">10W+粉丝</div>
+                    <div class="stat-item">GW认证</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main>
+        <!-- 个人简介区 -->
+        <section id="about" class="about-section">
+            <div class="about-container">
+                <h2 class="about-title">个人简介</h2>
+                <div class="about-desc">
+                    {{BIO|拥有多年数字营销与用户生态运营经验。我始终坚信，在信息碎片化的喧嚣时代，真正的价值在于克制与精准。过往履历中，我致力于从零到一构建高活跃用户圈层，将宏观数据分析与敏锐的趋势洞察结合，帮助品牌穿透算法壁垒，建立独特的辨识度。
+
+这不仅仅是一份工作，更是我对数字世界运行逻辑的探索。未来，我将继续秉持极简的执行理念——把复杂的底层数据逻辑藏于幕后，将最纯粹、有温度的感官体验呈现于台前，为每一份信任赋予生生不息的生命力。}}
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心优势/擅长领域 模块 -->
+        <section id="skills" class="skills-section">
+            <div class="skills-container">
+                <h2 class="section-title">核心能力</h2>
+                <div class="skills-grid">
+                    <!-- 模块1 -->
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                            <polyline points="16 7 22 7 22 13"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="skill-title">{{SKILL_1_TITLE|深度数据洞察}}</h3>
+                    <p class="skill-desc">{{SKILL_1_DESC|从复杂的底层数据中提取核心指标，反哺内容策略与平台的精准分发。}}</p>
+                </div>
+
+                <!-- 模块2 -->
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </div>
+                    <h3 class="skill-title">{{SKILL_2_TITLE|全域内容矩阵}}</h3>
+                    <p class="skill-desc">{{SKILL_2_DESC|针对跨平台生态进行内容差异化布局，打造全网立体化的高辨识度品牌认知。}}</p>
+                </div>
+
+                <!-- 模块3 -->
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    <h3 class="skill-title">{{SKILL_3_TITLE|爆款破圈增长}}</h3>
+                    <p class="skill-desc">{{SKILL_3_DESC|敏锐捕捉极短期流量红利，策划破圈事件与话题，达成指数级的拉新增长。}}</p>
+                </div>
+
+                <!-- 模块4 -->
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                            <path d="M3 3v5h5"></path>
+                        </svg>
+                    </div>
+                    <h3 class="skill-title">{{SKILL_4_TITLE|商业转化闭环}}</h3>
+                    <p class="skill-desc">{{SKILL_4_DESC|搭建健康且可复用的全景商业模型，实现从流量吸引到最终价值变现的转化。}}</p>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- 成果展示 / 作品集 模块 -->
+        <!-- 
+          WORKS_CARDS 模板变量说明：
+          - 未提供时使用下面 4 张默认占位卡片
+          - 提供平台链接后，Agent 会抓取内容并替换整个 works-grid 内部
+          - 每张卡片结构：
+            <div class="work-card">
+              <div class="work-image"><img src="封面图路径" alt="..."></div>
+              <div class="work-content">
+                <div class="work-badge"><span class="badge-num">序号</span><span class="badge-text">平台标签</span></div>
+                <h3 class="work-title">标题</h3>
+                <p class="work-desc">描述</p>
+                <div class="work-tags"><span>标签1</span><span>标签2</span><span>标签3</span></div>
+              </div>
+            </div>
+        -->
+        <section id="works" class="works-section">
+            <div class="works-container">
+                <h2 class="section-title">成果展示</h2>
+                <div class="works-grid">
+                    {{WORKS_CARDS|
+                    <!-- 
+                      默认占位：Agent 应根据用户身份自动生成 4 张卡片替换此处。
+                      以下为保底占位，正常情况下不会被使用。
+                    -->
+                    <div class="work-card">
+                        <div class="work-image"><img src="work-sample-1.jpg" alt="封面"></div>
+                        <div class="work-content">
+                            <div class="work-badge"><span class="badge-num">01</span><span class="badge-text">Branding</span></div>
+                            <h3 class="work-title">作品标题 1</h3>
+                            <p class="work-desc">作品描述占位文本。</p>
+                            <div class="work-tags"><span>标签A</span><span>标签B</span><span>标签C</span></div>
+                        </div>
+                    </div>
+                    <div class="work-card">
+                        <div class="work-image"><img src="work-sample-2.jpg" alt="封面"></div>
+                        <div class="work-content">
+                            <div class="work-badge"><span class="badge-num">02</span><span class="badge-text">Design</span></div>
+                            <h3 class="work-title">作品标题 2</h3>
+                            <p class="work-desc">作品描述占位文本。</p>
+                            <div class="work-tags"><span>标签A</span><span>标签B</span><span>标签C</span></div>
+                        </div>
+                    </div>
+                    <div class="work-card">
+                        <div class="work-image"><img src="work-sample-3.jpg" alt="封面"></div>
+                        <div class="work-content">
+                            <div class="work-badge"><span class="badge-num">03</span><span class="badge-text">Marketing</span></div>
+                            <h3 class="work-title">作品标题 3</h3>
+                            <p class="work-desc">作品描述占位文本。</p>
+                            <div class="work-tags"><span>标签A</span><span>标签B</span><span>标签C</span></div>
+                        </div>
+                    </div>
+                    <div class="work-card">
+                        <div class="work-image"><img src="work-sample-4.jpg" alt="封面"></div>
+                        <div class="work-content">
+                            <div class="work-badge"><span class="badge-num">04</span><span class="badge-text">Socials</span></div>
+                            <h3 class="work-title">作品标题 4</h3>
+                            <p class="work-desc">作品描述占位文本。</p>
+                            <div class="work-tags"><span>标签A</span><span>标签B</span><span>标签C</span></div>
+                        </div>
+                    </div>
+                    }}
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系方式 模块 -->
+        <section id="contact" class="contact-section">
+            <div class="contact-container">
+                <!-- 左侧大标题 -->
+                <div class="contact-header">
+                    <h2 class="contact-title">联系方式</h2>
+                    <p class="contact-subtitle">让伟大的想法在此落地</p>
+                </div>
+                
+                <!-- 右侧列表 (电话 & 邮箱) -->
+                <div class="contact-list">
+                    <!-- 电话 -->
+                    <div class="contact-item">
+                        <div class="contact-num-line">
+                            <span class="contact-index">01</span>
+                            <div class="line"></div>
+                        </div>
+                        <h3 class="contact-label">电话</h3>
+                        <p class="contact-value">{{PHONE|138 0000 0000}}</p>
+                    </div>
+
+                    <!-- 邮箱 -->
+                    <div class="contact-item">
+                        <div class="contact-num-line">
+                            <span class="contact-index">02</span>
+                            <div class="line"></div>
+                        </div>
+                        <h3 class="contact-label">邮箱</h3>
+                        <p class="contact-value">{{EMAIL|hello@example.com}}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 页脚 Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <span class="footer-logo">{{NAME}}</span>
+                <span class="footer-copyright">© 2026 All Rights Reserved.</span>
+            </div>
+            
+            <div class="footer-right">
+                <!-- 返回顶部 -->
+                <a href="#home" class="footer-link">Back to Top ↑</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

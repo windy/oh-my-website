@@ -1,0 +1,739 @@
+/* ============================================================
+   template-apple — Apple 风格样式 (修正一屏、水印、毛玻璃底部)
+   ============================================================ */
+
+:root {
+  /* 背景与文字：极简米白底 + 深色文字 */
+  --bg-primary: #f8f7f4; 
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  
+  /* 字体设置 */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-serif: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  /* 间距 */
+  --sp-sm: 8px;
+  --sp-md: 16px;
+  --sp-lg: 24px;
+  --sp-xl: 32px;
+  --sp-2xl: 48px;
+  --sp-3xl: 64px;
+}
+
+/* ---- Reset ---- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* ---- Hero Banner: 恰好一屏高度 ---- */
+.hero {
+  position: relative;
+  width: 100vw;
+  height: 100vh;      /* 强制满屏高度 */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 巨型背景水印词：超淡拼音、衬线体，居中 */
+.hero-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: "Songti SC", "STSong", "Times New Roman", Times, serif;
+  font-size: clamp(8rem, 20vw, 25rem); /* 非常大 */
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #efede7; /* 极其淡，仅比底色 #f8f7f4 深一点点 */
+  white-space: nowrap;
+  text-transform: uppercase;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 中间容器：放置姓名与人像 */
+.hero-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between; /* 左右两端分开 */
+  align-items: center;
+  width: 100%;
+  max-width: 1400px; /* 大宽度以容纳两边内容 */
+  margin: 0 auto;
+  padding: 0 4vw; /* 响应式边距 */
+  flex: 1; /* 撑开头部高度，挤压底部玻璃条空间 */
+}
+
+/* 左侧内容：巨大名字和身份 */
+.hero-content {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+  z-index: 2; /* 在水印之上 */
+  margin-top: -10vh; /* 微微上移，避开底部，使视觉居中偏上 */
+}
+
+.hero-title {
+  /* 将中文名字设为巨大 */
+  font-size: clamp(5rem, 10vw, 9rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  margin-bottom: var(--sp-md);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  padding-left: 0.5vw;
+}
+
+/* 右侧人像：预留区域 */
+.hero-image {
+  flex: 1;
+  height: 90vh; /* 使人物能占据屏幕大半高度 */
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end; /* 与底部玻璃条齐平或插入 */
+  position: relative;
+  z-index: 1;
+}
+
+.hero-image svg,
+.hero-image img {
+  height: 100%;
+  max-height: 850px;
+  width: auto;
+  object-fit: contain;
+  object-position: bottom right; /* 确保靠右底呈现 */
+  /* 让图片自然穿插于水印和底部装饰条之间 */
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1); /* 苹果风格的缓动曲线 */
+}
+
+.hero-image img:hover {
+  transform: scale(1.06); /* 鼠标悬浮时微微放大 6% */
+}
+
+/* ========================================================= */
+/* 底部数据栏：玻璃质感，完全覆盖屏幕底部 */
+/* ========================================================= */
+.hero-stats-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 110px; /* 合适的可见高度 */
+  z-index: 20;   /* 浮在人物上方或下方视需求定，通常在最上 */
+}
+
+.hero-stats {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  /* 毛玻璃质感层 */
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.03);
+}
+
+/* 左侧黑块：重色区分“个人标签” */
+.stats-label {
+  background: #000000;
+  color: #ffffff;
+  width: 350px; /* 固定占据左侧一定比例 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+
+.arrow-circle {
+  margin-left: 12px;
+  background: #ffffff;
+  color: #000000;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 右侧列表区在玻璃上 */
+.stats-list {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 0 var(--sp-2xl);
+  /* 渐变遮罩模拟反光/金属过渡效果 (可选) */
+  background: linear-gradient(90deg, 
+      rgba(255,255,255,0.8) 0%, 
+      rgba(220,220,220,0.4) 50%, 
+      rgba(255,255,255,0.8) 100%);
+}
+
+.stat-item {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #111;
+  letter-spacing: 0.05em;
+  position: relative;
+}
+
+/* 响应式调整 */
+@media (max-width: 900px) {
+  .hero {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .hero-container {
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: 10vh;
+  }
+  
+  .hero-content {
+    margin-top: 0;
+    text-align: center;
+    margin-bottom: 5vh;
+  }
+  
+  .hero-title {
+    font-size: clamp(3rem, 15vw, 5rem);
+  }
+  
+  .hero-image {
+    height: 50vh;
+    justify-content: center;
+  }
+
+  .hero-stats-wrapper {
+    position: relative; /* 移动端不绝对定位了，跟着文档流 */
+    height: auto;
+  }
+  
+  .hero-stats {
+    flex-direction: column;
+  }
+  
+  .stats-label {
+    width: 100%;
+    height: 70px;
+  }
+  
+  .stats-list {
+    flex-direction: column;
+    gap: 20px;
+    padding: 30px 0;
+  }
+}
+
+/* ========================================================= */
+/* About Section / 个人简介 */
+/* ========================================================= */
+.about-section {
+  width: 100vw;
+  min-height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff; /* 纯白背景，与首屏产生微妙的层级区分 */
+  padding: 8vw 2vw;
+  text-align: center;
+}
+
+.about-container {
+  max-width: 800px;
+  width: 100%;
+}
+
+/* 核心标题句：深色、略粗 */
+.about-title {
+  font-size: clamp(2rem, 5vw, 3rem); /* 增大了主标题字号 */
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: var(--sp-xl); /* 增加了与正文的距离 */
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+}
+
+/* 详细描述：浅灰色、字号较小，与标题形成强烈的灰度对比 */
+.about-desc {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-weight: 400;
+  color: #a0a0a0; /* 参考图中的浅灰色 */
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: justify;
+  white-space: pre-wrap; /* 关键：保留文案中的换行符渲染，使段落排版正确 */
+}
+
+/* 响应式 */
+@media (max-width: 900px) {
+  .about-section {
+    padding: 15vw 5vw;
+  }
+}
+
+/* ========================================================= */
+/* Skills Section / 核心优势 (四大块) */
+/* ========================================================= */
+.skills-section {
+  width: 100vw;
+  background-color: #ffffff; /* 与上方保持连贯 */
+  padding: 4vw 4vw 8vw 4vw;
+  display: flex;
+  justify-content: center;
+}
+
+.skills-container {
+  max-width: 1200px;
+  width: 100%;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 默认电脑端 4 列平行排列 */
+  gap: var(--sp-lg);
+  width: 100%;
+}
+
+.skill-card {
+  background-color: #faf9f7; /* 与参考图一致的超浅灰底色方块 */
+  padding: 3vw 2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-radius: 4px; /* 极小的圆角或微小圆角，保持硬朗 */
+}
+
+.skill-icon {
+  margin-bottom: var(--sp-lg);
+  color: #333333; /* 图标采用深灰色，保持纤细线条 */
+}
+
+.skill-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.skill-title {
+  font-family: var(--font-sans); /* 改为无衬线体，与整体现代极简风格统一 */
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: 600;
+  color: #111111;
+  margin-bottom: var(--sp-sm);
+  line-height: 1.3;
+}
+
+.skill-desc {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #999999;
+  line-height: 1.6;
+}
+
+/* 响应式调整 */
+@media (max-width: 1024px) {
+  .skills-grid {
+    grid-template-columns: repeat(2, 1fr); /* 平板尺寸变成横向 2x2 */
+  }
+}
+
+@media (max-width: 600px) {
+  .skills-grid {
+    grid-template-columns: 1fr; /* 手机端变成单列 4 行 */
+  }
+  .skill-card {
+    padding: 10vw 6vw;
+  }
+}
+
+/* ========================================================= */
+/* Works Section / 成果展示 (卡片流) */
+/* ========================================================= */
+.works-section {
+  width: 100vw;
+  background-color: #ffffff; /* 延续纯白色大背景 */
+  padding: 4vw 4vw 8vw 4vw;
+  display: flex;
+  justify-content: center;
+}
+
+.works-container {
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* 通用大模块主标题 (复用 about-title 样式体系) */
+.section-title {
+  text-align: center;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: var(--sp-3xl);
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  display: block; /* 覆盖之前可能的隐藏设定 */
+}
+
+/* 两两并排的网格布局 */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-xl);
+}
+
+/* 作品卡片：浅灰色大包围底板 */
+.work-card {
+  background-color: #f7f6f4;
+  border-radius: 20px; /* 大圆角显得现代而柔和 */
+  padding: 2.5vw;
+  display: flex;
+  gap: var(--sp-lg);
+  align-items: stretch; /* 让左右两边等高居中或上对齐 */
+}
+
+/* 卡片左侧：封面图区域 */
+.work-image {
+  flex-shrink: 0;
+  width: 40%;
+  aspect-ratio: 4 / 5; /* 封面照片比例 */
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #e5e5e5;
+  box-shadow: 4px 10px 25px rgba(0,0,0,0.06);
+}
+
+.work-image svg,
+.work-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 卡片右侧：文字信息区域 */
+.work-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 右侧文字垂直居中在卡片里 */
+}
+
+/* 右上角的黑色椭圆 Badge（类参考图 01 Branding） */
+.work-badge {
+  align-self: flex-end; /* 靠右上角 */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--sp-md);
+}
+
+.badge-num {
+  background-color: #222222;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+
+.badge-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555555;
+}
+
+/* 作品主标题与描述 */
+.work-title {
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-weight: 600;
+  color: #111111;
+  margin-bottom: var(--sp-sm);
+  line-height: 1.2;
+}
+
+.work-desc {
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  font-weight: 400;
+  color: #888888;
+  line-height: 1.6;
+  margin-bottom: var(--sp-lg);
+}
+
+/* 标签列表 */
+.work-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-md);
+  margin-top: auto; /* 推到最底部 */
+}
+
+.work-tags span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #111111;
+}
+
+/* 响应式调整 */
+@media (max-width: 1024px) {
+  .works-grid {
+    grid-template-columns: 1fr; /* 平板及以下，变为单列卡片平铺 */
+  }
+}
+
+@media (max-width: 600px) {
+  .work-card {
+    flex-direction: column; /* 手机端，图在上，文字在下 */
+    padding: 6vw;
+  }
+  .work-image {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* 手机上变为横向封面 */
+  }
+  .work-badge {
+    align-self: flex-start; /* 手机上文字排头 */
+    margin-top: var(--sp-md);
+  }
+}
+
+/* ========================================================= */
+/* Contact Section / 联系方式 */
+/* ========================================================= */
+.contact-section {
+  width: 100vw;
+  background-color: #ffffff;
+  padding: 8vw 4vw 12vw 4vw;
+  display: flex;
+  justify-content: center;
+}
+
+.contact-container {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--sp-3xl);
+}
+
+/* 左侧标题区：占据约1/3宽度 */
+.contact-header {
+  flex: 0 0 35%;
+}
+
+.contact-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #111;
+  line-height: 1.2;
+  margin-bottom: var(--sp-md);
+  letter-spacing: 0.02em;
+}
+
+.contact-subtitle {
+  font-size: 1.1rem;
+  color: #888;
+  font-weight: 400;
+}
+
+/* 右侧列表区：占据剩余宽度，两列排布 */
+.contact-list {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 平行两块：01 和 02 */
+  gap: var(--sp-3xl);
+  margin-top: 10px; /* 微微对齐左侧排版重点 */
+}
+
+/* 单个联系项块 */
+.contact-item {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部序号与分割线 */
+.contact-num-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: var(--sp-xl);
+}
+
+.contact-index {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+  font-family: monospace; /* 用等宽字体体现数字切割感 */
+}
+
+.contact-num-line .line {
+  flex: 1;
+  height: 2px;
+  background-color: #222; /* 粗而黑的顶栏分割线 */
+}
+
+/* 标签和值 */
+.contact-label {
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  font-weight: 600;
+  color: #111;
+  margin-bottom: var(--sp-md);
+}
+
+.contact-value {
+  font-size: clamp(1rem, 1.2vw, 1.1rem);
+  font-weight: 400;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 响应式调整 */
+@media (max-width: 900px) {
+  .contact-container {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2xl);
+  }
+  
+  .contact-header {
+    flex: none;
+    width: 100%;
+    text-align: center;
+    margin-bottom: var(--sp-lg);
+  }
+
+  .contact-list {
+    grid-template-columns: 1fr;
+    width: 100%;
+    justify-items: center;
+  }
+
+  .contact-item {
+    text-align: center;
+    width: 100%;
+  }
+
+  .contact-num-line {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact-list {
+    grid-template-columns: 1fr;
+    gap: var(--sp-2xl);
+    justify-items: center;
+  }
+
+  .contact-item {
+    text-align: center;
+    width: 100%;
+  }
+
+  .contact-num-line {
+    display: none;
+  }
+}
+
+/* ========================================================= */
+/* Footer / 页脚 */
+/* ========================================================= */
+.site-footer {
+  width: 100vw;
+  background-color: #f8f7f4; /* 回归到首屏那种稍微暖一点的米白色，形成视觉的首尾呼应 */
+  padding: 3vw 4vw;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid rgba(0,0,0,0.05); /* 极细极淡的分割线 */
+}
+
+.footer-container {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-lg);
+}
+
+.footer-logo {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0.1em;
+}
+
+.footer-copyright {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.footer-right .footer-link {
+  font-size: 0.9rem;
+  color: #555;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer-right .footer-link:hover {
+  color: #111;
+}
+
+/* 响应式调整 */
+@media (max-width: 600px) {
+  .footer-container {
+    flex-direction: column;
+    gap: var(--sp-md);
+  }
+  
+  .footer-left {
+    flex-direction: column;
+    gap: var(--sp-sm);
+    text-align: center;
+  }
+}

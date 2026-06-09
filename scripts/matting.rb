@@ -32,7 +32,7 @@ def token
   session_token = load_json(ACCOUNT_FILE)["session_token"]
   return session_token if session_token.to_s.length > 0
 
-  site_token = load_json(TOKEN_FILE)["site_token"]
+  site_token = load_json(TOKEN_FILE)["token"]
   return site_token if site_token.to_s.length > 0
 
   log "❌ 未找到认证 token：请先用 publish.rb 发布过站点（生成 token.json），或登录账号（生成 account.json）"

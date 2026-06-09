@@ -660,6 +660,190 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
 
 ---
 
+## Step 4.6 — 平台内容抓取（B站/小红书/抖音）
+
+> 当用户在 Q5 或后续提供了 B站空间链接、小红书主页、抖音主页时，Agent 应抓取其公开作品内容，填入成果展示/作品集模块。
+> 
+> **重要：B站/小红书/抖音页面均为 SPA 客户端渲染，普通 HTTP 请求拿不到数据，必须使用浏览器工具。**
+
+### 流程
+
+1. **检测平台链接**：解析用户提供的 URL，识别平台类型：
+   ```bash
+   ruby SKILL_DIR/scripts/fetch_platform_content.rb --detect "URL"
+   ```
+   输出 `{"platform":"bilibili","uid":"546195"}` 或 `xiaohongshu` / `douyin`。
+
+2. **浏览器抓取**（三平台通用流程）：
+   
+   **B站** — 打开 `https://space.bilibili.com/{uid}/video`：
+   - 等待页面加载完成（`.video-items` 或 `.small-item` 出现）
+   - 在 console 执行以下 JS 收集数据：
+   ```js
+   JSON.stringify({
+     platform: 'bilibili',
+     items: Array.from(document.querySelectorAll('.small-item')).slice(0, 6).map(el => ({
+       title: el.querySelector('.title')?.textContent?.trim() || '',
+       cover_url: (el.querySelector('img')?.src || '').replace(/@\d+w_\d+h(_\d+e)?/, ''),
+       url: 'https:' + (el.querySelector('a')?.getAttribute('href') || ''),
+       description: el.querySelector('.des')?.textContent?.trim() || '',
+       tags: ['B站']
+     }))
+   })
+   ```
+   
+   **小红书** — 打开 `https://www.xiaohongshu.com/user/profile/{uid}`：
+   - 等待笔记卡片加载
+   - 在 console 执行 JS 收集封面图和标题
+   ```js
+   JSON.stringify({
+     platform: 'xiaohongshu',
+     items: Array.from(document.querySelectorAll('.note-item')).slice(0, 6).map(el => ({
+       title: el.querySelector('.title')?.textContent?.trim() || '',
+       cover_url: el.querySelector('img')?.src || '',
+       url: el.querySelector('a')?.href || '',
+       description: '',
+       tags: ['小红书']
+     }))
+   })
+   ```
+   
+   **抖音** — 打开 `https://www.douyin.com/user/{sec_uid}`：
+   - 等待视频列表加载
+   - 在 console 执行 JS 收集数据
+   ```js
+   JSON.stringify({
+     platform: 'douyin',
+     items: Array.from(document.querySelectorAll('[data-e2e="user-post-item"]')).slice(0, 6).map(el => {
+       const img = el.querySelector('img');
+       return {
+         title: img?.alt || '',
+         cover_url: img?.src || '',
+         url: el.querySelector('a')?.href || '',
+         description: '',
+         tags: ['抖音']
+       };
+     })
+   })
+   ```
+
+3. **保存抓取结果**：把 console 输出的 JSON 保存为临时文件：
+   ```bash
+   echo 'JSON_DATA' > /tmp/platform-scraped.json
+   ```
+
+4. **下载封面图 + 生成卡片数据**：
+   ```bash
+   ruby SKILL_DIR/scripts/fetch_platform_content.rb \
+     --from-json /tmp/platform-scraped.json \
+     --out-dir "$SITE_DIR/images"
+   ```
+   脚本会：
+   - 下载所有封面图到 `$SITE_DIR/images/`（命名：`bilibili-cover-001.jpg` 等）
+   - 输出完整的 JSON（含本地图片路径），Agent 用此数据生成 HTML 卡片
+
+5. **生成 WORKS_CARDS HTML**：Agent 根据输出的 JSON 拼装 `.work-card` HTML，替换模板中的 `{{WORKS_CARDS}}`。
+   
+   卡片序号从 01 开始，平台标签用 `PlatformDetector.platform_badge()` 映射（Bilibili / RedBook / Douyin）。
+   
+   示例卡片 HTML：
+   ```html
+   <div class="work-card">
+       <div class="work-image">
+           <img src="images/bilibili-cover-001.jpg" alt="视频封面">
+       </div>
+       <div class="work-content">
+           <div class="work-badge">
+               <span class="badge-num">01</span>
+               <span class="badge-text">Bilibili</span>
+           </div>
+           <h3 class="work-title">视频标题</h3>
+           <p class="work-desc">视频简介摘要</p>
+           <div class="work-tags">
+               <span>标签1</span><span>标签2</span><span>标签3</span>
+           </div>
+       </div>
+   </div>
+   ```
+
+### 多平台整合
+
+如果用户同时提供了多个平台链接，按平台分开抓取，合并 item 列表后统一编号（01~N），跨平台穿插排列。
+
+### 异常处理
+
+| 情况 | 处理 |
+|------|------|
+| 浏览器未配置 | 告知用户需先 `browser-setup`，或让用户手动提供作品信息 |
+| 页面加载超时/无内容 | 告知用户该平台抓取失败，跳过该平台，用其他平台数据 |
+| 封面图下载失败 | 该卡片使用 `work-sample-N.jpg` 占位，不阻塞流程 |
+| 用户拒绝浏览器抓取 | 回退到 Q3 追问模式，让用户手动描述作品 |
+
+### 无平台链接时：Agent 自动生成作品卡片
+
+> **当用户没有提供任何平台链接时，Agent 必须根据 Q2 身份类型，随机生成 4 张有差异感的成果展示卡片。**
+> 禁止使用模板默认的硬编码占位文案（"现象级品牌公关稿"等），每次生成应看起来不一样。
+
+**生成规则**：
+
+1. **卡片数量**：固定 4 张，填满 2×2 网格
+2. **封面图**：使用模板预置的 `work-sample-1.jpg` ~ `work-sample-4.jpg`
+3. **编号**：01 ~ 04
+4. **分类标签**（`badge-text`）：从以下按 Q2 身份选 4 个不同的：
+
+| Q2 身份 | 可选标签 |
+|---------|---------|
+| C 写东西/做内容 | Branding / Content / Growth / Social / Media / Editorial / Creative / Strategy |
+| A 写代码/做产品 | Product / Engineering / Open Source / Architecture / DevOps / UI / API / Data |
+| B 做设计/搞创意 | Visual / UX/UI / Motion / Brand / Illustration / 3D / Print / Exhibition |
+| D 教书/做学术 | Research / Teaching / Publication / Lecture / Fieldwork / Theory / Review / Grant |
+| E 做专业服务 | Case / Advisory / Compliance / Training / Audit / Legal / HR / Strategy |
+| F 创业/自己做事 | Product / Growth / Fundraising / Launch / Pivot / Scale / Team / Revenue |
+| G 在校学生 | Project / Internship / Coursework / Competition / Research / Club / Hackathon / Thesis |
+
+5. **标题**：10-20 字中文，看起来像真实项目名/文章标题，每次随机生成不重复。示例方向：
+   - C 类：`从0到1搭建品牌内容矩阵`、`单月10W+爆文拆解复盘`、`全域流量漏斗搭建实录`
+   - A 类：`高并发微服务架构实践`、`开源 CLI 工具 1K Star 之路`
+   - B 类：`新消费品牌 VI 升级全案`、`动态视觉识别系统设计`
+   
+6. **描述**：30-60 字中文，自然段落，描述项目背景/方法/成果
+
+7. **标签**：每张卡片 3 个标签，从对应身份标签池中随机选，不重复
+
+8. **多样性约束**：4 张卡片的标题、描述、标签必须各不相同，覆盖该身份的不同侧面
+
+**Agent 操作步骤**：
+
+1. 确认用户 Q2 身份类型
+2. 随机生成 4 组（标题 + 描述 + 标签），确保多样性
+3. 拼装 `.work-card` HTML，替换 `{{WORKS_CARDS}}`：
+   ```html
+   <div class="work-card">
+       <div class="work-image">
+           <img src="work-sample-1.jpg" alt="封面">
+       </div>
+       <div class="work-content">
+           <div class="work-badge">
+               <span class="badge-num">01</span>
+               <span class="badge-text">Branding</span>
+           </div>
+           <h3 class="work-title">生成的项目标题</h3>
+           <p class="work-desc">随机生成的描述文案</p>
+           <div class="work-tags">
+               <span>标签1</span><span>标签2</span><span>标签3</span>
+           </div>
+       </div>
+   </div>
+   ```
+
+### 模板兼容
+
+- `template-apple` 的成果展示模块使用 `{{WORKS_CARDS}}` 变量，Agent 替换整个 `.works-grid` 内容
+- 模板默认值（`{{WORKS_CARDS\|...}}`）仅作为**最后保底**，Agent 应始终主动生成或抓取内容
+- 其他模板如有作品集/项目模块，Agent 按同样逻辑填充对应区域
+
+---
+
 ## Step 5 — 发布
 
 **发布前必须先确认可用 slug（URL 路径）。禁止随机生成。**
