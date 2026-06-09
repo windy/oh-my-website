@@ -11,7 +11,8 @@
   /* 字体设置 */
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
     "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-serif: "Songti SC", "STSong", "Times New Roman", Times, serif;
+  --font-serif: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
 
   /* 间距 */
   --sp-sm: 8px;
