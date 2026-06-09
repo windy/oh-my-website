@@ -120,95 +120,67 @@
         </section>
 
         <!-- 成果展示 / 作品集 模块 -->
+        <!-- 
+          WORKS_CARDS 模板变量说明：
+          - 未提供时使用下面 4 张默认占位卡片
+          - 提供平台链接后，Agent 会抓取内容并替换整个 works-grid 内部
+          - 每张卡片结构：
+            <div class="work-card">
+              <div class="work-image"><img src="封面图路径" alt="..."></div>
+              <div class="work-content">
+                <div class="work-badge"><span class="badge-num">序号</span><span class="badge-text">平台标签</span></div>
+                <h3 class="work-title">标题</h3>
+                <p class="work-desc">描述</p>
+                <div class="work-tags"><span>标签1</span><span>标签2</span><span>标签3</span></div>
+              </div>
+            </div>
+        -->
         <section id="works" class="works-section">
             <div class="works-container">
                 <h2 class="section-title">成果展示</h2>
                 <div class="works-grid">
-                    
-                    <!-- 卡片 1: 微信公众号 -->
+                    {{WORKS_CARDS|
+                    <!-- 
+                      默认占位：Agent 应根据用户身份自动生成 4 张卡片替换此处。
+                      以下为保底占位，正常情况下不会被使用。
+                    -->
                     <div class="work-card">
-                        <div class="work-image">
-                            <!-- 真实封面图 -->
-                            <img src="work-sample-1.jpg" alt="项目封面 1">
-                        </div>
+                        <div class="work-image"><img src="work-sample-1.jpg" alt="封面"></div>
                         <div class="work-content">
-                            <div class="work-badge">
-                                <span class="badge-num">01</span>
-                                <span class="badge-text">Branding</span>
-                            </div>
-                            <h3 class="work-title">{{WORK_1_TITLE|现象级品牌公关稿}}</h3>
-                            <p class="work-desc">{{WORK_1_DESC|通过深度的行业拆解与极具情绪共鸣的故事线，打造微信生态内 10W+ 爆款文章，有效提升了品牌在核心圈层中的信任背书与权威感。}}</p>
-                            <div class="work-tags">
-                                <span>{{WORK_1_TAG_1|Brand Strategy}}</span>
-                                <span>{{WORK_1_TAG_2|Visual Identity}}</span>
-                                <span>{{WORK_1_TAG_3|Brand Guidelines}}</span>
-                            </div>
+                            <div class="work-badge"><span class="badge-num">01</span><span class="badge-text">Branding</span></div>
+                            <h3 class="work-title">作品标题 1</h3>
+                            <p class="work-desc">作品描述占位文本。</p>
+                            <div class="work-tags"><span>标签A</span><span>标签B</span><span>标签C</span></div>
                         </div>
                     </div>
-
-                    <!-- 卡片 2: 小红书 -->
                     <div class="work-card">
-                        <div class="work-image">
-                            <!-- 真实封面图 -->
-                            <img src="work-sample-2.jpg" alt="项目封面 2">
-                        </div>
+                        <div class="work-image"><img src="work-sample-2.jpg" alt="封面"></div>
                         <div class="work-content">
-                            <div class="work-badge">
-                                <span class="badge-num">02</span>
-                                <span class="badge-text">Design</span>
-                            </div>
-                            <h3 class="work-title">{{WORK_2_TITLE|生活方式美学种草}}</h3>
-                            <p class="work-desc">{{WORK_2_DESC|提炼具有差异化的产品视觉锚点，策划符合年轻人生活方式的小红书图文种草矩阵，单月带来超万次高优赞评藏互动与长尾流量。}}</p>
-                            <div class="work-tags">
-                                <span>{{WORK_2_TAG_1|UX/UI Design}}</span>
-                                <span>{{WORK_2_TAG_2|Prototyping}}</span>
-                                <span>{{WORK_2_TAG_3|Design Systems}}</span>
-                            </div>
+                            <div class="work-badge"><span class="badge-num">02</span><span class="badge-text">Design</span></div>
+                            <h3 class="work-title">作品标题 2</h3>
+                            <p class="work-desc">作品描述占位文本。</p>
+                            <div class="work-tags"><span>标签A</span><span>标签B</span><span>标签C</span></div>
                         </div>
                     </div>
-
-                    <!-- 卡片 3: B站 -->
                     <div class="work-card">
-                        <div class="work-image">
-                            <!-- 真实封面图 -->
-                            <img src="work-sample-3.jpg" alt="项目封面 3">
-                        </div>
+                        <div class="work-image"><img src="work-sample-3.jpg" alt="封面"></div>
                         <div class="work-content">
-                            <div class="work-badge">
-                                <span class="badge-num">03</span>
-                                <span class="badge-text">Marketing</span>
-                            </div>
-                            <h3 class="work-title">{{WORK_3_TITLE|干货认知与涨粉实验}}</h3>
-                            <p class="work-desc">{{WORK_3_DESC|通过硬核的干货文案策划与生动的视频后期编排，在 B 站落地系列专栏，播放量突破百万级别，精准斩获泛知识圈层年轻粉丝。}}</p>
-                            <div class="work-tags">
-                                <span>{{WORK_3_TAG_1|Content Marketing}}</span>
-                                <span>{{WORK_3_TAG_2|Digital Ads}}</span>
-                                <span>{{WORK_3_TAG_3|Email Campaigns}}</span>
-                            </div>
+                            <div class="work-badge"><span class="badge-num">03</span><span class="badge-text">Marketing</span></div>
+                            <h3 class="work-title">作品标题 3</h3>
+                            <p class="work-desc">作品描述占位文本。</p>
+                            <div class="work-tags"><span>标签A</span><span>标签B</span><span>标签C</span></div>
                         </div>
                     </div>
-
-                    <!-- 卡片 4: 抖音 -->
                     <div class="work-card">
-                        <div class="work-image">
-                            <!-- 真实封面图 -->
-                            <img src="work-sample-4.jpg" alt="项目封面 4">
-                        </div>
+                        <div class="work-image"><img src="work-sample-4.jpg" alt="封面"></div>
                         <div class="work-content">
-                            <div class="work-badge">
-                                <span class="badge-num">04</span>
-                                <span class="badge-text">Socials</span>
-                            </div>
-                            <h3 class="work-title">{{WORK_4_TITLE|现象级短视频转化}}</h3>
-                            <p class="work-desc">{{WORK_4_DESC|以极致的情绪痛点作为开头黄金3秒，结合快节奏的剪辑与热门 BGM，打造数条百万赞的短视频爆款，并在挂载组件中完成高效闭环。}}</p>
-                            <div class="work-tags">
-                                <span>{{WORK_4_TAG_1|Social Media Strategy}}</span>
-                                <span>{{WORK_4_TAG_2|Content Creation}}</span>
-                                <span>{{WORK_4_TAG_3|Influences}}</span>
-                            </div>
+                            <div class="work-badge"><span class="badge-num">04</span><span class="badge-text">Socials</span></div>
+                            <h3 class="work-title">作品标题 4</h3>
+                            <p class="work-desc">作品描述占位文本。</p>
+                            <div class="work-tags"><span>标签A</span><span>标签B</span><span>标签C</span></div>
                         </div>
                     </div>
-
+                    }}
                 </div>
             </div>
         </section>
