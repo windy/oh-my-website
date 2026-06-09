@@ -56,13 +56,13 @@ body {
   flex-direction: column;
 }
 
-/* 巨型背景水印词：超淡拼音、衬线体，置于底部中间 */
+/* 巨型背景水印词：超淡拼音、衬线体，居中 */
 .hero-watermark {
   position: absolute;
-  top: 55%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-family: var(--font-serif);
+  font-family: "Songti SC", "STSong", "Times New Roman", Times, serif;
   font-size: clamp(8rem, 20vw, 25rem); /* 非常大 */
   font-weight: 700;
   letter-spacing: 0.05em;
