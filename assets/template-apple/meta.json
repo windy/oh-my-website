@@ -1,0 +1,11 @@
+{
+  "id": "apple",
+  "name": "Apple 极简风",
+  "description": "大图Hero+毛玻璃数据栏+极简米白底，Apple Keynote 式克制美学，拼音水印背书",
+  "suitable_for": ["coder", "professional", "founder", "writer", "designer"],
+  "style_tags": ["极简", "大图Hero", "毛玻璃", "Apple风", "克制"],
+  "persona_classes": ["persona-coder", "persona-writer", "persona-designer", "persona-founder", "persona-student"],
+  "preview_colors": { "bg": "#f8f7f4", "text": "#111111", "accent": "#333333" },
+  "default_bg": "bg-gradient-flow",
+  "pages": ["index", "about", "projects", "blog", "portfolio", "product", "resume", "contact"]
+}
