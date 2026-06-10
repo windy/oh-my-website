@@ -273,25 +273,7 @@
       onScroll();
     })();
 
-    /* 2. 移动端汉堡菜单 */
-    (function() {
-      var toggle = document.getElementById('navToggle');
-      var links = document.getElementById('navLinks');
-      if (!toggle || !links) return;
-      toggle.addEventListener('click', function() {
-        links.classList.toggle('open');
-        toggle.classList.toggle('open');
-      });
-      // 点击链接后自动收起
-      links.querySelectorAll('a').forEach(function(a) {
-        a.addEventListener('click', function() {
-          links.classList.remove('open');
-          toggle.classList.remove('open');
-        });
-      });
-    })();
-
-    /* 3. 滚动渐入：每个 .reveal section 进入视口时加 .visible */
+    /* 2. 滚动渐入：每个 .reveal section 进入视口时加 .visible */
     (function() {
       if (!('IntersectionObserver' in window)) {
         document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });

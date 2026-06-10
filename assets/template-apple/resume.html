@@ -75,16 +75,6 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  var toggle = nav.querySelector('.nav-toggle');
-  var links = nav.querySelector('.nav-links');
-  if (toggle && links) {
-    toggle.addEventListener('click', function () {
-      nav.classList.toggle('menu-open');
-    });
-    links.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') nav.classList.remove('menu-open');
-    });
-  }
 })();
 </script>
 <script src="js/script.js"></script>
