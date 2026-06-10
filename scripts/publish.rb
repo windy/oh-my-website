@@ -15,8 +15,8 @@
 #   ruby publish.rb claim    [--slug SLUG]
 #
 # 凭证：
-#   ~/.oh-my-site/token.json    # 当前 site 的 site_token
-#   ~/.oh-my-site/account.json  # 登录后的 session_token
+#   ~/.oh-my-website/token.json    # 当前 site 的 site_token
+#   ~/.oh-my-sbite/account.json  # 登录后的 session_token
 #
 # Environment:
 #   SHOWCODE_API_HOST — platform base URL (default: https://showcode.com)
@@ -39,7 +39,7 @@ require "tmpdir"
 require "zip" # bundled with most Ruby installs via rubygems; if missing: `gem install rubyzip`
 
 API_HOST     = ENV.fetch("SHOWCODE_API_HOST", "https://showcode.com")
-BASE_DIR     = File.expand_path("~/.oh-my-site")
+BASE_DIR     = File.expand_path("~/.oh-my-website")
 TOKEN_FILE   = File.join(BASE_DIR, "token.json")
 ACCOUNT_FILE = File.join(BASE_DIR, "account.json")
 
