@@ -130,7 +130,15 @@ server.mount_proc '/' do |req, res|
   q_template = req.query['template']
   q_persona = req.query['persona']
 
-  current_template = q_template && available_templates.include?(q_template) ? q_template : template
+  # 支持缩写（如 ?template=magazine）和全名（如 ?template=template-magazine）
+  resolved_template = if q_template
+    if available_templates.include?(q_template)
+      q_template
+    elsif available_templates.include?("template-#{q_template}")
+      "template-#{q_template}"
+    end
+  end
+  current_template = resolved_template || template
   current_persona = q_persona || persona
   current_template_dir = File.join(ASSETS_DIR, current_template)
 
