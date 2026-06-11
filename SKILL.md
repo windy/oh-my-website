@@ -607,9 +607,17 @@ CSS 端的 fallback 用 `:has(img[src=""])` 或 `:has(img:not([src]))` 选择器
 | 已有透明背景的 PNG | 跳过 |
 | 纯景物 / 截图 / Logo | 跳过（抠图无意义） |
 
-#### 自动执行
+#### 自动执行（先检查本地是否有 Token）
 
-抠图脚本调用 showcode.com API，**复用 publish.rb 的认证**——发布过站点（生成 `~/.oh-my-website/token.json`）或登录账号（`account.json`）后即可直接使用，无需额外配置。
+抠图脚本调用 showcode.com API，需要有效 Token（来自 `~/.oh-my-website/token.json` 或 `account.json`）。**运行前先检查本地 Token 状态**：
+
+```bash
+# 检查是否有可用 Token
+cat ~/.oh-my-website/token.json 2>/dev/null || echo "NO_TOKEN"
+cat ~/.oh-my-website/account.json 2>/dev/null || echo "NO_ACCOUNT"
+```
+
+##### 情况 A：本地已有 Token → 直接抠图
 
 ```bash
 # Hero 大图抠图 — 保留原始分辨率
@@ -618,6 +626,16 @@ ruby "SKILL_DIR/scripts/matting.rb" PHOTO.jpg images/hero.png
 # 头像抠图 — 缩小到 400px
 ruby "SKILL_DIR/scripts/matting.rb" --resize 400 AVATAR_ORIG.jpg images/avatar.png
 ```
+
+##### 情况 B：本地无 Token（新用户首发）→ 先用原图，后置补抠
+
+抠图 API 此时不可用，**先用原图装配网页**（复制到 `images/` 下），但**Agent 必须把待抠图任务明确记下**：
+
+> ⚠️ **待抠图清单示例**（Agent 需要在回复中显式记录）：
+> - `PHOTO_ORIG.jpg` → `$SITE_DIR/images/hero.png`（Hero 大图抠图）
+> - `AVATAR_ORIG.jpg` → `$SITE_DIR/images/avatar.png`（头像抠图，resize 400）
+
+等 **Step 5 发布完成后**（此时 `token.json` 已生成），立即补跑上述抠图命令，然后重新发布覆盖。详见 Step 5 末尾的 checkpoint。
 
 成功则输出到指定路径（PNG 透明背景），失败返回非 0 退出码。
 
@@ -945,6 +963,22 @@ ruby "SKILL_DIR/scripts/publish.rb" publish --name "NAME" --slug "SLUG" --dir "$
 - 从 stdout 提取 `✅` 开头的 URL 返回给用户
 
 > 仅发布单个 HTML 文件时可用 `--html-file` 替代 `--dir`（内部会自动包成单文件 zip）。
+
+### 🔄 后置抠图补跑（新用户首发，Step 4.5 遗留了待抠清单时）
+
+> ⚠️ **Agent 发布后必须自查**：如果 Step 4.5 因本地无 Token 记录了待抠图清单，发布完成后（`token.json` 已自动生成）**立即补抠并重新发布覆盖**，不能忘。
+
+1. 按 Step 4.5 记录的清单逐个跑抠图：
+   ```bash
+   ruby "SKILL_DIR/scripts/matting.rb" PHOTO_ORIG.jpg "$SITE_DIR/images/hero.png"
+   ruby "SKILL_DIR/scripts/matting.rb" --resize 400 AVATAR_ORIG.jpg "$SITE_DIR/images/avatar.png"
+   ```
+2. 抠图成功后重新发布覆盖（第二次发布走 update，秒级完成）：
+   ```bash
+   ruby "SKILL_DIR/scripts/publish.rb" publish --name "NAME" --slug "SLUG" --dir "$SITE_DIR"
+   ```
+3. 抠图失败（exit code ≠ 0）→ 跳过，原图版本已在线，不阻塞。
+4. 全部完成后把最终 URL 交付用户（抠图后的精美版本已覆盖上线）。
 
 ### 编辑现有网站（拉回来改）
 
