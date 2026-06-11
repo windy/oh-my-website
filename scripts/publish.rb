@@ -446,12 +446,21 @@ end
 def cmd_delete(slug: nil)
   td = load_token_data
   slug ||= td["slug"]
-  unless slug
-    warn "❌ 没有可用的 slug"
+  site_token = td["token"]
+  auth = preferred_auth_token(site_token)
+  unless slug && auth
+    warn "❌ 没有可用的 slug 或 token（请先发布站点或登录账号）"
     exit 1
   end
-  warn "⚠️  Delete API 尚未实现，请通过 dashboard 删除。slug=#{slug}"
-  exit 0
+
+  status, body = http_request("DELETE", "/api/v1/sites/#{slug}", token: auth)
+  if status == 200
+    puts "✅ #{body["message"]} (#{body["slug"]})"
+    File.delete(TOKEN_FILE) if File.exist?(TOKEN_FILE)
+  else
+    warn "❌ 删除失败 (#{status}): #{body["error"] || body.inspect}"
+    exit 1
+  end
 end
 
 # ── CLI ──────────────────────────────────────────────────────────────
