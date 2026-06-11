@@ -948,7 +948,16 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
 
 4. **如果 3 个候选全被占用**，告知用户并请用户自定义一个 slug，重新 `check-slug` 确认后再发布。
 
-5. 用户确认后，执行发布命令：
+5. 用户确认后，**先填入 `{{SITE_URL}}`**（微信分享卡片依赖绝对 URL）：
+
+   ```bash
+   # 把 index.html 中的 {{SITE_URL|}} 替换为实际 URL（去掉末尾斜杠）
+   sed -i '' 's|{{SITE_URL|}}|https://showcode.com/~SLUG|g' "$SITE_DIR/index.html"
+   ```
+
+   这样 `og:image` 会变成 `https://showcode.com/~SLUG/images/hero.png`，`og:url` 变成 `https://showcode.com/~SLUG/`，微信抓取到的分享卡片就有标题、描述和头像了。
+
+6. 然后执行发布命令：
 
 ```bash
 ruby "SKILL_DIR/scripts/publish.rb" publish --name "NAME" --slug "SLUG" --dir "$SITE_DIR"
