@@ -313,8 +313,11 @@ def publish_dir(name:, dir:, slug: nil)
     http_request("PUT", "/api/v1/sites/#{slug_in_use}", body: { name: name }, token: auth)
   else
     # 首次发布：创建 site
-    post_body = { name: name }
-    post_body[:slug] = slug if slug
+    unless slug
+      warn "❌ 首次发布需要 --slug（例如：--slug my-site）"
+      exit 1
+    end
+    post_body = { name: name, slug: slug }
     status, body = http_request("POST", "/api/v1/sites", body: post_body)
     unless status == 201
       warn "❌ 创建站点失败 (#{status}): #{body["error"] || body.inspect}"
@@ -530,7 +533,7 @@ when "claim"
 
 else
   warn "Usage: ruby publish.rb COMMAND [options]"
-  warn "  publish     --name NAME [--html-file FILE | --dir DIR] [--slug SLUG]"
+  warn "  publish     --name NAME --slug SLUG [--html-file FILE | --dir DIR]"
   warn "  fetch       [--slug SLUG] [--out DIR]"
   warn "  delete      [--slug SLUG]"
   warn "  check-slug  --q slug1,slug2,slug3"
