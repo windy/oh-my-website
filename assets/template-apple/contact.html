@@ -6,7 +6,7 @@
   <title>{{NAME}} - 联系</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="persona-coder">
+<body class="persona-coder contact-studio-wrapper">
 <nav class="apple-nav apple-nav--inner" id="appleNav">
   <a href="index.html" class="nav-brand">{{NAME}}</a>
   <button class="nav-toggle" aria-label="Menu">
@@ -25,26 +25,61 @@
       <li><a href="contact.html" class="active">联系</a></li>
   </ul>
 </nav>
-<main class="page-main">
-  <div class="page-container">
-  <h2 style="margin-bottom:var(--sp-4)">联系</h2>
-  <p class="contact-intro" style="color:var(--text-secondary)">{{CONTACT_INTRO}}</p>
-  <ul class="social-links">
-    {{SOCIAL_LINKS}}
-  </ul>
+
+<main class="cv2-main">
+  <div class="cv2-container">
+    
+    <div class="cv2-header-stack">
+      <h1 class="cv2-watermark">Contact me</h1>
+      <div class="cv2-overlay-text">联系方式</div>
+    </div>
+    
+    <div class="cv2-middle">
+      <div class="cv2-left">
+        <div class="cv2-info-block">
+          <p>{{LOCATION|上海市}}</p>
+          <p>{{YEAR|2026}}</p>
+        </div>
+        <div class="cv2-info-block">
+          <p class="cv2-label">工作时间</p>
+          <p>周一 - 周五</p>
+          <p>10:00 AM - 6:00 PM</p>
+        </div>
+      </div>
+      
+      <div class="cv2-right">
+        <div class="cv2-contact-grid">
+          <div class="cv2-contact-row">
+            <span class="cv2-contact-key">手机</span>
+            <span class="cv2-contact-val">{{PHONE|+86 138 0000 0000}}</span>
+          </div>
+          <div class="cv2-contact-row">
+            <span class="cv2-contact-key">邮箱</span>
+            <span class="cv2-contact-val">{{EMAIL|hello@example.com}}</span>
+          </div>
+          <div class="cv2-contact-row">
+            <span class="cv2-contact-key">B站</span>
+            <span class="cv2-contact-val">bilibili.com/{{NAME|李工程}}</span>
+          </div>
+          <div class="cv2-contact-row">
+            <span class="cv2-contact-key">小红书</span>
+            <span class="cv2-contact-val">xiaohongshu.com/{{NAME|李工程}}</span>
+          </div>
+          <div class="cv2-contact-row">
+            <span class="cv2-contact-key">抖音</span>
+            <span class="cv2-contact-val">douyin.com/@{{NAME|李工程}}</span>
+          </div>
+          <div class="cv2-contact-row">
+            <span class="cv2-contact-key">公众号</span>
+            <span class="cv2-contact-val">{{NAME|李工程}}的公众号</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </main>
-<footer>
-  <button class="footer-btn" onclick="toggleQR()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
-    扫码访问
-  </button>
-  <button class="footer-btn" onclick="copyLink(this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-    复制链接
-  </button>
-</footer>
-<script src="js/qrcode.min.js"></script>
+
 <script>
 (function () {
   var nav = document.getElementById('appleNav');
@@ -56,7 +91,6 @@
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
-
 })();
 </script>
 <script src="js/script.js"></script>
