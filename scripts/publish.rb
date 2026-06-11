@@ -2,8 +2,8 @@
 # publish.rb — Publish or fetch a personal website on showcode.com
 #
 # Usage:
-#   ruby publish.rb publish --name "NAME" --dir /path/to/site
-#   ruby publish.rb publish --name "NAME" --html-file FILE
+#   ruby publish.rb publish --name "NAME" --slug "SLUG" --dir /path/to/site
+#   ruby publish.rb publish --name "NAME" --slug "SLUG" --html-file FILE
 #   ruby publish.rb fetch   [--slug SLUG] [--out DIR]   # 下载 zip 解压到目录（用于编辑现有 site）
 #   ruby publish.rb delete  [--slug SLUG]
 #   ruby publish.rb check-slug --q s1,s2,s3

@@ -313,7 +313,7 @@ cat SKILL_DIR/assets/template-*/meta.json | ruby -rjson -e '
 > 2. **📰 杂志风**（预览版）：典雅的排版和柔和的渐变，适合写作者和创意人。
 > 3. **🎨 暖色工作室**（预览版）：温馨舒缓的三段式色调。
 > 4. **📉 极简主义**（预览版）：极致克制的文本和线条。
-> 
+>
 > 虽然多套模板都可用，但我们**强烈推荐你首选「Apple 极简风」**。你想选择哪一个，或者让我帮你定？
 
 ### 匹配规则
@@ -933,10 +933,7 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
 5. 用户确认后，执行发布命令：
 
 ```bash
-ruby "SKILL_DIR/scripts/publish.rb" publish \
-  --name "NAME" \
-  --slug "SLUG" \
-  --dir "$SITE_DIR"
+ruby "SKILL_DIR/scripts/publish.rb" publish --name "NAME" --slug "SLUG" --dir "$SITE_DIR"
 ```
 
 - `--slug` 指定 URL 路径（必传，不可随机）
