@@ -2037,16 +2037,16 @@ footer {
 
 /* Resume Page Specific Styles */
 .cv-body-bg {
-  background-color: #f3f3f5;
+  background-color: #fafaf8;
 }
 
 .cv-paper {
-  max-width: 900px;
-  margin: 40px auto 80px;
-  background: #ffffff;
-  padding: 60px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-  color: #333333;
+  max-width: 1200px;
+  margin: 0 auto 80px;
+  background: transparent;
+  padding: 60px 40px;
+  box-shadow: none;
+  color: #1d1d1f;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   text-align: left;
 }
@@ -2061,7 +2061,6 @@ footer {
   letter-spacing: 2px;
   color: #222;
   margin: 0 0 10px;
-  text-transform: uppercase;
 }
 
 .cv-title {
@@ -2069,7 +2068,6 @@ footer {
   font-weight: 500;
   letter-spacing: 1.5px;
   color: #666;
-  text-transform: uppercase;
 }
 
 .cv-divider {
@@ -2086,9 +2084,8 @@ footer {
 .cv-heading {
   font-size: 1.2rem;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   color: #222;
-  text-transform: uppercase;
   margin: 0 0 20px;
 }
 
@@ -2156,7 +2153,6 @@ footer {
   font-weight: 600;
   font-size: 1rem;
   color: #333;
-  text-transform: uppercase;
   margin-bottom: 6px;
 }
 
@@ -2248,7 +2244,6 @@ footer {
   font-size: 1.1rem;
   font-weight: 600;
   color: #222;
-  text-transform: uppercase;
   margin-bottom: 4px;
 }
 
@@ -2302,8 +2297,8 @@ footer {
     gap: 40px;
   }
   .cv-paper {
-    padding: 30px;
-    margin: 20px auto 40px;
+    padding: 20px;
+    margin: 0 auto 40px;
   }
   .cv-name {
     font-size: 2rem;
