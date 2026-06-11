@@ -27,23 +27,92 @@
   </ul>
 </nav>
 
-<main class="page-main">
-  <div class="page-container">
-  <h2>关于</h2>
-  <div class="about-text">
-    <p>{{ABOUT_PARAGRAPH_1}}</p>
-    <p>{{ABOUT_PARAGRAPH_2}}</p>
-  </div>
+<main class="page-main" style="padding-top: 120px; background: #fff;">
 
-  <div class="skills">
-    {{SKILL_TAGS}}
-  </div>
+  <!-- 头部介绍：标题与描述 -->
+  <section class="about-hero-section">
+    <div class="about-hero-container">
+      <h2 class="about-hero-title">{{ABOUT_HERO_TITLE|内容为矛，数据为锚}}</h2>
+      <p class="about-hero-desc">{{ABOUT_HERO_DESC|专注新媒体运营与内容策略。用数据洞察用户需求，用内容建立品牌信任 — 在流量红利消退的时代，回归内容本身的力量。}}</p>
+    </div>
+  </section>
 
-  <h3 style="margin-bottom:var(--sp-4)">经历</h3>
-  <ul class="timeline">
-    {{TIMELINE_ITEMS}}
-  </ul>
-  </div>
+  <!-- 技能卡片：延续核心能力的中文文案 -->
+  <section class="about-impact-section">
+    <div class="impact-grid">
+      <div class="impact-card">
+        <h3 class="impact-title">{{ABOUT_SKILL_1_TITLE|全栈开发}}</h3>
+        <p class="impact-desc">{{ABOUT_SKILL_1_DESC|从前端到后端、从数据库到部署，具备全链路技术能力。}}</p>
+      </div>
+      <div class="impact-card">
+        <h3 class="impact-title">{{ABOUT_SKILL_2_TITLE|系统设计}}</h3>
+        <p class="impact-desc">{{ABOUT_SKILL_2_DESC|擅长高并发分布式架构，保障系统稳定与可扩展性。}}</p>
+      </div>
+      <div class="impact-card">
+        <h3 class="impact-title">{{ABOUT_SKILL_3_TITLE|独立开发}}</h3>
+        <p class="impact-desc">{{ABOUT_SKILL_3_DESC|从零到一构建产品，快速验证想法并推向市场。}}</p>
+      </div>
+      <div class="impact-card">
+        <h3 class="impact-title">{{ABOUT_SKILL_4_TITLE|开源贡献}}</h3>
+        <p class="impact-desc">{{ABOUT_SKILL_4_DESC|多个开源项目获得社区关注，累计数千次 Star。}}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 时间线：经历与事件 -->
+  <section class="about-timeline-section">
+    <div class="timeline-container">
+      <div class="timeline-left">
+        <div class="timeline-sticky">
+          <h2 class="timeline-heading">{{ABOUT_TIMELINE_HEADING|一步步构建更好的产品，一个里程碑接一个里程碑}}</h2>
+          <p class="timeline-subheading">{{ABOUT_TIMELINE_SUBHEADING|从首次发布到服务全球数百家客户，这是我们从一个想法成长为团队信赖的解决方案的过程。}}</p>
+        </div>
+      </div>
+
+      <div class="timeline-right">
+        <div class="timeline-track"></div>
+
+        <div class="timeline-node">
+          <div class="node-marker"></div>
+          <div class="node-content">
+            <div class="node-year">{{TIMELINE_1_YEAR|2024}}</div>
+            <h3 class="node-title">{{TIMELINE_1_TITLE|开始独立开发 DevFlow}}</h3>
+            <p class="node-desc">{{TIMELINE_1_DESC|从零设计并开发了 DevFlow 开发者工具平台，半年内达到 MRR $1.2 万，服务超过 500 名付费用户。}}</p>
+          </div>
+        </div>
+
+        <div class="timeline-node">
+          <div class="node-marker"></div>
+          <div class="node-content">
+            <div class="node-year">{{TIMELINE_2_YEAR|2020}}</div>
+            <h3 class="node-title">{{TIMELINE_2_TITLE|加入字节跳动，主导广告前端架构升级}}</h3>
+            <p class="node-desc">{{TIMELINE_2_DESC|负责广告投放系统的前端架构重构，将构建性能提升 40%，支撑日均数十亿次广告请求。}}</p>
+            <img class="node-img" src="{{TIMELINE_2_IMG|https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80}}" alt="工作场景">
+          </div>
+        </div>
+
+        <div class="timeline-node">
+          <div class="node-marker"></div>
+          <div class="node-content">
+            <div class="node-year">{{TIMELINE_3_YEAR|2018}}</div>
+            <h3 class="node-title">{{TIMELINE_3_TITLE|从上海交大毕业，加入创业公司}}</h3>
+            <p class="node-desc">{{TIMELINE_3_DESC|作为早期工程师加入一家 AI 创业公司，从零搭建了核心产品的前后端架构。}}</p>
+          </div>
+        </div>
+
+        <div class="timeline-node">
+          <div class="node-marker"></div>
+          <div class="node-content">
+            <div class="node-year">{{TIMELINE_4_YEAR|2016}}</div>
+            <h3 class="node-title">{{TIMELINE_4_TITLE|开始编程之旅}}</h3>
+            <p class="node-desc">{{TIMELINE_4_DESC|大学期间自学编程，参与第一个开源项目，从此踏上了技术探索之路。}}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
