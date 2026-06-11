@@ -1,0 +1,21 @@
+
+╭────────────────────────────────────────────────────────────╮
+│  🎨  oh-my-website — 模板开发预览                            │
+╰────────────────────────────────────────────────────────────╯
+
+  模板：  template-apple    （可用：template-apple, template-magazine, template-minimal, template-warm-studio）
+  身份：  coder     （可用：academic, coder, designer, founder, pro, student, writer）
+  端口：  http://localhost:4567/
+
+  URL 参数切换（无工具栏，纯链接）：
+    ?persona=designer        → 切换身份
+    ?template=minimal        → 切换模板
+    ?template=minimal&persona=writer  → 同时切换
+
+  修改 assets/template-apple/ 下的 HTML/CSS 后，刷新浏览器即可看到。
+
+  ✅  改完满意了，告诉 Agent：「保存提交」
+      Agent 会帮你建主题分支并 commit/push，避免丢数据。
+
+  Ctrl+C 退出。
+

@@ -255,12 +255,14 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: flex-end; /* 与底部玻璃条齐平或插入 */
+  align-self: flex-end; /* 确保靠底对齐无空隙 */
   position: relative;
   z-index: 1;
 }
 
 .hero-image svg,
 .hero-image img {
+  display: block;
   height: 100%;
   max-height: 850px;
   width: auto;
@@ -308,11 +310,11 @@ body {
   width: 100%;
   height: 100%;
   /* 毛玻璃质感层 */
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(60px) saturate(150%);
+  -webkit-backdrop-filter: blur(60px) saturate(150%);
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.04);
 }
 
 /* 左侧黑块：重色区分“个人标签” */
@@ -388,6 +390,10 @@ body {
   .hero-image {
     height: 50vh;
     justify-content: center;
+  }
+  .hero-image svg,
+  .hero-image img {
+    object-position: bottom center;
   }
 
   .hero-stats-wrapper {
@@ -1389,60 +1395,61 @@ footer {
 /* 产品页 product-grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
   margin-top: 32px;
 }
+@media (max-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .product-card {
   background: #ffffff;
-  border-radius: 16px;
-  padding: 32px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   transition: transform 0.25s, box-shadow 0.25s;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
 }
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
-.product-card h3 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 0 0 8px;
-  color: #1d1d1f;
+.product-card-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background-color: #f5f5f7;
 }
-.product-card .tagline {
-  font-size: 0.95rem;
-  color: #4a4a4a;
-  margin: 0 0 20px;
-  line-height: 1.6;
+.product-card-content {
+  padding: 16px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-.product-card .metrics {
-  font-size: 0.85rem;
-  color: #6e6e73;
-  margin-bottom: 20px;
-}
-.product-card .metrics .accent-text {
-  color: #1d1d1f;
+.product-card-title {
+  font-size: 1.15rem;
   font-weight: 600;
-  font-family: var(--mono, ui-monospace, SFMono-Regular, monospace);
-}
-.product-card a {
-  align-self: flex-start;
-  margin-top: auto;
   color: #1d1d1f;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 8px 18px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 999px;
-  transition: background 0.2s, transform 0.2s;
+  margin: 0;
+  line-height: 1.2;
 }
-.product-card a:hover {
-  background: #f0eee9;
-  transform: translateY(-1px);
+.product-card-desc {
+  font-size: 0.85rem;
+  color: #86868b;
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* 联系页 social links */
@@ -2025,5 +2032,280 @@ footer {
   }
   .case-body p {
     font-size: 1.05rem;
+  }
+}
+
+/* Resume Page Specific Styles */
+.cv-body-bg {
+  background-color: #f3f3f5;
+}
+
+.cv-paper {
+  max-width: 900px;
+  margin: 40px auto 80px;
+  background: #ffffff;
+  padding: 60px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  color: #333333;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  text-align: left;
+}
+
+.cv-header {
+  margin-bottom: 30px;
+}
+
+.cv-name {
+  font-size: 2.8rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #222;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.cv-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.cv-divider {
+  height: 1px;
+  background: #eaeaea;
+  margin: 30px 0;
+  width: 100%;
+}
+
+.cv-section {
+  margin-bottom: 40px;
+}
+
+.cv-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #222;
+  text-transform: uppercase;
+  margin: 0 0 20px;
+}
+
+.cv-profile-text {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #555;
+  margin: 0;
+}
+
+.cv-layout {
+  display: flex;
+  gap: 60px;
+}
+
+.cv-sidebar {
+  flex: 0 0 35%;
+}
+
+.cv-main-col {
+  flex: 1;
+}
+
+/* Contact */
+.cv-contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cv-contact-list li {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.cv-contact-list li:last-child {
+  border-bottom: none;
+}
+
+.cv-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 15px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cv-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Education */
+.cv-edu-item {
+  margin-bottom: 20px;
+}
+
+.cv-edu-degree {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.cv-edu-school {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.cv-edu-date {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Skills */
+.cv-skills-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cv-skill-item {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.cv-skill-name {
+  flex: 0 0 45%;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.cv-skill-bar {
+  flex: 1;
+  height: 4px;
+  background: #eaeaea;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.cv-skill-progress {
+  height: 100%;
+  background: #333;
+  border-radius: 2px;
+}
+
+/* Experience */
+.cv-experience-timeline {
+  position: relative;
+  padding-left: 20px;
+}
+
+.cv-experience-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 0;
+  width: 1px;
+  background: #eaeaea;
+}
+
+.cv-exp-item {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.cv-exp-item::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #333;
+}
+
+.cv-exp-date {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cv-exp-role {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.cv-exp-company {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.cv-exp-desc {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #555;
+  margin: 0 0 10px;
+}
+
+.cv-exp-bullets {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.cv-exp-bullets li {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 6px;
+  list-style-type: disc;
+}
+
+/* Footer */
+.cv-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 30px;
+  border-top: 1px solid #eaeaea;
+  font-size: 0.9rem;
+  color: #666;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.cv-social-divider {
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .cv-layout {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .cv-paper {
+    padding: 30px;
+    margin: 20px auto 40px;
+  }
+  .cv-name {
+    font-size: 2rem;
   }
 }

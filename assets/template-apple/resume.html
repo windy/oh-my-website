@@ -6,7 +6,7 @@
   <title>{{NAME}} - 简历</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="persona-coder">
+<body class="persona-coder cv-body-bg">
 <nav class="apple-nav apple-nav--inner" id="appleNav">
   <a href="index.html" class="nav-brand">{{NAME}}</a>
   <button class="nav-toggle" aria-label="Menu">
@@ -25,33 +25,63 @@
       <li><a href="contact.html">联系</a></li>
   </ul>
 </nav>
+
 <main class="page-main">
-  <div class="page-container">
-  <h2 style="margin-bottom:var(--sp-5)">简历</h2>
+  <div class="cv-paper">
+    <header class="cv-header">
+      <h1 class="cv-name">{{CV_NAME|LI GONGCHENG}}</h1>
+      <div class="cv-title">{{CV_ROLE|FULL-STACK ENGINEER}}</div>
+    </header>
 
-  <div class="resume-section">
-    <h3>教育背景</h3>
-    {{EDUCATION_ITEMS}}
-  </div>
+    <div class="cv-divider"></div>
 
-  <div class="resume-section">
-    <h3>实习/项目经历</h3>
-    {{EXPERIENCE_ITEMS}}
-  </div>
+    <section class="cv-section cv-profile">
+      <h2 class="cv-heading">PROFILE</h2>
+      <p class="cv-profile-text">{{CV_PROFILE}}</p>
+    </section>
 
-  <div class="resume-section">
-    <h3>技能</h3>
-    <div class="skills">
-      {{RESUME_SKILL_TAGS}}
+    <div class="cv-divider"></div>
+
+    <div class="cv-layout">
+      <aside class="cv-sidebar">
+        <section class="cv-section">
+          <h2 class="cv-heading">CONTACT</h2>
+          <ul class="cv-contact-list">
+            {{CV_CONTACT_ITEMS}}
+          </ul>
+        </section>
+
+        <section class="cv-section">
+          <h2 class="cv-heading">EDUCATION</h2>
+          <div class="cv-education-list">
+            {{CV_EDUCATION_ITEMS}}
+          </div>
+        </section>
+
+        <section class="cv-section">
+          <h2 class="cv-heading">SKILLS</h2>
+          <ul class="cv-skills-list">
+            {{CV_SKILL_ITEMS}}
+          </ul>
+        </section>
+      </aside>
+
+      <div class="cv-main-col">
+        <section class="cv-section">
+          <h2 class="cv-heading">EXPERIENCE</h2>
+          <div class="cv-experience-timeline">
+            {{CV_EXPERIENCE_ITEMS}}
+          </div>
+        </section>
+      </div>
+    </div>
+    
+    <div class="cv-footer">
+      {{CV_SOCIAL_ITEMS}}
     </div>
   </div>
-
-  <div class="resume-section">
-    <h3>荣誉奖项</h3>
-    {{HONOR_ITEMS}}
-  </div>
-  </div>
 </main>
+
 <footer>
   <button class="footer-btn" onclick="toggleQR()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h2.5a1.5 1.5 0 0 1 1.5 1.5V18"/><path d="M14 21h2.5a1.5 1.5 0 0 0 1.5-1.5V17"/><path d="M21 14v2.5a1.5 1.5 0 0 1-1.5 1.5H17"/></svg>
@@ -74,7 +104,6 @@
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
-
 })();
 </script>
 <script src="js/script.js"></script>
