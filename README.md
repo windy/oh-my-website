@@ -10,32 +10,31 @@
 
 > 把「帮我做个个人网站」变成一句可执行的指令。
 
-一个适配 OpenClacky 等 Agent 环境的个人网站技能——**按身份自动匹配页面结构，AI 撰写文案，多页独立 HTML 文件，CSS 变量一键换肤，发布即上线**。
+一个适配 任一 Agent 环境的个人网站技能——**按身份自动匹配页面结构，AI 撰写文案，多页独立 HTML 文件，CSS 变量一键换肤，发布即上线**。
 
-内置三套视觉系统（极简白已就绪，杂志风和暗色极客待开发）：
+查看真实案例：https://showcode.com/~yafeilee/
 
-- **极简白**：大量留白、细线分割、黑白灰 + 单一强调色，适合程序员、创业者、学生求职
-- **杂志风** _(即将推出)_：衬线标题、大胆字号对比、暖色调，适合设计师、写作者、创意人
-- **暗色极客** _(即将推出)_：深色背景、霓虹强调色、等宽字体元素，适合极客审美
+内置多套视觉系统（官方推荐「Apple 极简风」，其他风格持续完善中）：
+
+- 🍎 **Apple 极简风 (Apple Style - 官方强推)**：极致打磨的高端美学设计。磨砂玻璃导航栏、精致微光卡片、大留白、柔和毛玻璃和高质感动画。深度适配所有页面，推荐所有人首选！
+- 🤍 **极简白 (Minimal)**：经典细线分割，黑白灰 + 单一强调色。适合极客、技术开发者、求职简历。
+- 🧸 **温暖工作室 (Warm Studio)**：温暖柔和的大地米色系、舒适色调、圆润阴影。适合个人工作室、文创、独立设计师。
+- 📰 **杂志风 (Magazine)**：优雅的衬线大标题、鲜明视觉对比。适合写作者、编辑、创意总监。
 
 > 由 [windy](https://github.com/windy) 在反复折腾个人网站的过程中沉淀而成——为什么每个人的个人站都要从零写一遍？
 
 ## 30 秒开始
 
-```bash
-npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
-```
-
-也可以直接把这段话发给有 shell 权限的 AI Agent：
+在任一 Agent（ClaudeCode、Codex、WorkBuddy、OpenClacky 等）中，输入这段话即可自动安装：
 
 ```text
-帮我安装 oh-my-website 这个 OpenClacky skill。请把 https://github.com/windy/oh-my-website 克隆到 ~/.claude/skills/oh-my-website，安装完成后检查 SKILL.md、assets/、references/ 是否存在。
+帮我安装这个 skill: https://github.com/windy/oh-my-website
 ```
 
 已经安装过的话，用这段话更新：
 
 ```text
-帮我更新 oh-my-website。请进入 ~/.claude/skills/oh-my-website 执行 git pull，然后告诉我当前最新 commit。
+帮我更新这个 skill: https://github.com/windy/oh-my-website
 ```
 
 安装后直接对 Agent 说：
@@ -55,20 +54,20 @@ npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
 
 ## 效果
 
-- 🧑‍💼 **5 种身份映射**：程序员、设计师、写作者、创业者、学生求职，自动匹配页面结构（首页/关于/项目/博客/作品/产品/简历/联系）
-- 📄 **多页独立文件**：8 个子页面各一个 HTML，共享 CSS/JS，普通 `<a href>` 导航，无 SPA 路由
-- 🎨 **5 套配色预设**：石墨、靛蓝、赭石、松绿、梅红，CSS 变量一键切换
-- 🤖 **AI 撰写文案**：根据名字、身份、收集到的信息自动撰写自然友好的自我介绍、项目描述
-- 📱 **移动端优先**：响应式布局，小屏汉堡菜单，系统字体栈
-- 🔗 **零外部依赖**：不引用 CDN、Google Fonts、外部图片，纯静态可离线浏览
-- 🚀 **一键发布**：`publish.rb` 直接将网站目录发布上线，返回公开 URL
-- ✏️ **对话迭代**：发布后持续对话修改——换配色、加链接、改文案、调排版
+- **5 种身份映射**：程序员、设计师、写作者、创业者、学生求职，自动匹配页面结构（首页/关于/项目/博客/作品/产品/简历/联系）
+- **多页独立文件**：8 个子页面各一个 HTML，共享 CSS/JS，普通 `<a href>` 导航，无 SPA 路由
+- **5 套配色预设**：石墨、靛蓝、赭石、松绿、梅红，CSS 变量一键切换
+- **AI 撰写文案**：根据名字、身份、收集到的信息自动撰写自然友好的自我介绍、项目描述
+- **移动端优先**：响应式布局，小屏汉堡菜单，系统字体栈
+- **零外部依赖**：不引用 CDN、Google Fonts、外部图片，纯静态可离线浏览
+- **一键发布**：`publish.rb` 直接将网站目录发布上线，返回公开 URL
+- **对话迭代**：发布后持续对话修改——换配色、加链接、改文案、调排版
 
 ## 适合 / 不适合
 
-**✅ 合适**：想快速拥有个人主页的程序员、设计师、创业者 / 求职需要在线简历 / 产品独立介绍页 / 个人博客入口 / 名片式社交链接聚合
+**合适**：想快速拥有个人主页的程序员、设计师、创业者 / 求职需要在线简历 / 产品独立介绍页 / 个人博客入口 / 名片式社交链接聚合
 
-**❌ 不合适**：需要 CMS 后台编辑内容 / 需要用户登录和评论 / SEO 重度依赖（纯前端 HTML）/ 需要多语言 i18n
+**不合适**：需要 CMS 后台编辑内容 / 需要用户登录和评论 / SEO 重度依赖（纯前端 HTML）/ 需要多语言 i18n
 
 ## 常见使用场景
 
@@ -103,27 +102,16 @@ npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
 
 ## 安装
 
-### 方式一：一行命令安装（推荐）
+在任一 Clacky Agent 中，输入这段话即可自动安装：
 
-```bash
-npx skills add https://github.com/windy/oh-my-website --skill oh-my-website
+```text
+帮我安装这个 skill: https://github.com/windy/oh-my-website
 ```
 
-### 方式二：把下面这段话直接发给 AI
-
-> 帮我安装 `oh-my-website` 这个 OpenClacky skill。请按下面步骤做：
->
-> 1. 确保 `~/.claude/skills/` 目录存在（不存在就创建）
-> 2. 执行 `git clone https://github.com/windy/oh-my-website.git ~/.claude/skills/oh-my-website`
-> 3. 验证：`ls ~/.claude/skills/oh-my-website/` 应该看到 `SKILL.md`、`assets/`、`references/` 三项
-> 4. 告诉我安装好了，之后我说「帮我做个个人网站」之类的话就会触发这个 skill
-
-把这段话复制粘贴给 OpenClacky / Claude Code / Cursor 等任何有 shell 权限的 AI Agent，它会自动完成安装。
-
-### 方式三：手动命令行
+或者通过命令行克隆到本地 Skill 目录：
 
 ```bash
-git clone https://github.com/windy/oh-my-website.git ~/.claude/skills/oh-my-website
+git clone https://github.com/windy/oh-my-website.git ~/.clacky/skills/oh-my-website
 ```
 
 ### 触发方式
@@ -179,34 +167,24 @@ Skill 本身是结构化工作流，Agent 会逐步引导：
 
 ```
 oh-my-website/
-├── SKILL.md                        ← Skill 主文件：工作流、原则、常用错误
+├── SKILL.md                        ← Skill 主文件：工作流、内置原则、对话话术引导与错误防范
 ├── README.md                       ← 本文件
-├── publish.rb                      ← 发布脚本
+├── publish.rb                      ← 自动发布上线脚本（发布即产生 showcode.com 公开链接）
 ├── assets/
-│   └── template-minimal/           ← 极简白种子模板（已就绪）
-│       ├── index.html              ← 首页
-│       ├── about.html              ← 关于
-│       ├── projects.html           ← 项目
-│       ├── blog.html               ← 博客
-│       ├── portfolio.html          ← 作品集
-│       ├── product.html            ← 产品
-│       ├── resume.html             ← 简历
-│       ├── contact.html            ← 联系
-│       ├── css/
-│       │   └── style.css           ← 共享样式（14 模块编号组织）
-│       └── js/
-│           └── script.js           ← 汉堡菜单 + 导航高亮
+│   ├── template-apple/             ← 🍎 Apple 极简风种子模板（已就绪，官方主推🌟）
+│   ├── template-minimal/           ← 🤍 极简白种子模板（已就绪）
+│   ├── template-warm-studio/       ← 🧸 温暖工作室种子模板（已就绪）
+│   └── template-magazine/          ← 📰 杂志风种子模板（已就绪）
 └── references/
-    └── themes-minimal.md           ← 5 套极简白主题色预设
+    └── themes-minimal.md           ← 极简白配色主题方案
 ```
 
 ## Roadmap
 
-- [ ] `assets/template-magazine/` — 杂志风种子模板（衬线标题、大胆对比、暖色调）
-- [ ] `references/themes-magazine.md` — 杂志风配色方案
-- [ ] `assets/template-dark/` — 暗色极客种子模板（深色背景、霓虹色、等宽元素）
-- [ ] `references/themes-dark.md` — 暗色极客配色方案
-- [ ] 头像/照片支持（可选图片槽位）
+- [x] `assets/template-apple/` — Apple 极简风种子模板（已深度适配并推荐为默认首选）
+- [x] `assets/template-warm-studio/` — 温暖工作室种子模板（已就绪）
+- [x] `assets/template-magazine/` — 杂志风种子模板（已就绪）
+- [x] `assets/template-minimal/` — 极简白种子模板（已就绪）
 - [ ] 更多页面类型（FAQ、Timeline、Gallery）
 - [ ] 多语言支持（英文模板）
 
@@ -216,19 +194,19 @@ oh-my-website/
 每个页面是独立的 HTML 文件，用普通 `<a href>` 链接导航。URL 可以直接分享、收藏、刷新——没有前端路由的怪异感。对 Agent 来说，独立文件比单文件多 section 更容易精准修改。
 
 **需要服务器吗？**
-不需要。生成的网站是纯静态 HTML/CSS/JS，可以直接用浏览器打开（`file://` 协议），也可以部署到任何静态托管服务。
+不需要。生成的网站是纯静态 HTML/CSS/JS，支持一键布署到 showcode.com 上。
 
 **我能自己选配色吗？**
-可以。5 套预设主题覆盖了常见的审美方向，也允许你提具体颜色偏好。但不开放自由调色——保持美学一致性比绝对自由更重要。
+可以。目前多套高质感模板覆盖了不同审美方向，也允许你提具体色彩或视觉偏好。
 
 **能加图片吗？**
-可以在首页或关于页手动插入 `<img>` 标签。当前模板没有头像槽位（不强制用户提供照片），但你明确需要时可以加上。
+可以在首页或关于页手动插入 `<img>` 标签。当前模板默认使用精心设计的优雅 SVG / 预设插画作为占位，若提供具体照片，AI 也会为你精准替换并适配。
 
 **怎么更新到最新版？**
-重新运行安装命令，或在本地 skill 目录执行 `git pull`。
+在任一 Agent 中发送：`帮我更新这个 skill: https://github.com/windy/oh-my-website`，或者在本地 skill 目录（`~/.clacky/skills/oh-my-website`）下执行 `git pull`。
 
 **杂志风和暗色极客什么时候出？**
-待开发。如果你特别需要某个风格，提出来可以加速优先级。
+已全部就绪！您可以在对话中随意切换或由 AI 推荐。
 
 ## 贡献
 
