@@ -255,12 +255,14 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: flex-end; /* 与底部玻璃条齐平或插入 */
+  align-self: flex-end; /* 确保靠底对齐无空隙 */
   position: relative;
   z-index: 1;
 }
 
 .hero-image svg,
 .hero-image img {
+  display: block;
   height: 100%;
   max-height: 850px;
   width: auto;
@@ -308,11 +310,11 @@ body {
   width: 100%;
   height: 100%;
   /* 毛玻璃质感层 */
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(60px) saturate(150%);
+  -webkit-backdrop-filter: blur(60px) saturate(150%);
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.04);
 }
 
 /* 左侧黑块：重色区分“个人标签” */
@@ -388,6 +390,10 @@ body {
   .hero-image {
     height: 50vh;
     justify-content: center;
+  }
+  .hero-image svg,
+  .hero-image img {
+    object-position: bottom center;
   }
 
   .hero-stats-wrapper {
@@ -1389,60 +1395,61 @@ footer {
 /* 产品页 product-grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
   margin-top: 32px;
 }
+@media (max-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .product-card {
   background: #ffffff;
-  border-radius: 16px;
-  padding: 32px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   transition: transform 0.25s, box-shadow 0.25s;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
 }
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
-.product-card h3 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 0 0 8px;
-  color: #1d1d1f;
+.product-card-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background-color: #f5f5f7;
 }
-.product-card .tagline {
-  font-size: 0.95rem;
-  color: #4a4a4a;
-  margin: 0 0 20px;
-  line-height: 1.6;
+.product-card-content {
+  padding: 16px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-.product-card .metrics {
-  font-size: 0.85rem;
-  color: #6e6e73;
-  margin-bottom: 20px;
-}
-.product-card .metrics .accent-text {
-  color: #1d1d1f;
+.product-card-title {
+  font-size: 1.15rem;
   font-weight: 600;
-  font-family: var(--mono, ui-monospace, SFMono-Regular, monospace);
-}
-.product-card a {
-  align-self: flex-start;
-  margin-top: auto;
   color: #1d1d1f;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 8px 18px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 999px;
-  transition: background 0.2s, transform 0.2s;
+  margin: 0;
+  line-height: 1.2;
 }
-.product-card a:hover {
-  background: #f0eee9;
-  transform: translateY(-1px);
+.product-card-desc {
+  font-size: 0.85rem;
+  color: #86868b;
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* 联系页 social links */
@@ -2025,5 +2032,511 @@ footer {
   }
   .case-body p {
     font-size: 1.05rem;
+  }
+}
+
+/* Resume Page Specific Styles */
+.cv-body-bg {
+  background-color: #fafaf8;
+}
+
+.cv-paper {
+  max-width: 1200px;
+  margin: 0 auto 80px;
+  background: transparent;
+  padding: 60px 40px;
+  box-shadow: none;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  text-align: left;
+}
+
+.cv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 50px;
+}
+
+.cv-header-left {
+  flex: 1;
+}
+
+.cv-name {
+  font-size: 3.2rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #222;
+  margin: 0 0 10px;
+}
+
+.cv-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin-left: 40px;
+}
+
+.cv-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  color: #666;
+}
+
+.cv-divider {
+  height: 1px;
+  background: #eaeaea;
+  margin: 30px 0;
+  width: 100%;
+}
+
+.cv-section {
+  margin-bottom: 40px;
+}
+
+.page-main .cv-heading {
+  font-size: 20pt;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #1d1d1f;
+  margin: 0 0 16px;
+}
+
+.cv-profile-text {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #555;
+  margin: 0;
+}
+
+.cv-layout {
+  display: flex;
+  gap: 60px;
+}
+
+.cv-sidebar {
+  flex: 0 0 35%;
+}
+
+.cv-main-col {
+  flex: 1;
+}
+
+/* Contact */
+.cv-contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cv-contact-list li {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.cv-contact-list li:last-child {
+  border-bottom: none;
+}
+
+.cv-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 15px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cv-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Education */
+.cv-edu-item {
+  margin-bottom: 20px;
+}
+
+.cv-edu-degree {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.cv-edu-school {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.cv-edu-date {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Skills */
+.cv-skills-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cv-skill-item {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.cv-skill-name {
+  flex: 0 0 45%;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.cv-skill-bar {
+  flex: 1;
+  height: 4px;
+  background: #eaeaea;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.cv-skill-progress {
+  height: 100%;
+  background: #333;
+  border-radius: 2px;
+}
+
+/* Experience */
+.cv-experience-timeline {
+  position: relative;
+  padding-left: 20px;
+}
+
+.cv-experience-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 0;
+  width: 1px;
+  background: #eaeaea;
+}
+
+.cv-exp-item {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.cv-exp-item::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #333;
+}
+
+.cv-exp-date {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cv-exp-role {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.cv-exp-company {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.cv-exp-desc {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #555;
+  margin: 0 0 10px;
+}
+
+.cv-exp-bullets {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.cv-exp-bullets li {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 6px;
+  list-style-type: disc;
+}
+
+/* Footer */
+.cv-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 30px;
+  border-top: 1px solid #eaeaea;
+  font-size: 0.9rem;
+  color: #666;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.cv-social-divider {
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .cv-layout {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .cv-paper {
+    padding: 20px;
+    margin: 0 auto 40px;
+  }
+  .cv-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cv-avatar {
+    margin-left: 0;
+    margin-top: 16px;
+    width: 60px;
+    height: 60px;
+  }
+  .cv-name {
+    font-size: 2rem;
+  }
+}
+
+
+
+/* Contact Page Studio Match */
+.contact-studio-wrapper {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Hide default nav/footer for full immersion if needed, or style them to blend. 
+   The image has a very specific top nav, we'll keep ours but make it transparent. */
+body.contact-studio-wrapper .apple-nav {
+  position: absolute;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none;
+}
+body.contact-studio-wrapper .apple-nav.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+}
+body.contact-studio-wrapper footer {
+  display: none;
+}
+
+.cv2-main {
+  min-height: 100vh;
+  padding: 120px 4vw 40px;
+  background: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.cv2-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---- Header: layered watermark + overlay ---- */
+.cv2-header-stack {
+  position: relative;
+  margin-bottom: 80px;
+}
+
+.cv2-watermark {
+  font-size: clamp(6rem, 14vw, 14rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  margin: 0;
+  line-height: 1;
+  color: #000;
+  opacity: 0.06;
+  white-space: nowrap;
+  text-transform: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.cv2-overlay-text {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+.cv2-middle {
+  display: flex;
+  gap: 10vw;
+  margin-bottom: 120px;
+}
+
+.cv2-left {
+  flex: 0 0 200px;
+}
+
+.cv2-info-block {
+  margin-bottom: 40px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #000;
+}
+
+.cv2-info-block p {
+  margin: 0;
+}
+
+.cv2-label {
+  margin-bottom: 10px !important;
+}
+
+.cv2-right {
+  flex: 1;
+  max-width: 700px;
+}
+
+/* ---- Right column: contact info display ---- */
+.cv2-contact-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.cv2-contact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #000;
+}
+
+.cv2-contact-key {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.cv2-contact-val {
+  font-size: 0.9rem;
+  color: #000;
+  text-align: right;
+}
+
+.cv2-bottom {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.cv2-big-contact {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  color: #000;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.cv2-footer {
+  border-top: 1px solid #eaeaea;
+  padding-top: 40px;
+  font-size: 0.8rem;
+  color: #000;
+}
+
+.cv2-footer-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.cv2-footer-col p {
+  margin: 0 0 4px;
+}
+
+.cv2-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.cv2-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cv2-footer-links ul {
+  display: flex;
+  gap: 15px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cv2-footer-links ul li a {
+  color: #000;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cv2-footer-links > a {
+  color: #000;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .cv2-middle {
+    flex-direction: column;
+    gap: 50px;
+  }
+  .cv2-form-row {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .cv2-bottom {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
