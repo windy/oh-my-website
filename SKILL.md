@@ -345,6 +345,7 @@ cat SKILL_DIR/assets/template-*/meta.json | ruby -rjson -e '
 1. 复制所选模板到独立临时目录：
    ```bash
    SITE_DIR="/tmp/site-$(date +%Y%m%d%H%M%S)"
+   NAME="{用户姓名}"          # 从 Step 0 收集的用户姓名，如 "李亚飞"
    cp -r SKILL_DIR/assets/template-<ID> "$SITE_DIR"
    ```
 2. 如果偏好的模板内置页面不够，可以从页面更全的模板中补拷需要的 HTML 文件
@@ -960,7 +961,7 @@ curl 失败（403/404/超时）→ 告诉用户拿不到图，请换一个或直
 6. 然后执行发布命令：
 
 ```bash
-ruby "SKILL_DIR/scripts/publish.rb" publish --name "NAME" --slug "SLUG" --dir "$SITE_DIR"
+ruby "SKILL_DIR/scripts/publish.rb" publish --name "$NAME" --slug "$SLUG" --dir "$SITE_DIR"
 ```
 
 - `--slug` 指定 URL 路径（必传，不可随机）
@@ -984,7 +985,7 @@ ruby "SKILL_DIR/scripts/publish.rb" publish --name "NAME" --slug "SLUG" --dir "$
    ```
 2. 抠图成功后重新发布覆盖（第二次发布走 update，秒级完成）：
    ```bash
-   ruby "SKILL_DIR/scripts/publish.rb" publish --name "NAME" --slug "SLUG" --dir "$SITE_DIR"
+   ruby "SKILL_DIR/scripts/publish.rb" publish --name "$NAME" --slug "$SLUG" --dir "$SITE_DIR"
    ```
 3. 抠图失败（exit code ≠ 0）→ 跳过，原图版本已在线，不阻塞。
 4. 全部完成后把最终 URL 交付用户（抠图后的精美版本已覆盖上线）。
